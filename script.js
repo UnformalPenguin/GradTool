@@ -8,7 +8,8 @@ let hue = 120;
 let saturation = 1;
 let brightness = 1;
 let alpha = 1;
-
+let defaultDuration = 10;
+let projectName = "Gradient";
 
 const templates = [    
         {
@@ -26,7 +27,7 @@ const templates = [
                     },
                     {
                         "color": "#92fe9d",
-                        "stop": "20%",
+                        "stop": "20.1%",
                         "pinned": false
                     },
                     {
@@ -87,7 +88,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "hue",
-                        "duration": 10,
+                        "duration": 11,
                         "reverse": false,
                         "fromHue": "0"
                     }
@@ -98,6 +99,39 @@ const templates = [
                 "visible": true,
                 "colors": "undefined",
                 "direction": ""
+            },
+            {
+                "type": "conic",
+                "shape": "square",
+                "animate": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(126,190,255,0.43)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(253,255,143,0.49)",
+                        "stop": "5.6%"
+                    },
+                    {
+                        "color": "rgba(255,135,245,0.52)",
+                        "stop": "9.7%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [],
+                "blur": 10,
+                "opacity": 0.25,
+                "visible": true,
+                "angle": 90,
+                "startAngle": 180,
+                "centerX": 50,
+                "centerY": 100,
+                "size": "farthest-corner",
+                "direction": "",
+                "repeating": true,
+                "posType": "percent"
             }
         ]
     },
@@ -390,19 +424,51 @@ const templates = [
     },
     {
         name: "Deep Space Swirl",
-        preview: "conic-gradient(from 0deg at 50% 50%, rgba(147, 166, 232, 1) 95%, rgba(196, 100, 236, 1) 100%)",
+        preview: "linear-gradient(90deg, rgba(221,152,24,1.00) 0.0%, rgba(132,24,221,1.00) 49.3%, rgba(218, 118, 210, 1) 100%),radial-gradient(circle at 50% 50%, rgba(194,54,185,1.00) 43.8%, rgba(97,24,129,1.00) 74.2%),radial-gradient(circle at 50% 50%, rgba(220,46,209,1.00) 43.8%, rgba(136,27,183,1.00) 74.2%)",
         config: [
             {
-                "type": "conic",
+                "type": "linear",
+                "shape": "square",
+                "animate": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(221,152,24,1.00)",
+                        "stop": "0.0%"
+                    },
+                    {
+                        "color": "rgba(132,24,221,1.00)",
+                        "stop": "49.3%"
+                    },
+                    {
+                        "color": "rgba(218, 118, 210, 1)",
+                        "stop": "100%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [],
+                "blur": 2,
+                "opacity": 1,
+                "visible": true,
+                "angle": 90,
+                "startAngle": 0,
+                "centerX": 50,
+                "centerY": 50,
+                "size": "farthest-corner",
+                "direction": "",
+                "repeating": false
+            },
+            {
+                "type": "radial",
                 "shape": "circle",
                 "colorStops": [
                     {
-                        "color": "rgba(147, 166, 232, 1)",
-                        "stop": "95%"
+                        "color": "rgba(194,54,185,1.00)",
+                        "stop": "43.8%"
                     },
                     {
-                        "color": "rgba(196, 100, 236, 1)",
-                        "stop": "100%"
+                        "color": "rgba(97,24,129,1.00)",
+                        "stop": "74.2%"
                     }
                 ],
                 "startAngle": 0,
@@ -411,15 +477,52 @@ const templates = [
                 "animate": true,
                 "animations": [
                     {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
+                        "type": "hue",
+                        "duration": 10,
+                        "reverse": false,
+                        "toHue": "20"
+                    }
+                ],
                 "blur": 6,
                 "opacity": 0.8,
                 "repeating": false,
                 "visible": true,
-                "colors": "undefined"
+                "colors": "undefined",
+                "size": ""
+            },
+            {
+                "type": "radial",
+                "shape": "circle",
+                "colorStops": [
+                    {
+                        "color": "rgba(220,46,209,1.00)",
+                        "stop": "43.8%"
+                    },
+                    {
+                        "color": "rgba(136,27,183,1.00)",
+                        "stop": "57.9%"
+                    }
+                ],
+                "startAngle": 0,
+                "centerX": 50,
+                "centerY": 50,
+                "animate": true,
+                "animations": [
+                    {
+                        "type": "slide",
+                        "duration": 10,
+                        "reverse": false,
+                        "fromHue": "300",
+                        "intensity": "0.1"
+                    }
+                ],
+                "blur": 2,
+                "opacity": 0.15,
+                "repeating": false,
+                "visible": true,
+                "colors": "undefined",
+                "size": "",
+                "posType": "percent"
             }
         ]
 
@@ -625,6 +728,7 @@ function updateCurrentLayer() {
 
     if (layer.type === 'conic') {
         layer.startAngle = parseFloat(document.getElementById('conicStartAngle')?.value || 0);
+        layer.posType = document.getElementById('posType')?.value || 'percent';
         layer.centerX = parseFloat(document.getElementById('centerX')?.value || 50);
         layer.centerY = parseFloat(document.getElementById('centerY')?.value || 50);
         layer.repeating = document.getElementById('repeating')?.checked || false;
@@ -632,6 +736,7 @@ function updateCurrentLayer() {
 
     if (layer.type === 'radial') {
         layer.size = document.getElementById('radialSize')?.value || '';
+        layer.posType = document.getElementById('posType')?.value || 'percent';
         layer.centerX = parseFloat(document.getElementById('centerX')?.value || 50);
         layer.centerY = parseFloat(document.getElementById('centerY')?.value || 50);
         layer.repeating = document.getElementById('repeating')?.checked || false;
@@ -651,6 +756,13 @@ function renderDynamicInputs() {
 
     if (layer.type === 'linear') {
         html += `
+                    <label>
+                        Shape:
+                        <select id="layerShape" onchange="updateCurrentLayer()">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                        </select>
+                    </label>
             <label>Direction (e.g. to right, 90deg):
                 <input type="text" id="linearDirection" value="${layer.direction || ''}" onchange="updateCurrentLayer()">
             </label>
@@ -666,8 +778,21 @@ function renderDynamicInputs() {
 
     if (layer.type === 'conic') {
         html += `
+                    <label>
+                        Shape:
+                        <select id="layerShape" onchange="updateCurrentLayer()">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                        </select>
+                    </label>
             <label>Start Angle (deg):
                 <input type="number" id="conicStartAngle" value="${layer.startAngle || 0}" onchange="updateCurrentLayer()">
+            </label>
+            <label>Position Type:
+                <select id="posType" onchange="updateCurrentLayer()">
+                    <option value="percent">%</option>
+                    <option value="px">px</option>
+                </select>
             </label>
             <label>Center X (%):
                 <input type="number" id="centerX" value="${layer.centerX || 50}" onchange="updateCurrentLayer()">
@@ -684,6 +809,13 @@ function renderDynamicInputs() {
 
     if (layer.type === 'radial') {
         html += `
+                    <label>
+                        Shape:
+                        <select id="layerShape" onchange="updateCurrentLayer()">
+                            <option value="circle">Circle</option>
+                            <option value="ellipse">Ellipse</option>
+                        </select>
+                    </label>
             <label>Size:
                 <select id="radialSize" onchange="updateCurrentLayer()">
                     <option value="">none</option>
@@ -691,12 +823,19 @@ function renderDynamicInputs() {
                     <option value="farthest-side">farthest-side</option>
                     <option value="closest-corner">closest-corner</option>
                     <option value="farthest-corner">farthest-corner</option>
+
                 </select>
             </label>
-            <label>Center X (%):
+            <label>Position Type:
+                <select id="posType" onchange="updateCurrentLayer()">
+                    <option value="percent">%</option>
+                    <option value="px">px</option>
+                </select>
+            </label>
+            <label>Center X (${layer.posType == "percent" ? "%" : "px"}):
                 <input type="number" id="centerX" value="${layer.centerX || 50}" onchange="updateCurrentLayer()">
             </label>
-            <label>Center Y (%):
+            <label>Center Y (${layer.posType == "percent" ? "%" : "px"}):
                 <input type="number" id="centerY" value="${layer.centerY || 50}" onchange="updateCurrentLayer()">
             </label>
             <label>
@@ -846,7 +985,7 @@ function updateColorEditor() {
     const rgba = rgbaFromCss(stop.color);
     document.getElementById('colorPicker').value = hexFromRgba(stop.color);
     document.getElementById('alphaSlider').value = rgba.a;
-    document.getElementById('hexInput').value = stop.color;
+    //document.getElementById('hexInput').value = stop.color;
     document.getElementById('stopInput').value = parseFloat(stop.stop);
 }
 
@@ -928,7 +1067,7 @@ function onPickerChange() {
                 if (!layer.visible) return;
 
                 const div = document.createElement('div');
-                div.className = `spiral-layer layer-${i}`;
+                div.className = `spiral-layer ${projectName}-layer-${i}`;
 
                 const colorStr = layer.colorStops.map(cs => `${cs.color} ${cs.stop}`).join(', ');
                 let gradient = buildGradientString(layer);
@@ -993,10 +1132,9 @@ function onPickerChange() {
 
                 if (layer.animate && Array.isArray(layer.animations)) {
                     animated = true;
-                    console.log("Animating");
                         layer.animations.forEach((anim, aIndex) => {
-                            const animName = `layer${i}_anim${aIndex}`;
-                            const duration = anim.duration || 10;
+                            const animName = `${projectName}_layer${i}_anim${aIndex}`;
+                            const duration = anim.duration || defaultDuration;
 
                             div.style.animation = div.style.animation
                                 ? `${div.style.animation}, ${animName} ${duration}s linear infinite`
@@ -1187,8 +1325,20 @@ function buildGradientString(layer) {
 
     if (layer.type === 'radial') {
         const radialType = layer.repeating ? 'repeating-radial-gradient' : 'radial-gradient';
-        const shapeSize = `${layer.shape || 'circle'} ${layer.size || ''}`.trim();
-        const atPos = `at ${layer.centerX}% ${layer.centerY}%`;
+        if (!layer.shape || layer.shape != "circle" || layer.shape != "ellipse") {
+            layer.shape = "circle";
+        }
+        var shapeSize = "";
+        var atPos = `at ${layer.centerX}% ${layer.centerY}%`;
+        if (layer.posType === "percent") {
+            atPos = `at ${layer.centerX}% ${layer.centerY}%`
+        }
+        else if (layer.posType === "rem") {
+            atPos = `at ${layer.centerX}rem ${layer.centerY}rem`
+        }
+        else {
+            atPos = `at ${layer.centerX}px ${layer.centerY}px`
+        }
         return `${radialType}(${shapeSize} ${atPos}, ${stops})`;
     }
 
@@ -1232,7 +1382,7 @@ function generateCSS() {
     let keyframes = '';
 
     layers.forEach((layer, i) => {
-        const className = `layer-${i}`;
+        const className = `${projectName}-layer-${i}`;
         const gradient = buildGradientString(layer);
         let animationNames = [];
 
@@ -1246,7 +1396,7 @@ function generateCSS() {
             let animationParts = [];
 
             layer.animations.forEach((anim, aIndex) => {
-                const animName = `layer${i}_anim${aIndex}`;
+                const animName = `${projectName}_layer${i}_anim${aIndex}`;
                 animationNames.push(animName);
                 const duration = anim.duration || 5;
 
@@ -1329,7 +1479,7 @@ function generateCSS() {
     // Generate the HTML for the container
     let html = `<div class="spiral-container">\n`;
     layers.forEach((_, i) => {
-        html += `  <div class="spiral-layer layer-${i}"></div>\n`;
+        html += `  <div class="spiral-layer ${projectName}-layer-${i}"></div>\n`;
     });
     html += `</div>`;
 
@@ -1689,6 +1839,8 @@ function loadTemplate(config) {
 function newProject() {
     layers = [];
     currentLayerIndex = -1;
+    projectName = "new";
+    document.getElementById('projectName').value = "new";
     createLayers();
     renderColorStops();
     renderDynamicInputs();
@@ -1726,7 +1878,7 @@ function renderAnimationControls() {
         // Duration
         const durationLabel = document.createElement('label');
         durationLabel.innerHTML = `Duration (s):
-            <input type="number" value="${anim.duration || 10}" 
+            <input type="number" value="${anim.duration || defaultDuration}" 
             onchange="updateAnimation(${index}, 'duration', this.value)">
         `;
         item.appendChild(durationLabel);
@@ -1918,6 +2070,15 @@ function updateAnimation(index, key, value) {
     createLayers();
 }
 
+function updateProjectName() {
+    var nameIn = document.getElementById('projectName');
+    if (nameIn) {
+        projectName = nameIn.value;
+        console.log("Name: " + projectName);
+        updateCurrentLayer();
+    }
+}
+
 function copyToClipboard(elementId) {
     const el = document.getElementById(elementId);
     el.select();
@@ -2000,7 +2161,7 @@ document.addEventListener('keydown', (e) => {
     if (!layer || selectedStopIndex === null) return;
 
     const stop = layer.colorStops[selectedStopIndex];
-    if (stop.pinned) return;
+    if (!stop || stop.pinned) return;
 
     const step = e.shiftKey ? 0.1 : 1;
     let pos = parseFloat(stop.stop);

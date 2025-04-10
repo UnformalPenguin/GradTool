@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Gradient  CSS Generator</title>
+    <title>Free Gradient Creator | Layers | Animations </title>
     <link rel="stylesheet" href="styles.css" />
 
-    <meta name="description" content="GradTool makes gradients, with a large degree ofcustomizability.">
-    <meta name="keywords" content="free design tool, css design, custom gradient, radial-gradient, conical-gradient, linear-gradient, art,gradient creator, spiral creator, custom spiral, color picker">
-    <meta name="author" content="Keeley">
+    <meta name="description" content="GradTool is a free custom css generator. This tool makes gradients, with multi-layer and animations, with a large degree of customizability.">
+    <meta name="keywords" content="Gradient cusomizer, free gradient, css animations, custom animations, cusom css, css customizer, animations, web design, free tool, free web design, Free design tool, css design, custom gradient, radial-gradient, conical-gradient, linear-gradient, art,gradient creator, spiral creator, custom spiral, color picker">
+    <meta name="author" content="UnformalPenguin">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -48,6 +48,9 @@
                 <div class="layer-controls">
                     <button onclick="newProject()">New Project</button>
                     <button onclick="addLayer()">Add Layer</button>
+                    <label style="margin-left:10px;"> Project Name:
+                    <input type="text" onchange="updateProjectName()" id="projectName" />
+                    </label>
                     <!--<button onclick="copyLayer()">Copy Layer</button>-->
                     <!--<button onclick="moveLayerUp()">Move Up</button>
             <button onclick="moveLayerDown()">Move Down</button>-->
@@ -67,13 +70,6 @@
                         </select>
                     </label>
 
-                    <label>
-                        Shape:
-                        <select id="layerShape" onchange="updateCurrentLayer()">
-                            <option value="circle">Circle</option>
-                            <option value="square">Square</option>
-                        </select>
-                    </label>
 
                     <div id="dynamicInputs"></div>
 
@@ -88,8 +84,8 @@
                     </label>
 
                     <label>
-                        Animate:
                         <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
+                        Animate                        
                     </label>
 
                     <div id="animate-block">
@@ -99,30 +95,30 @@
                             <button onclick="addAnimation()">+ Add Animation</button>
                         </div>
                         <!--<label>
-                Animation Type:
-                <select id="layerAnimType" onchange="updateCurrentLayer()">
-                    <option value="rotate">Rotate</option>-->
+        Animation Type:
+        <select id="layerAnimType" onchange="updateCurrentLayer()">
+            <option value="rotate">Rotate</option>-->
                         <!--<option value="pulse">Pulse</option>-->
                         <!--<option value="hue">Hue Shift</option>
-                <option value="slide">Slide Gradient</option>-->
+        <option value="slide">Slide Gradient</option>-->
                         <!--<option value="morph">Morph Gradient</option>-->
                         <!--</select>
-                </label>-->
+        </label>-->
                         <!--<label id="layerClockBlock">
-                    Clockwise:
-                    <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
-                </label>
+            Clockwise:
+            <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
+        </label>
 
-                <label id="layerDurationBlock">
-                    Duration (s):
-                    <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
-                </label>
-                </div>
+        <label id="layerDurationBlock">
+            Duration (s):
+            <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
+        </label>
+        </div>
 
-                <div>
-                    <button onclick="toggleVisibility()">Show/Hide Layer</button>
-                    <button onclick="deleteLayer()">Delete Layer</button>
-                </div>-->
+        <div>
+            <button onclick="toggleVisibility()">Show/Hide Layer</button>
+            <button onclick="deleteLayer()">Delete Layer</button>
+        </div>-->
 
 
                     </div>
@@ -179,7 +175,8 @@
             <nav>
                 <a href="privacy.html">Privacy Policy</a>
                 <span>|</span>
-                <a href="terms.html">Terms of Use</a>
+                <a href="https://github.com/UnformalPenguin/GradTool">GitHub</a>
+                <span>|</span>
                 <a href="mailto:spira@nodeflow.net">Contact Us</a>
             </nav>
         </div>

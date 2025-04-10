@@ -68,6 +68,16 @@
              cursor: pointer;
          }
 
+        .layer-controls input[type="text"],
+        .layer-editor input[type="text"] {
+            margin: 0.3rem;
+            padding: 0.5rem 1rem;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
              .layer-controls button:hover,
              .layer-editor button:hover {
                  background: #444;
@@ -394,7 +404,6 @@
 
     .animation-item select,
     .animation-item input {
-        width: 100%;
         background: #333;
         color: white;
         border: none;
@@ -405,12 +414,13 @@
 
 
 
+
 .site-footer {
-    background-color: #f8f8f8;
+    background-color: rgb(223,196,255);
     padding: 20px 0;
     border-top: 1px solid #ddd;
-    font-size: 14px;
-    color: #555;
+    font-size: 16px;
+    color: #0034ff;
     text-align: center;
     margin-top: 40px;
 }
