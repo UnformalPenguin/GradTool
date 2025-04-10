@@ -24,7 +24,17 @@
                 <div id="templateList" class="template-list scrollable"></div>
             </div>
 
-            <div class="spiral-container" id="spiral"></div>
+            <div id="previewWindow" class="pinned">
+                <div id="previewHeader" class="">
+                    <span class="tooltip-icon" tabindex="0">
+                        <button onmousedown="togglePin()" class="pin-toggle">📌</button>
+                        <span class="tooltip-text">
+                            Unpinning the window allows it to become a draggable and resizable window.
+                        </span>
+                    </span>
+                </div>
+                <div class="spiral-container" id="spiral"></div>
+            </div>
 
             <div class="textarea-wrapper">
                 <textarea id="cssOutput" placeholder="Generated CSS will appear here..."></textarea>
@@ -67,6 +77,7 @@
                 <label style="margin-left:10px;">
                     Project Name:
                     <input type="text" onchange="updateProjectName()" id="projectName" />
+                    <label><input type="checkbox" id="enableTooltips" checked> Show tooltips</label>
                 </label>
                 <!--<button onclick="saveToTemplates()">Save as Template</button>-->
                 <!--<button onclick="copyLayer()">Copy Layer</button>-->
@@ -79,113 +90,170 @@
             <div class="layer-list" id="layerList"></div>
 
             <div class="layer-editor" id="layerEditor">
-                <label>
-                    Type:
-                    <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
-                        <option value="conic">Conic</option>
-                        <option value="radial">Radial</option>
-                        <option value="linear">Linear</option>
-                    </select>
-                </label>
+                <div id="animate-block">
+                    <div class="animation-controls">
+                        <h4>Layer Details</h4>
+                        <label>
+                            Type:
+                            <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
+                                <option value="conic">Conic</option>
+                                <option value="radial">Radial</option>
+                                <option value="linear">Linear</option>
+                            </select>
+                        </label>
 
 
-                <div id="dynamicInputs"></div>
+                        <div id="dynamicInputs"></div>
 
-                <label>
-                    Opacity:
-                    <input type="range" id="layerOpacity" min="0" max="1" step="0.05" onchange="updateCurrentLayer()">
-                </label>
+                        <label>
+                            Opacity:
+                            <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    Controls how transparent the layer is. 1 is fully visible, 0 is fully transparent.<br />
+                                    If the lowest layer has no transparency, no other layers will be visible
+                                </span>
+                            </span>
+                            <input type="range" id="layerOpacity" min="0" max="1" step="0.05" onchange="updateCurrentLayer()">
+                        </label>
 
-                <label>
-                    Blur:
-                    <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
-                </label>
+                        <label>
+                            Blur:
+                            <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    Adds a soft blur to the entire layer, creating a smoother or hazier effect.
+                                </span>
+                            </span>
+                            <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
+                        </label>
 
-                <label>
-                    <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
-                    Animate
-                </label>
+                        <label>
+                            <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
+                            Animate
+                            <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    If checked, then the Layer Animations will be applied. Add multiple, but not all may mesh well together
+                                </span>
+                            </span>
+                        </label>
 
+                    </div>
+                </div>
                 <div id="animate-block">
                     <div class="animation-controls">
                         <h4>Layer Animations</h4>
                         <div id="animationList"></div>
-                        <button onclick="addAnimation()">+ Add Animation</button>
+                        <button onclick="addAnimation()">
+                            + Add Animation
+                            <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    A single layer can have multiple animations.<br />
+                                    They should apply in the order listed, but may not all play well together.
+                                </span>
+                            </span>
+                        </button>
                     </div>
                     <!--<label>
-            Animation Type:
-            <select id="layerAnimType" onchange="updateCurrentLayer()">
-                <option value="rotate">Rotate</option>-->
+        Animation Type:
+        <select id="layerAnimType" onchange="updateCurrentLayer()">
+            <option value="rotate">Rotate</option>-->
                     <!--<option value="pulse">Pulse</option>-->
                     <!--<option value="hue">Hue Shift</option>
-            <option value="slide">Slide Gradient</option>-->
+        <option value="slide">Slide Gradient</option>-->
                     <!--<option value="morph">Morph Gradient</option>-->
                     <!--</select>
-            </label>-->
+        </label>-->
                     <!--<label id="layerClockBlock">
-                Clockwise:
-                <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
-            </label>
+            Clockwise:
+            <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
+        </label>
 
-            <label id="layerDurationBlock">
-                Duration (s):
-                <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
-            </label>
-            </div>
-
-            <div>
-                <button onclick="toggleVisibility()">Show/Hide Layer</button>
-                <button onclick="deleteLayer()">Delete Layer</button>
-            </div>-->
-
-
-                </div>
-                <div class="color-controls hidden">
-                    <h4>Color Stops</h4>
-                    <div id="colorStopsContainer"></div>
-                    <button onclick="addColorStop()">Add Color Stop</button>
-                </div>
-
-                <div class="color-stop-editor">
-                    <div class="color-track" id="colorTrack"></div>
-                    <div class="color-values" id="colorValueInputs"></div>
-                    <div class="color-details">
-                        <input type="color" id="colorPicker" onchange="changeColorStopColor()" />
-                        <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
-                        <input type="text" id="hexInput" onchange="changeColorStopHex()" />
-                        <input type="number" id="stopInput" onchange="changeColorStopPosition()" />
-                    </div>
-
-                    <div class="color-picker-ui">
-                        <div class="color-area">
-                            <div class="color-field" id="colorField">
-                                <div class="picker-cursor" id="colorCursor"></div>
-                            </div>
-                            <input type="range" id="hueSlider" min="0" max="360" step="1" />
-                            <!--<input type="range" id="alphaSlider" min="0" max="1" step="0.01" />-->
-                        </div>
-
-                        <div class="color-meta">
-                            <div class="field"><label>HEX</label><input type="text" id="hexInput" /></div>
-                            <div class="field"><label>R</label><input type="number" id="rInput" /></div>
-                            <div class="field"><label>G</label><input type="number" id="gInput" /></div>
-                            <div class="field"><label>B</label><input type="number" id="bInput" /></div>
-                            <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" /></div>
-                        </div>
-                    </div>
-
-
-                    <div class="layer-controls">
-                        <button onclick="addColorStop()">+ Add Stop</button>
-                        <button onclick="removeColorStop()">- Remove Stop</button>
-                    </div>
-                </div>
-
-            </div>
-
-            <!--<canvas id="gradientCanvas"></canvas>-->
-
+        <label id="layerDurationBlock">
+            Duration (s):
+            <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
+        </label>
         </div>
+
+        <div>
+            <button onclick="toggleVisibility()">Show/Hide Layer</button>
+            <button onclick="deleteLayer()">Delete Layer</button>
+        </div>-->
+
+
+                </div>
+
+
+                <div id="animate-block">
+                    <div class="animation-controls">
+                        <h4>Color Stops</h4>
+                        <span class="tooltip-icon" tabindex="0">
+                            ❓
+                            <span class="tooltip-text">
+                                Color stops define which colors appear where along your gradient. These control the timing and flow of the colors. <br />
+                                Each stop includes a color and a position (e.g., “red at 0%”). <br />
+                                Drag stops left/right to change position. <br/>
+                                Click on the track to add a new stop
+                            </span>
+                        </span>
+
+                        <div class="color-controls hidden">
+                            <h4>Color Stops</h4>
+                            <div id="colorStopsContainer"></div>
+                            <button onclick="addColorStop()">Add Color Stop</button>
+                        </div>
+
+                        <div class="color-stop-editor">
+                            <div class="color-track" id="colorTrack"></div>
+                            <div class="color-values" id="colorValueInputs"></div>
+                            <div class="color-details">
+                                <input type="color" id="colorPicker" onchange="changeColorStopColor()" />
+                                <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
+                                <span class="tooltip-icon" tabindex="0">
+                                    ❓
+                                    <span class="tooltip-text">
+                                        This changes the transparency (alpha) of the color.
+                                    </span>
+                                </span>
+                                <input type="text" id="hexInput" onchange="changeColorStopHex()" />
+                                <input type="number" id="stopInput" onchange="changeColorStopPosition()" />
+                            </div>
+
+                            <div class="color-picker-ui">
+                                <div class="color-area">
+                                    <div class="color-field" id="colorField">
+                                        <div class="picker-cursor" id="colorCursor"></div>
+                                    </div>
+                                    <input type="range" id="hueSlider" min="0" max="360" step="1" />
+                                    <!--<input type="range" id="alphaSlider" min="0" max="1" step="0.01" />-->
+                                </div>
+
+                                <div class="color-meta">
+                                    <div class="field"><label>HEX</label><input type="text" id="hexInput" /></div>
+                                    <div class="field"><label>R</label><input type="number" id="rInput" /></div>
+                                    <div class="field"><label>G</label><input type="number" id="gInput" /></div>
+                                    <div class="field"><label>B</label><input type="number" id="bInput" /></div>
+                                    <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" /></div>
+                                </div>
+                            </div>
+
+
+                            <div class="layer-controls">
+                                <button onclick="addColorStop()">+ Add Stop</button>
+                                <button onclick="removeColorStop()">- Remove Stop</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+                <!--<canvas id="gradientCanvas"></canvas>-->
+
+            </div>
     </div>
 
     <script src="./scripts/curveutils.js"></script>

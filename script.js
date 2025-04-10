@@ -710,8 +710,14 @@ function renderDynamicInputs() {
                             <option value="to left">to left (270dedg)</option>
                         </select>
             </label>
-            <label>Angle (deg):
+            <label>Angle (deg):<span class="tooltip-icon" tabindex="0">❓
+    <span class="tooltip-text">
+      The angle determines the direction of the gradient, measured in degrees.<br>
+      For example, <code>90deg</code> means left-to-right.
+    </span>
+  </span>
                 <input type="number" id="linearAngle" value="${layer.angle || 0}" onchange="updateCurrentLayer()">
+                
             </label>
             <label>
                 <input type="checkbox" id="repeating" ${layer.repeating ? 'checked' : ''} onchange="updateCurrentLayer()">
@@ -1089,8 +1095,8 @@ function onPickerChange() {
                 }`;
                                     break;
                                 case 'pulse':
-                                    const lowOpacity = Math.max(0, layer.opacity - anim.intensity);
-                                    const highOpacity = layer.opacity;
+                                    const lowOpacity = Math.max(0, anim.pulsefrom);
+                                    const highOpacity = layer.pulseto;
                                     const lowBlur = layer.blur;
                                     const highBlur = layer.blur + 2;
 
@@ -1960,14 +1966,14 @@ function renderAnimationControls() {
         typeLabel.innerHTML = `
             Type:
             <select onchange="updateAnimation(${index}, 'type', this.value)">
-                <option value="rotate" ${anim.type === 'rotate' ? 'selected' : ''}>Rotate</option>
-                <option value="step-rotate" ${anim.type === 'step-rotate' ? 'selected' : ''}>Step Rotate</option>
-                <option value="pulse" ${anim.type === 'pulse' ? 'selected' : ''}>Pulse</option>
-                <option value="hue" ${anim.type === 'hue' ? 'selected' : ''}>Hue</option>
-                <option value="slide" ${anim.type === 'slide' ? 'selected' : ''}>Slide</option>
-                <option value="blur" ${anim.type === 'blur' ? 'selected' : ''}>Blur</option>
-                <option value="saturation" ${anim.type === 'saturation' ? 'selected' : ''}>Saturation</option>
-                <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale</option>
+                <option value="rotate" ${anim.type === 'rotate' ? 'selected' : ''}>Rotate -  Rotates the layer around a center. Ideal for circular or conic gradients. </option>                
+                <option value="step-rotate" ${anim.type === 'step-rotate' ? 'selected' : ''}>Step Rotate - Rotates the layer in discrete jumps. Useful for glitchy or mechanical motion.</option>
+                <option value="pulse" ${anim.type === 'pulse' ? 'selected' : ''}>Pulse - Animates the layer's opacity to create a pulsing effect. Great for ambient visuals.</option>
+                <option value="hue" ${anim.type === 'hue' ? 'selected' : ''}>Hue - Shifts across the color wheel, cycling through hues. Gives a psychedelic feel..</option>
+                <option value="slide" ${anim.type === 'slide' ? 'selected' : ''}>Slide - Animates the gradient’s position to simulate motion, like running fabric.</option>
+                <option value="blur" ${anim.type === 'blur' ? 'selected' : ''}>Blur - Softens and sharpens the layer repeatedly. Gives diffuse, dreamy effects.</option>
+                <option value="saturation" ${anim.type === 'saturation' ? 'selected' : ''}>Saturation - Increases and decreases color intensity. Dramatic washes or faded looks.</option>
+                <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale - Grows and shrinks the layer. Used for breathing effects or floating visuals.</option>
             </select>
         `;
 
@@ -1976,6 +1982,12 @@ function renderAnimationControls() {
         // Duration
         const durationLabel = document.createElement('label');
         durationLabel.innerHTML = `Duration (s):
+                    <span class="tooltip-icon" tabindex="0">
+                    ❓
+                 <span class="tooltip-text">
+                        How long it will take to complete a full animation loop
+                   </span>
+                  </span>
             <input type="number" value="${anim.duration || defaultDuration}" 
             onchange="updateAnimation(${index}, 'duration', this.value)">
         `;
@@ -2010,8 +2022,26 @@ function renderAnimationControls() {
         if (anim.type === 'pulse') {
             const intLabel = document.createElement('label');
             intLabel.innerHTML = `
-                Intensity:
-                 <input type="range" min="0" max="1" step="0.05" value="${anim.intensity ?? 0}" onchange="updateAnimation(${index}, 'intensity', this.value)">
+             <label>From:
+                    <span class="tooltip-icon" tabindex="0">
+                    ❓
+                 <span class="tooltip-text">
+                        Starting Opacity for animation loop
+                   </span>
+                  </span>
+            <input type="number" min="0" max="1" step="0.05" value="${anim.pulsefrom ?? 0}" 
+                onchange="updateAnimation(${index}, 'pulsefrom', this.value)">
+        </label>
+        <label>To:
+                    <span class="tooltip-icon" tabindex="0">
+                    ❓
+                 <span class="tooltip-text">
+                        Final Opacity for animation loop
+                   </span>
+                  </span>
+            <input type="number" min="0" max="1" step="0.05" value="${anim.pulseto ?? 0.5}" 
+                onchange="updateAnimation(${index}, 'pulseto', this.value)">
+        </label>
 
             `;
             item.appendChild(intLabel);
@@ -2020,6 +2050,12 @@ function renderAnimationControls() {
         if (anim.type === 'hue') {
             const fromHueLabel = document.createElement('label');
             fromHueLabel.innerHTML = `From Hue (deg):
+                    <span class="tooltip-icon" tabindex="0">
+                    ❓
+                 <span class="tooltip-text">
+                          Hue animation cycles the color values by spinning around the color wheel.
+                   </span>
+                  </span>
         <input type="number" value="${anim.fromHue ?? 0}" onchange="updateAnimation(${index}, 'fromHue', this.value)">
     `;
             item.appendChild(fromHueLabel);
@@ -2249,13 +2285,14 @@ function startDragStop(e, index) {
 
 
 
-// Toggle visibility
+// Toggle template visibility
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('templateHeader').onclick = () => {
         const list = document.getElementById('templateList');
         list.classList.toggle('hidden');
     };
 });
+
 
 document.addEventListener('keydown', (e) => {
     const layer = layers[currentLayerIndex];
@@ -2353,7 +2390,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (encoded) {
         try {
             const config = decodeConfig(encoded);
-            console.log("dddDD" + config);
+            //console.log("dddDD" + config);
             //validateConfig(config);
             //loadTemplate(config);
             layers = JSON.parse(config);
@@ -2459,4 +2496,79 @@ function percentToDecimal(stop) {
         return parseFloat(stop) / 100;
     }
     return parseFloat(stop); // fallback for already-decimal values
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const checkbox = document.getElementById('enableTooltips');
+    checkbox.checked = "checked";
+    document.body.classList.toggle('tooltips-disabled', false);
+    
+});
+document.getElementById('enableTooltips').addEventListener('change', function () {
+    const isChecked = this.checked;
+    document.body.classList.toggle('tooltips-disabled', !isChecked);
+//    localStorage.setItem('showTooltips', !isChecked);
+});
+
+
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+const preview = document.getElementById('previewWindow');
+
+preview.addEventListener('mousedown', (e) => {
+    if (!preview.classList.contains('unpinned')) return;
+
+    isDragging = true;
+    const rect = preview.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+    preview.classList.add('dragging');
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging || !preview.classList.contains('unpinned')) return;
+
+    preview.style.left = `${e.clientX - dragOffsetX}px`;
+    preview.style.top = `${e.clientY - dragOffsetY}px`;
+    preview.style.right = 'auto';
+    preview.style.bottom = 'auto';
+});
+
+document.addEventListener('mouseup', () => {
+    if (isDragging) {
+        isDragging = false;
+        preview.classList.remove('dragging');
+    }
+});
+function togglePin() {
+    const dragHandle = document.getElementById('previewHeader');
+    const isPinned = preview.classList.contains('pinned');
+    console.log("toggling");
+    if (isPinned) {
+        // Unpin: enable dragging/resizing
+        preview.classList.remove('pinned');
+        preview.classList.add('unpinned');
+        preview.classList.add('floating-preview');
+        dragHandle.classList.add('preview-drag-handle');
+        preview.style.right = 'auto';
+        preview.style.left = `${preview.getBoundingClientRect().left}px`;
+        preview.style.top = `${preview.getBoundingClientRect().top}px`;
+        //localStorage.setItem('previewPinned', 'false');
+    } else {
+        // Pin: reset to top-right, disable movement
+        preview.classList.remove('unpinned');
+        dragHandle.classList.remove('preview-drag-handle');
+        preview.classList.remove('floating-preview');
+        preview.classList.add('pinned');
+        preview.style.top = '20px';
+        preview.style.right = '20px';
+        preview.style.left = 'auto';
+        preview.style.bottom = 'auto';
+        //reset back to original size
+        preview.style.width = "500px";
+        preview.style.height = "500px";
+        //localStorage.setItem('previewPinned', 'true');
+    }
 }

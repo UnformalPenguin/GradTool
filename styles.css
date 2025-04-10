@@ -28,21 +28,27 @@
          margin-bottom: 1rem;
      }
 
-     .left-panel, .right-panel {
+.left-panel {
+    flex: 1;
+    max-width: 50%;
+}
+
+.right-panel {
          flex: 1;
          max-width: 50%;
+         right:12px;
      }
 
      .spiral-container {
          width: 100%;
-         max-width:700px;
+         /*max-width:700px;*/
          aspect-ratio: 1 / 1;
          position: relative;
          border: 2px solid #444;
          border-radius: 8px;
          overflow: hidden;
          background: #111;
-         margin-bottom: 1rem;
+         /*margin-bottom: 1rem;*/
      }
 
      .spiral-layer {
@@ -257,8 +263,8 @@
      }
 
      h4 {
-         margin-top: 1rem;
-         margin-bottom: 0.5rem;
+         margin-top: 0.5rem;
+         margin-bottom: 0.25rem;
      }
 
 .textarea-wrapper {
@@ -266,6 +272,7 @@
     display: block;
     width: 100%;
     max-width: 700px;
+    margin-top: 16px;
 }
 
     .textarea-wrapper textarea {
@@ -387,10 +394,11 @@
     }
 
 .animation-controls {
-    margin-top: 1rem;
-    background: #2a2a3b;
+    /*    margin-top: 1rem;
+*/ background: #2a2a3b;
     padding: 0.5rem;
     border-radius: 6px;
+    margin-bottom: 8px;
 }
 
 .animation-item {
@@ -651,3 +659,125 @@
     background-image: linear-gradient(to right, transparent, #000), url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkkYGBgAEAAgEAfsFexQAAAABJRU5ErkJggg==");
 }
 
+
+
+.tooltip-icon {
+    position: relative;
+    display: inline-block;
+    margin-left: 6px;
+    color: #666;
+    cursor: help;
+    font-size: 0.9em;
+    user-select: none;
+}
+
+    .tooltip-icon:focus .tooltip-text,
+    .tooltip-icon:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+}
+
+    .tooltip-text::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+    }
+.tooltip-icon {
+    display: inline-block;
+}
+
+body.tooltips-disabled .tooltip-icon {
+    display: none !important;
+}
+body.tooltips-disabled .tooltip-text {
+    display: none !important;
+}
+
+
+
+
+.floating-preview {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px;
+    z-index: 1000;
+    height: auto;
+    /*border: 1px solid #1e1e2f;*/
+    border-radius: 8px;
+    background: #1e1e2f;
+    box-shadow: 0 0 10px black;
+    user-select: none;
+    overflow: hidden;
+    resize: none;
+    max-width:100% !important;
+}
+
+.preview-drag-handle {
+    background: #eee;
+    padding: 8px;
+    font-weight: bold;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.pin-toggle {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.floating-preview.dragging {
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* Draggable and resizable only when unpinned */
+.floating-preview.unpinned {
+    resize: both;
+    cursor: default;
+}
+
+    .floating-preview.unpinned .preview-drag-handle {
+        cursor: move;
+    }
+
+.floating-preview.pinned {
+    resize: none;
+    top: 20px;
+    right: 20px;
+    left: auto !important;
+    bottom: auto !important;
+}
+
+.pinned #spiral {
+    max-width:600px !important;
+}
