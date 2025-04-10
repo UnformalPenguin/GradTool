@@ -5,7 +5,7 @@
     <title>Free Gradient Creator | Layers | Animations </title>
     <link rel="stylesheet" href="styles.css" />
 
-    <meta name="description" content="GradTool is a free custom css generator. This tool makes gradients, with multi-layer and animations, with a large degree of customizability.">
+    <meta name="description" content="GradTool is a free custom css generator. This tool makes gradients, with multi-layer, multi-animation functionality, with a large degree of customizability.">
     <meta name="keywords" content="Gradient cusomizer, free gradient, css animations, custom animations, cusom css, css customizer, animations, web design, free tool, free web design, Free design tool, css design, custom gradient, radial-gradient, conical-gradient, linear-gradient, art,gradient creator, spiral creator, custom spiral, color picker">
     <meta name="author" content="UnformalPenguin">
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
         <!-- LEFT PANEL -->
         <div class="left-panel">
             <div class="template-menu" id="templateMenu">
-                <h4>
+                <h4 id="templateHeader">
                     Templates
                     <button id="toggleTemplateMenu">Toggle</button>
                 </h4>
@@ -29,149 +29,172 @@
             <div class="textarea-wrapper">
                 <textarea id="cssOutput" placeholder="Generated CSS will appear here..."></textarea>
                 <button class="copy-btn" onclick="copyToClipboard('cssOutput')">&#12222;</button>
+                <label>HTML Output (Includes styles and animations)</label>
             </div>
             <div class="textarea-wrapper">
                 <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
                 <button class="copy-btn" onclick="copyToClipboard('configOutput')">&#12222;</button>
+                <label>JSON Configuration (For this application)</label>
+            </div>
+            <div class="textarea-wrapper">
+                <textarea id="svgOutput" placeholder="SVG Output (generate and copy it)"></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('svgOutput')">&#12222;</button>
+                <label>SVG Output (May not work with all gradients, styles, and animations)</label>
+                <div class="layer-controls">
+                    <button onclick="generateSVG()">Generate SVG</button>
+                    <span id="svgMessage"></span>
+                    <div id="svgPreview">
+
+                    </div>
+                </div>
             </div>
             <div class="textarea-wrapper">
                 <textarea id="configInput" placeholder="Paste Config to Import"></textarea>
-                </div>
-                <div class="layer-controls">
-                    <button onclick="importConfig()">Import</button>
-                </div>
             </div>
+            <div class="layer-controls">
+                <button onclick="importConfig()">Import</button>
+                <button onclick="shareConfig()">Copy Share URL</button>
+                <!--<button onclick="createimage()">Create Image</button>-->
+            </div>
+        </div>
 
-            <!-- RIGHT PANEL -->
-            <div class="right-panel">
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
 
-                <div class="layer-controls">
-                    <button onclick="newProject()">New Project</button>
-                    <button onclick="addLayer()">Add Layer</button>
-                    <label style="margin-left:10px;"> Project Name:
+            <div class="layer-controls">
+                <button onclick="newProject()">New Project</button>
+                <button onclick="addLayer()">Add Layer</button>
+                <label style="margin-left:10px;">
+                    Project Name:
                     <input type="text" onchange="updateProjectName()" id="projectName" />
-                    </label>
-                    <!--<button onclick="copyLayer()">Copy Layer</button>-->
-                    <!--<button onclick="moveLayerUp()">Move Up</button>
-            <button onclick="moveLayerDown()">Move Down</button>-->
-                    <!--<button onclick="generateCSS()">Generate & Show CSS</button>-->
-                    <!--<button onclick="exportConfig()">Export</button>-->
-                    <!--<button onclick="importConfig()">Import</button>-->
-                </div>
-                <div class="layer-list" id="layerList"></div>
-
-                <div class="layer-editor" id="layerEditor">
-                    <label>
-                        Type:
-                        <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
-                            <option value="conic">Conic</option>
-                            <option value="radial">Radial</option>
-                            <option value="linear">Linear</option>
-                        </select>
-                    </label>
-
-
-                    <div id="dynamicInputs"></div>
-
-                    <label>
-                        Opacity:
-                        <input type="range" id="layerOpacity" min="0" max="1" step="0.05" onchange="updateCurrentLayer()">
-                    </label>
-
-                    <label>
-                        Blur:
-                        <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
-                    </label>
-
-                    <label>
-                        <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
-                        Animate                        
-                    </label>
-
-                    <div id="animate-block">
-                        <div class="animation-controls">
-                            <h4>Layer Animations</h4>
-                            <div id="animationList"></div>
-                            <button onclick="addAnimation()">+ Add Animation</button>
-                        </div>
-                        <!--<label>
-        Animation Type:
-        <select id="layerAnimType" onchange="updateCurrentLayer()">
-            <option value="rotate">Rotate</option>-->
-                        <!--<option value="pulse">Pulse</option>-->
-                        <!--<option value="hue">Hue Shift</option>
-        <option value="slide">Slide Gradient</option>-->
-                        <!--<option value="morph">Morph Gradient</option>-->
-                        <!--</select>
-        </label>-->
-                        <!--<label id="layerClockBlock">
-            Clockwise:
-            <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
-        </label>
-
-        <label id="layerDurationBlock">
-            Duration (s):
-            <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
-        </label>
-        </div>
-
-        <div>
-            <button onclick="toggleVisibility()">Show/Hide Layer</button>
-            <button onclick="deleteLayer()">Delete Layer</button>
-        </div>-->
-
-
-                    </div>
-                    <div class="color-controls hidden">
-                        <h4>Color Stops</h4>
-                        <div id="colorStopsContainer"></div>
-                        <button onclick="addColorStop()">Add Color Stop</button>
-                    </div>
-
-                    <div class="color-stop-editor">
-                        <div class="color-track" id="colorTrack"></div>
-                        <div class="color-values" id="colorValueInputs"></div>
-                        <div class="color-details">
-                            <input type="color" id="colorPicker" onchange="changeColorStopColor()" />
-                            <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
-                            <input type="text" id="hexInput" onchange="changeColorStopHex()" />
-                            <input type="number" id="stopInput" onchange="changeColorStopPosition()" />
-                        </div>
-
-                        <div class="color-picker-ui">
-                            <div class="color-area">
-                                <div class="color-field" id="colorField">
-                                    <div class="picker-cursor" id="colorCursor"></div>
-                                </div>
-                                <input type="range" id="hueSlider" min="0" max="360" step="1" />
-                                <!--<input type="range" id="alphaSlider" min="0" max="1" step="0.01" />-->
-                            </div>
-
-                            <div class="color-meta">
-                                <div class="field"><label>HEX</label><input type="text" id="hexInput" /></div>
-                                <div class="field"><label>R</label><input type="number" id="rInput" /></div>
-                                <div class="field"><label>G</label><input type="number" id="gInput" /></div>
-                                <div class="field"><label>B</label><input type="number" id="bInput" /></div>
-                                <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" /></div>
-                            </div>
-                        </div>
-
-
-                        <div class="layer-controls">
-                            <button onclick="addColorStop()">+ Add Stop</button>
-                            <button onclick="removeColorStop()">- Remove Stop</button>
-                        </div>
-                    </div>
-
-                </div>
+                </label>
+                <!--<button onclick="saveToTemplates()">Save as Template</button>-->
+                <!--<button onclick="copyLayer()">Copy Layer</button>-->
+                <!--<button onclick="moveLayerUp()">Move Up</button>
+    <button onclick="moveLayerDown()">Move Down</button>-->
+                <!--<button onclick="generateCSS()">Generate & Show CSS</button>-->
+                <!--<button onclick="exportConfig()">Export</button>-->
+                <!--<button onclick="importConfig()">Import</button>-->
             </div>
-        </div>
+            <div class="layer-list" id="layerList"></div>
 
+            <div class="layer-editor" id="layerEditor">
+                <label>
+                    Type:
+                    <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
+                        <option value="conic">Conic</option>
+                        <option value="radial">Radial</option>
+                        <option value="linear">Linear</option>
+                    </select>
+                </label>
+
+
+                <div id="dynamicInputs"></div>
+
+                <label>
+                    Opacity:
+                    <input type="range" id="layerOpacity" min="0" max="1" step="0.05" onchange="updateCurrentLayer()">
+                </label>
+
+                <label>
+                    Blur:
+                    <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
+                </label>
+
+                <label>
+                    <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
+                    Animate
+                </label>
+
+                <div id="animate-block">
+                    <div class="animation-controls">
+                        <h4>Layer Animations</h4>
+                        <div id="animationList"></div>
+                        <button onclick="addAnimation()">+ Add Animation</button>
+                    </div>
+                    <!--<label>
+            Animation Type:
+            <select id="layerAnimType" onchange="updateCurrentLayer()">
+                <option value="rotate">Rotate</option>-->
+                    <!--<option value="pulse">Pulse</option>-->
+                    <!--<option value="hue">Hue Shift</option>
+            <option value="slide">Slide Gradient</option>-->
+                    <!--<option value="morph">Morph Gradient</option>-->
+                    <!--</select>
+            </label>-->
+                    <!--<label id="layerClockBlock">
+                Clockwise:
+                <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
+            </label>
+
+            <label id="layerDurationBlock">
+                Duration (s):
+                <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
+            </label>
+            </div>
+
+            <div>
+                <button onclick="toggleVisibility()">Show/Hide Layer</button>
+                <button onclick="deleteLayer()">Delete Layer</button>
+            </div>-->
+
+
+                </div>
+                <div class="color-controls hidden">
+                    <h4>Color Stops</h4>
+                    <div id="colorStopsContainer"></div>
+                    <button onclick="addColorStop()">Add Color Stop</button>
+                </div>
+
+                <div class="color-stop-editor">
+                    <div class="color-track" id="colorTrack"></div>
+                    <div class="color-values" id="colorValueInputs"></div>
+                    <div class="color-details">
+                        <input type="color" id="colorPicker" onchange="changeColorStopColor()" />
+                        <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
+                        <input type="text" id="hexInput" onchange="changeColorStopHex()" />
+                        <input type="number" id="stopInput" onchange="changeColorStopPosition()" />
+                    </div>
+
+                    <div class="color-picker-ui">
+                        <div class="color-area">
+                            <div class="color-field" id="colorField">
+                                <div class="picker-cursor" id="colorCursor"></div>
+                            </div>
+                            <input type="range" id="hueSlider" min="0" max="360" step="1" />
+                            <!--<input type="range" id="alphaSlider" min="0" max="1" step="0.01" />-->
+                        </div>
+
+                        <div class="color-meta">
+                            <div class="field"><label>HEX</label><input type="text" id="hexInput" /></div>
+                            <div class="field"><label>R</label><input type="number" id="rInput" /></div>
+                            <div class="field"><label>G</label><input type="number" id="gInput" /></div>
+                            <div class="field"><label>B</label><input type="number" id="bInput" /></div>
+                            <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" /></div>
+                        </div>
+                    </div>
+
+
+                    <div class="layer-controls">
+                        <button onclick="addColorStop()">+ Add Stop</button>
+                        <button onclick="removeColorStop()">- Remove Stop</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--<canvas id="gradientCanvas"></canvas>-->
+
+        </div>
+    </div>
+
+    <script src="./scripts/curveutils.js"></script>
     <script src="script.js"></script>
 
     <footer class="site-footer">
         <div class="footer-container">
             <p>All rights reserved.</p>
+            <p>Page is under active development, please enjoy despite any bugs :)</p>
             <nav>
                 <a href="privacy.html">Privacy Policy</a>
                 <span>|</span>

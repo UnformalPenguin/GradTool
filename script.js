@@ -249,176 +249,112 @@ const templates = [
         ]
     },
     {
-        name: "Neon Spin",
-        preview: "conic-gradient(from 0deg at 50% 50%, #39ff14 0%, transparent 30%)",
+        name: "Bubble Burst",
+        preview: "repeating-linear-gradient(90deg, rgba(28, 128, 227, 1) 0%, rgba(218, 118, 210, 1) 4.6%, rgba(76,117,214,1.00) 9.2%)",
         config: [
             {
-                "type": "conic",
+                "type": "linear",
+                "shape": "square",
+                "animate": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(28, 128, 227, 1)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(218, 118, 210, 1)",
+                        "stop": "4.6%"
+                    },
+                    {
+                        "color": "rgba(76,117,214,1.00)",
+                        "stop": "9.2%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [
+                    {
+                        "type": "slide",
+                        "duration": 10,
+                        "reverse": false
+                    }
+                ],
+                "blur": 2,
+                "opacity": 1,
+                "visible": true,
+                "angle": 90,
+                "startAngle": 0,
+                "posType": "percent",
+                "centerX": 50,
+                "centerY": 50,
+                "size": "farthest-corner",
+                "direction": "",
+                "repeating": true
+            },
+            {
+                "type": "radial",
+                "shape": "circle",
+                "animate": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(82,161,125,1.00)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(218,175,118,1.00)",
+                        "stop": "100%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [],
+                "blur": 2,
+                "opacity": 0.65,
+                "visible": true,
+                "angle": 90,
                 "startAngle": 0,
                 "centerX": 50,
                 "centerY": 50,
-                "blur": 3,
-                "opacity": 0.9,
+                "size": "",
+                "direction": "",
                 "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#39ff14",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
+                "posType": "percent"
             },
             {
-                "type": "conic",
+                "type": "radial",
+                "shape": "circle",
+                "animate": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(28, 128, 227, 1)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(218, 118, 210, 1)",
+                        "stop": "100%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [
+                    {
+                        "type": "hue",
+                        "duration": 10,
+                        "reverse": false,
+                        "toHue": "120"
+                    }
+                ],
+                "blur": 2,
+                "opacity": 0.55,
+                "visible": true,
+                "angle": 90,
                 "startAngle": 0,
                 "centerX": 50,
                 "centerY": 50,
-                "blur": 3,
-                "opacity": 0.9,
+                "size": "",
+                "direction": "",
                 "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#39ff14",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
-            },
-            {
-                "type": "conic",
-                "startAngle": 0,
-                "centerX": 50,
-                "centerY": 50,
-                "blur": 3,
-                "opacity": 0.9,
-                "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#39ff14",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
-            },
-            {
-                "type": "conic",
-                "startAngle": 180,
-                "centerX": 50,
-                "centerY": 50,
-                "blur": 3,
-                "opacity": 0.35,
-                "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#00ffff",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
-            },
-            {
-                "type": "conic",
-                "startAngle": 180,
-                "centerX": 50,
-                "centerY": 50,
-                "blur": 3,
-                "opacity": 0.35,
-                "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#00ffff",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
-            },
-            {
-                "type": "conic",
-                "startAngle": 180,
-                "centerX": 50,
-                "centerY": 50,
-                "blur": 3,
-                "opacity": 0.4,
-                "repeating": false,
-                "colorStops": [
-                    {
-                        "color": "#00ffff",
-                        "stop": "0deg"
-                    },
-                    {
-                        "color": "transparent",
-                        "stop": "30deg"
-                    }
-                ],
-                "animate": true,
-                "animations": [
-                    {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
-                    }],
-                "visible": true,
-                "shape": ""
+                "posType": "percent"
             }
         ]
     },
@@ -552,6 +488,7 @@ const templates = [
                 "animations": [],
                 "blur": 2,
                 "opacity": 1,
+                "posType": "percent",
                 "repeating": true,
                 "visible": true,
                 "size": "farthest-corner",
@@ -591,6 +528,7 @@ const templates = [
                 startAngle: 0,     // for conic
                 centerX: 50,       // for radial/conic
                 centerY: 50,
+                "posType": "percent",
                 size: "farthest-corner", // for radial,
                 "direction": "",
                 "repeating": false
@@ -764,7 +702,13 @@ function renderDynamicInputs() {
                         </select>
                     </label>
             <label>Direction (e.g. to right, 90deg):
-                <input type="text" id="linearDirection" value="${layer.direction || ''}" onchange="updateCurrentLayer()">
+            <select id="linearDirection" value="${layer.direction || ''}" onchange="updateCurrentLayer()">
+                            <option value="">none (use angle below)</option>
+                            <option value="to top">to top (0dedg)</option>
+                            <option value="to right">to right (90dedg)</option>
+                            <option value="to bottom">to bottom (180dedg)</option>
+                            <option value="to left">to left (270dedg)</option>
+                        </select>
             </label>
             <label>Angle (deg):
                 <input type="number" id="linearAngle" value="${layer.angle || 0}" onchange="updateCurrentLayer()">
@@ -869,8 +813,6 @@ function interpolateColorStops(stops, percent) {
 
 
 function renderColorStops() {
-    0.
-
     const track = document.getElementById('colorTrack');
     const labels = document.getElementById('colorValueInputs');
     track.innerHTML = '';
@@ -1181,6 +1123,8 @@ function onPickerChange() {
 
                                 case 'slide':
                                     div.style.backgroundSize = '200% 200%';
+                                    let dir1 = layer.reverse ? '0% 100%' : '200% 100%';
+                                    let dir2 = layer.reverse ? '200% 100%' : '0% 100%';
                                     if (anim.direction === 'vertical') {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
                         0% { background-position: 100% 0%; }
@@ -1188,8 +1132,8 @@ function onPickerChange() {
                     }`;
                                     } else {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
-                        0% { background-position: 0% 50%; }
-                        100% { background-position: 200% 50%; }
+                        0% { background-position: 0% 100%; }
+                        100% { background-position: 200% 100%; }
                     }`;
                                     }
                                     break;
@@ -1485,6 +1429,160 @@ function generateCSS() {
 
     const fullExport = `<!-- HTML -->\n${html}\n\n<!-- CSS -->\n<style>\n${containerStyles}\n${layerStyles}${keyframes}</style>`;
     document.getElementById('cssOutput').value = fullExport;
+}
+
+function generateSVG() {
+    const svgWidth = 300;
+    const svgHeight = 300;
+    const centerX = svgWidth / 2;
+    const centerY = svgHeight / 2;
+    const defs = [];
+    const filters = [];
+    const layersSvg = [];
+
+    let msg = document.getElementById("svgMessage");
+    msg.innerText = "";
+
+    layers.forEach((layer, i) => {
+        const gradientId = `${projectName}-grad-${i}`;
+        const filterId = `${projectName}-filter-${i}`;
+        const isCircle = layer.shape !== 'square';
+
+        if (!layer.colorStops || layer.colorStops.length === 0) return;
+        if (layer.type === 'conic') {
+            msg.innerHTML = "Conical Layers not supported in SVG";
+            return;
+        }
+        // Build gradient stops
+        const stops = layer.colorStops.map(cs =>
+            `<stop offset="${cs.stop}" stop-color="${cs.color}" />`
+        ).join('\n');
+
+        // Build gradient definition
+        let gradientDef = '';
+        const gradientType = layer.repeating ? 'repeating' : '';
+        let gradientTransform = '';
+
+        if (layer.type === 'linear') {
+            const angle = layer.angle ?? 0;
+            const rad = angle * Math.PI / 180;
+            const x1 = 50 - Math.cos(rad) * 50;
+            const y1 = 50 - Math.sin(rad) * 50;
+            const x2 = 50 + Math.cos(rad) * 50;
+            const y2 = 50 + Math.sin(rad) * 50;
+
+            gradientDef = `<linearGradient id="${gradientId}" gradientUnits="userSpaceOnUse"
+  x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
+  ${stops}
+</linearGradient>`;
+        }
+
+        else if (layer.type === 'radial') {
+            const posX = layer.centerX ?? 50;
+            const posY = layer.centerY ?? 50;
+            gradientDef = `<radialGradient id="${gradientId}" cx="${posX}%" cy="${posY}%" r="50%" fx="${posX}%" fy="${posY}%" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
+  ${stops}
+</radialGradient>`;
+        }
+
+        else if (layer.type === 'conic') {
+            // SVG doesn't support native conic gradients
+            gradientDef = `<!-- Conic gradients are not natively supported in SVG -->`;
+        }
+
+        defs.push(gradientDef);
+
+        // Handle filters (blur, hue, saturation)
+        let filterContent = '';
+        const filterParts = [];
+
+        if (layer.animate && Array.isArray(layer.animations)) {
+            layer.animations.forEach((anim) => {
+                const dur = `${anim.duration || 5}s`;
+
+                if (anim.type === 'blur') {
+                    filterParts.push(`<feGaussianBlur in="SourceGraphic" stdDeviation="${anim.blurfrom ?? 0}">
+  <animate attributeName="stdDeviation"
+    values="${anim.blurfrom ?? 0};${anim.blurto ?? 5};${anim.blurfrom ?? 0}"
+    dur="${dur}" repeatCount="indefinite" />
+</feGaussianBlur>`);
+                }
+
+                if (anim.type === 'saturation') {
+                    filterParts.push(`<feColorMatrix type="saturate" values="${anim.satfrom ?? 1}">
+  <animate attributeName="values"
+    values="${anim.satfrom ?? 1};${anim.satto ?? 2};${anim.satfrom ?? 1}"
+    dur="${dur}" repeatCount="indefinite" />
+</feColorMatrix>`);
+                }
+
+                if (anim.type === 'hue') {
+                    filterParts.push(`<feColorMatrix type="hueRotate" values="${anim.fromHue ?? 0}">
+  <animate attributeName="values"
+    values="${anim.fromHue ?? 0};${anim.toHue ?? 360};${anim.fromHue ?? 0}"
+    dur="${dur}" repeatCount="indefinite" />
+</feColorMatrix>`);
+                }
+            });
+        }
+
+        if (filterParts.length > 0) {
+            filters.push(`<filter id="${filterId}">\n${filterParts.join('\n')}\n</filter>`);
+        }
+
+        // Build shape animations
+        let shapeAnimations = '';
+        if (layer.animate && layer.animations) {
+            layer.animations.forEach((anim) => {
+                const dur = `${anim.duration || 5}s`;
+
+                if (anim.type === 'rotate') {
+                    shapeAnimations += `
+<animateTransform attributeName="transform" type="rotate"
+  from="0 ${centerX} ${centerY}" to="${anim.reverse ? -360 : 360} ${centerX} ${centerY}"
+  dur="${dur}" repeatCount="indefinite" />`;
+                }
+
+                if (anim.type === 'scale') {
+                    shapeAnimations += `
+<animateTransform attributeName="transform" type="scale"
+  values="${anim.scalefrom ?? 1};${anim.scaleto ?? 1.1};${anim.scalefrom ?? 1}"
+  dur="${dur}" repeatCount="indefinite" />`;
+                }
+
+                if (anim.type === 'pulse') {
+                    shapeAnimations += `
+<animate attributeName="opacity"
+  values="${layer.opacity};${Math.max(0.1, layer.opacity - 0.2)};${layer.opacity}"
+  dur="${dur}" repeatCount="indefinite" />`;
+                }
+            });
+        }
+
+        const filterAttr = filterParts.length > 0 ? `filter="url(#${filterId})"` : '';
+        const commonAttrs = `fill="url(#${gradientId})" opacity="${layer.opacity}" ${filterAttr}`;
+
+        const shape = isCircle
+            ? `<circle cx="${centerX}" cy="${centerY}" r="${centerX}" ${commonAttrs}>
+  ${shapeAnimations}
+</circle>`
+            : `<rect x="0" y="0" width="${svgWidth}" height="${svgHeight}" ${commonAttrs}>
+  ${shapeAnimations}
+</rect>`;
+
+        layersSvg.push(shape);
+    });
+
+    const svg = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    ${defs.join('\n')}
+    ${filters.join('\n')}
+  </defs>
+  ${layersSvg.join('\n')}
+</svg>`;
+
+    document.getElementById('svgOutput').value = svg;
+    document.getElementById('svgPreview').innerHTML = svg;
 }
 
 function buildFilterString(layer) {
@@ -1887,9 +1985,9 @@ function renderAnimationControls() {
         if (anim.type === 'rotate') {
             const reverseLabel = document.createElement('label');
             reverseLabel.innerHTML = `
-                <input type="checkbox" ${anim.reverse ? 'checked' : ''} 
-                onchange="updateAnimation(${index}, 'reverse', this.checked)">
-                Reverse rotation
+                <input type="checkbox" ${anim.reverse ? '' : 'checked'} 
+                onchange="updateAnimation(${index}, 'reverse', !this.checked)">
+                Rotate Clockwise
             `;
             item.appendChild(reverseLabel);
         }
@@ -1902,6 +2000,9 @@ function renderAnimationControls() {
                     <option value="horizontal" ${anim.direction === 'horizontal' ? 'selected' : ''}>Horizontal</option>
                     <option value="vertical" ${anim.direction === 'vertical' ? 'selected' : ''}>Vertical</option>
                 </select>
+                <input type="checkbox" ${anim.reverse ? 'checked' : ''} 
+                onchange="updateAnimation(${index}, 'reverse', this.checked)">
+                Reverse Direction
             `;
             item.appendChild(dirLabel);
         }
@@ -1995,11 +2096,11 @@ function renderAnimationControls() {
         if (anim.type === 'blur') {
             item.innerHTML += `
         <label>From (px):
-            <input type="number" value="${anim.from ?? 2}" 
+            <input type="number" value="${anim.blurfrom ?? 2}" 
                 onchange="updateAnimation(${index}, 'blurfrom', this.value)">
         </label>
         <label>To (px):
-            <input type="number" value="${anim.to ?? 6}" 
+            <input type="number" value="${anim.blurto ?? 6}" 
                 onchange="updateAnimation(${index}, 'blurto', this.value)">
         </label>
     `;
@@ -2150,7 +2251,7 @@ function startDragStop(e, index) {
 
 // Toggle visibility
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('templateMenu').onclick = () => {
+    document.getElementById('templateHeader').onclick = () => {
         const list = document.getElementById('templateList');
         list.classList.toggle('hidden');
     };
@@ -2195,6 +2296,7 @@ document.getElementById('alphaSlider').addEventListener('input', (e) => {
         // Initialize with one default layer
         //addLayer();
 renderTemplateMenu();
+//console.log("aaa" + templates[0].config);
 loadTemplate(templates[0].config);
 
 
@@ -2243,3 +2345,118 @@ colorField.addEventListener('pointerdown', (e) => {
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get("config");
+
+    if (encoded) {
+        try {
+            const config = decodeConfig(encoded);
+            console.log("dddDD" + config);
+            //validateConfig(config);
+            //loadTemplate(config);
+            layers = JSON.parse(config);
+;
+            createLayers();
+        } catch (e) {
+            console.error("Invalid config:", e);
+            // fallback UI / error message
+        }
+    } else {
+        // load default or editor mode
+    }
+});
+
+
+
+function shareConfig() {
+    const url = getEmbedding(JSON.stringify(layers, null, 2));
+    navigator.clipboard.writeText(url).then(() => alert("Link copied to clipboard!"));
+}
+
+function createimage() {
+    //var canvas = document.createElement("canvas");
+        const canvas = document.getElementById('gradientCanvas');
+        //const ctx = canvas.getContext('2d');
+    //renderGradientLayersToCanvas(ctx);
+    let gradients = [];
+    layers.forEach((layer, i) => {
+        if (!layer.visible) return;
+        //layerCSS += `  background: ${gradient};\n`;
+        gradients.push(buildGradientString(layer));
+    });
+    canvas.style.background = gradients.join(", ");
+        // Create a linear gradient — you can change this
+        //const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        //gradient.addColorStop(0, '#FF5F6D');
+        //gradient.addColorStop(1, '#FFC371');
+
+    // Fill the canvas with the gradient
+    //ctx.fillStyle = buildGradientString(layer);
+        //ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Automatically trigger download
+        const link = document.createElement('a');
+        link.download = 'gradient-4k-wallpaper.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+}
+
+function renderGradientLayersToCanvas(ctx) {
+    let width = 3840;
+    let height = 2160;
+    layers.forEach((layer, i) => {
+        if (!layer.visible) return;
+        
+        // Gradient Builder (same as your buildGradientString logic)
+        let gradient = "";
+        if (layer.type === 'linear') {
+            const angle = (layer.angle || 0) * (Math.PI / 180);
+            const x1 = width / 2 + Math.cos(angle) * width;
+            const y1 = height / 2 + Math.sin(angle) * height;
+            gradient = ctx.createLinearGradient(0, 0, x1, y1);
+        } else {
+            const cx = width / 2;
+            const cy = height / 2;
+            const r = Math.max(width, height);
+            gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        }
+        
+        layer.colorStops.forEach(cs => {
+            gradient.addColorStop(percentToDecimal(cs.stop), cs.color);
+        });
+
+        // Apply opacity (skip pulse logic)
+        ctx.globalAlpha = layer.opacity ?? 1;
+
+        // Shape & blur simulation
+        ctx.save();
+
+        // Shape clipping
+        if (layer.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, Math.PI * 2);
+            ctx.clip();
+        }
+
+        // Set blur if not animated
+        //if (!skipPulse && !skipHue && layer.blur > 0) {
+            // Canvas doesn't have direct blur unless you're using `ctx.filter` (modern)
+        ctx.filter = `blur(${layer.blur}px)`;
+        //}
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.restore();
+        ctx.globalAlpha = 1.0;
+        ctx.filter = 'none';
+    });
+}
+function percentToDecimal(stop) {
+    if (typeof stop === 'string' && stop.trim().endsWith('%')) {
+        return parseFloat(stop) / 100;
+    }
+    return parseFloat(stop); // fallback for already-decimal values
+}

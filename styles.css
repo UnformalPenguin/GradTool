@@ -70,7 +70,7 @@
 
         .layer-controls input[type="text"],
         .layer-editor input[type="text"] {
-            margin: 0.3rem;
+            margin-top: 0.3rem;
             padding: 0.5rem 1rem;
             background: #333;
             color: white;
@@ -157,27 +157,31 @@
          margin-top: 0.2rem;
      }
 
-     #cssOutput, #configOutput, #configInput {
+     #cssOutput, #configOutput, #svgOutput, #configInput {
          width: 100%;
          max-width: 700px;
          height: 150px;
-         margin-top: 1rem;
+         margin-top: 2rem;
          padding: 0.5rem;
          background: #111;
          color: #fff;
          border: 1px solid #333;
          border-radius: 4px;
      }
-     .color-stops-panel {
-         display: flex;
-         flex-direction: column;
-         gap: 0.5rem;
-         margin-top: 0.5rem;
-         padding: 0.5rem;
-         background: #2a2a3b;
-         border-radius: 6px;
-         border: 1px solid #444;
-     }
+#gradientCanvas{
+     width:3840px;
+     height:2160px;
+}
+.color-stops-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #2a2a3b;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
 
      .color-stop-group {
          display: flex;
@@ -279,7 +283,7 @@
 .copy-btn {
     position: absolute;
     top: 6px;
-    right: 16px;
+    right: 24px;
     background: none;
     border: none;
     font-size: 1.2rem;
