@@ -59,7 +59,7 @@
      .layer-controls, .layer-editor, .layer-list {
          margin: 1rem 0;
          width: 100%;
-         max-width: 700px;
+         /*max-width: 700px;*/
      }
 
          .layer-controls button,
@@ -439,7 +439,7 @@
 
 .footer-container {
     width: 90%;
-    max-width: 960px;
+    /*max-width: 960px;*/
     margin: 0 auto;
 }
 
@@ -755,6 +755,13 @@ body.tooltips-disabled .tooltip-text {
     cursor: pointer;
 }
 
+/* Hide pin toggle if on narrow screen */
+@media (max-width: 768px) {
+    .pin-toggle {
+        display: none;
+    }
+}
+
 .floating-preview.dragging {
     opacity: 0.85;
     pointer-events: none;
@@ -780,4 +787,19 @@ body.tooltips-disabled .tooltip-text {
 
 .pinned #spiral {
     max-width:600px !important;
+}
+
+@media (max-width: 768px) {
+    .layer-editor label,
+    .dynamic-inputs label {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .layer-editor input,
+    .layer-editor select {
+        width: 100%;
+        font-size: 1rem;
+    }
 }
