@@ -495,8 +495,9 @@
     margin-bottom: 8px;
 }
 
-#animationHeader {
-    cursor:pointer;
+#animationHeader,
+#detailsHeader {
+    cursor: pointer;
 }
 
 .animation-item {

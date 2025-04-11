@@ -1567,8 +1567,8 @@ function buildGradientString(layer) {
 }
 function addThisLayer(layer) {
     layers.push(layer);
-    selectLayer(layers.length - 1);
     createLayers();
+    selectLayer(layers.length - 1);
 }
 
 
@@ -2228,8 +2228,7 @@ function newProject() {
     projectName = "new";
     document.getElementById('projectName').value = "new";
     createLayers();
-    renderColorStops();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 
@@ -2636,6 +2635,9 @@ document.addEventListener('DOMContentLoaded', () => {
         list.classList.toggle('hidden');
     }; document.getElementById('animationHeader').onclick = () => {
         const list = document.getElementById('animationList');
+        list.classList.toggle('hidden');
+    }; document.getElementById('detailsHeader').onclick = () => {
+        const list = document.getElementById('layer-details-block');
         list.classList.toggle('hidden');
     };
 });
@@ -3136,7 +3138,6 @@ function generateRandomGradientFromSettings() {
     layers = newLayers;
     currentLayerIndex = -1;
     createLayers();
-    renderLayerList();
     selectLayer(0);
 }
 

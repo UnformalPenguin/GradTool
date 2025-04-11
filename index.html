@@ -170,42 +170,43 @@
             <div class="layer-editor" id="layerEditor">
                 <div id="layer-block">
                     <div class="layer-controls">
-                        <h4>Layer Details</h4>
-                        <label>
-                            Type:
-                            <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
-                                <option value="conic">Conic</option>
-                                <option value="radial">Radial</option>
-                                <option value="linear">Linear</option>
-                            </select>
-                        </label>
+                        <h4 id="detailsHeader">Layer Details</h4>
+                        <div id="layer-details-block">
+                            <label>
+                                Type:
+                                <select id="layerType" onchange="updateCurrentLayer(); renderDynamicInputs();">
+                                    <option value="conic">Conic</option>
+                                    <option value="radial">Radial</option>
+                                    <option value="linear">Linear</option>
+                                </select>
+                            </label>
 
 
-                        <div id="dynamicInputs"></div>
+                            <div id="dynamicInputs"></div>
 
 
-                        <label>
-                            Blur:
-                            <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    Adds a soft blur to the entire layer, creating a smoother or hazier effect.
+                            <label>
+                                Blur:
+                                <span class="tooltip-icon" tabindex="0">
+                                    ❓
+                                    <span class="tooltip-text">
+                                        Adds a soft blur to the entire layer, creating a smoother or hazier effect.
+                                    </span>
                                 </span>
-                            </span>
-                            <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
-                        </label>
+                                <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
+                            </label>
 
-                        <label>
-                            <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
-                            Animate
-                            <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    If checked, then the Layer Animations will be applied. Add multiple, but not all may mesh well together
+                            <label>
+                                <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
+                                Animate
+                                <span class="tooltip-icon" tabindex="0">
+                                    ❓
+                                    <span class="tooltip-text">
+                                        If checked, then the Layer Animations will be applied. Add multiple, but not all may mesh well together
+                                    </span>
                                 </span>
-                            </span>
-                        </label>
-
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div id="animate-block">
