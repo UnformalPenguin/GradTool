@@ -42,11 +42,6 @@
                 <label>HTML Output (Includes styles and animations)</label>
             </div>
             <div class="textarea-wrapper">
-                <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
-                <button class="copy-btn" onclick="copyToClipboard('configOutput')">&#12222;</button>
-                <label>JSON Configuration (For this application)</label>
-            </div>
-            <div class="textarea-wrapper">
                 <textarea id="svgOutput" placeholder="SVG Output (generate and copy it)"></textarea>
                 <button class="copy-btn" onclick="copyToClipboard('svgOutput')">&#12222;</button>
                 <label>SVG Output (May not work with all gradients, styles, and animations)</label>
@@ -59,11 +54,24 @@
                 </div>
             </div>
             <div class="textarea-wrapper">
+                <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('configOutput')">&#12222;</button>
+                <label>JSON Configuration (For this application)</label>
+            </div>
+            <div class="textarea-wrapper">
                 <textarea id="configInput" placeholder="Paste Config to Import"></textarea>
             </div>
             <div class="layer-controls">
                 <button onclick="importConfig()">Import</button>
-                <button onclick="shareConfig()">Copy Share URL</button>
+                <button onclick="shareConfig()">
+                    Copy Share URL
+                    <span class="tooltip-icon" tabindex="0">
+                        ❓
+                        <span class="tooltip-text">
+                            This copies a link to your clipboard that will load this gradient upon navigation.
+                        </span>
+                    </span>
+                </button>
                 <!--<button onclick="createimage()">Create Image</button>-->
             </div>
         </div>
@@ -90,8 +98,8 @@
             <div class="layer-list" id="layerList"></div>
 
             <div class="layer-editor" id="layerEditor">
-                <div id="animate-block">
-                    <div class="animation-controls">
+                <div id="layer-block">
+                    <div class="layer-controls">
                         <h4>Layer Details</h4>
                         <label>
                             Type:
@@ -142,11 +150,9 @@
                     </div>
                 </div>
                 <div id="animate-block">
-                    <div class="animation-controls">
-                        <h4>Layer Animations</h4>
-                        <div id="animationList"></div>
-                        <button onclick="addAnimation()">
-                            + Add Animation
+                    <div class="layer-controls">
+                        <h4 id="animationHeader">
+                            Layer Animations
                             <span class="tooltip-icon" tabindex="0">
                                 ❓
                                 <span class="tooltip-text">
@@ -154,6 +160,10 @@
                                     They should apply in the order listed, but may not all play well together.
                                 </span>
                             </span>
+                        </h4>
+                        <div id="animationList"></div>
+                        <button onclick="addAnimation()">
+                            + Add Animation
                         </button>
                     </div>
                     <!--<label>
@@ -188,17 +198,18 @@
 
                 <div id="animate-block">
                     <div class="animation-controls">
-                        <h4>Color Stops</h4>
-                        <span class="tooltip-icon" tabindex="0">
-                            ❓
-                            <span class="tooltip-text">
-                                Color stops define which colors appear where along your gradient. These control the timing and flow of the colors. <br />
-                                Each stop includes a color and a position (e.g., “red at 0%”). <br />
-                                Drag stops left/right to change position. <br/>
-                                Click on the track to add a new stop
+                        <h4>
+                            Color Stops <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    Color stops define which colors appear where along your gradient. These control the timing and flow of the colors. <br />
+                                    Each stop includes a color and a position (e.g., “red at 0%”). <br />
+                                    Drag stops left/right to change position. <br />
+                                    Click on the track to add a new stop
+                                </span>
                             </span>
-                        </span>
-
+                        </h4>
+                       
                         <div class="color-controls hidden">
                             <h4>Color Stops</h4>
                             <div id="colorStopsContainer"></div>
@@ -209,16 +220,23 @@
                             <div class="color-track" id="colorTrack"></div>
                             <div class="color-values" id="colorValueInputs"></div>
                             <div class="color-details">
-                                <input type="color" id="colorPicker" onchange="changeColorStopColor()" />
-                                <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
+                                <input type="color" id="colorPicker" style="width:50px; height:50px;" onchange="changeColorStopColor()" />
+                                <label>Alpha:</label>
                                 <span class="tooltip-icon" tabindex="0">
                                     ❓
                                     <span class="tooltip-text">
-                                        This changes the transparency (alpha) of the color.
+                                        This slider changes the transparency (alpha) of the color.
                                     </span>
                                 </span>
-                                <input type="text" id="hexInput" onchange="changeColorStopHex()" />
-                                <input type="number" id="stopInput" onchange="changeColorStopPosition()" />
+                                <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
+                                <label>Stop Pos:</label>
+                                <span class="tooltip-icon" tabindex="0">
+                                    ❓
+                                    <span class="tooltip-text">
+                                        Another means of changing the position of the selected color stop.
+                                    </span>
+                                </span>
+                                <input type="number" id="stopInput" title="Manually change stop position" style="max-width:40%;" onchange="changeColorStopPosition()" />
                             </div>
 
                             <div class="color-picker-ui">
@@ -231,11 +249,11 @@
                                 </div>
 
                                 <div class="color-meta">
-                                    <div class="field"><label>HEX</label><input type="text" id="hexInput" /></div>
-                                    <div class="field"><label>R</label><input type="number" id="rInput" /></div>
-                                    <div class="field"><label>G</label><input type="number" id="gInput" /></div>
-                                    <div class="field"><label>B</label><input type="number" id="bInput" /></div>
-                                    <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" /></div>
+                                    <div class="field"><label>HEX</label><input type="text" id="hexInput" onchange="changeColorStopHex()"/></div>
+                                    <div class="field"><label>R</label><input type="number" id="rInput" onchange="changeColorStopHex()"/></div>
+                                    <div class="field"><label>G</label><input type="number" id="gInput" onchange="changeColorStopHex()"/></div>
+                                    <div class="field"><label>B</label><input type="number" id="bInput" onchange="changeColorStopHex()" /></div>
+                                    <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" onchange="changeColorStopHex()" /></div>
                                 </div>
                             </div>
 

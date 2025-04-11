@@ -151,17 +151,27 @@
     cursor: pointer;
 }
 
-     .layer-editor input[type="text"],
-     .layer-editor input[type="number"],
-     .layer-editor select {
-         width: 100%;
-         padding: 0.3rem;
-         border: none;
-         background: #333;
-         color: #fff;
-         border-radius: 4px;
-         margin-top: 0.2rem;
-     }
+.layer-editor input[type="text"],
+.layer-editor input[type="number"],
+.layer-editor select {
+    width: 100%;
+    padding: 0.3rem;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    margin-top: 0.2rem;
+}
+/*.layer-editor input[type="number"]
+{
+    width: 40%;
+    padding: 0.3rem;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    margin-top: 0.2rem;
+}*/
 
      #cssOutput, #configOutput, #svgOutput, #configInput {
          width: 100%;
@@ -393,12 +403,16 @@
         border-radius: 4px;
     }
 
-.animation-controls {
+.layer-controls {
     /*    margin-top: 1rem;
 */ background: #2a2a3b;
     padding: 0.5rem;
     border-radius: 6px;
     margin-bottom: 8px;
+}
+
+#animationHeader {
+    cursor:pointer;
 }
 
 .animation-item {
@@ -802,4 +816,48 @@ body.tooltips-disabled .tooltip-text {
         width: 100%;
         font-size: 1rem;
     }
+}
+
+
+
+.hue-wheel-tooltip {
+    text-align: center;
+    margin-top:4px;
+    max-width: 180px;
+}
+
+.hue-wheel {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient( red, yellow, lime, cyan, blue, magenta, red );
+    position: relative;
+    margin: 0 auto 8px;
+    border: 2px solid #ccc;
+}
+
+.hue-zero-marker {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    /*transform: translateX(-50%) translateY(-60%);*/
+    /*font-size: 0.7rem;*/
+    /*background: #fff;*/
+    color: white;
+    /*padding: 1px 4px;*/
+    /*border: 1px solid #aaa;*/
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.hue-range-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    mask: conic-gradient( transparent var(--start), rgba(0,0,0,0.4) var(--start), rgba(0,0,0,0.4) var(--end), transparent var(--end) );
+    background: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
 }

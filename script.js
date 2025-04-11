@@ -1207,8 +1207,43 @@ function onPickerChange() {
         100% { filter: saturate(${satTo}); }
     }`;
 
+
+                                case 'glowpulse':
+                                    //const satFrom = anim.satfrom ?? 1;
+                                    //const satTo = anim.satto ?? 2;
+
+                                    animStyleElem.innerHTML += `@keyframes ${animName} {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
+    }`;
+
+
+                                case 'wobble':
+                                    //const satFrom = anim.satfrom ?? 1;
+                                    //const satTo = anim.satto ?? 2;
+
+                                    animStyleElem.innerHTML += `@keyframes ${animName} {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(1deg) scale(1.1); }
+    50% { transform: rotate(0deg) scale(1); }
+    75% { transform: rotate(-1deg) scale(0.9); }
+    100% { transform: rotate(0deg) scale(1); }
+    }`;
+
+
+                                case 'contrast':
+                                    //const satFrom = anim.satfrom ?? 1;
+                                    //const satTo = anim.satto ?? 2;
+
+                                    animStyleElem.innerHTML += `@keyframes ${animName} {
+        0%, 200% { filter: contrast(100 %); }
+    200%, 0% { filter: contrast(140%); }
+    }`;
+
                                     div.style.animationDirection = 'alternate';
                                     break;
+                                    
+
 
                                 case 'scale':
                                     const zoomFrom = anim.scalefrom ?? 1;
@@ -1415,6 +1450,29 @@ function generateCSS() {
   50% { transform: scale(${anim.scaleto ?? 1.1}); }
   100% { transform: scale(${anim.scalefrom ?? 1}); }
 }\n\n`;
+                        break;
+
+                    case 'wobble':
+                        keyframes += `@keyframes ${animName} {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(1deg) scale(1.1); }
+    50% { transform: rotate(0deg) scale(1); }
+    75% { transform: rotate(-1deg) scale(0.9); }
+    100% { transform: rotate(0deg) scale(1); }
+  }\n\n`;
+                        break;
+
+                    case 'glowpulse':
+                        keyframes += `@keyframes ${animName} {
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
+  }\n\n`;
+                        break;
+                    case 'contrast':
+                        keyframes += `@keyframes ${animName} {
+    0%, 100% { filter: contrast(100 %); }
+    50% { filter: contrast(140%); }
+  }\n\n`;
                         break;
                 }
             });
@@ -1966,16 +2024,22 @@ function renderAnimationControls() {
         typeLabel.innerHTML = `
             Type:
             <select onchange="updateAnimation(${index}, 'type', this.value)">
-                <option value="rotate" ${anim.type === 'rotate' ? 'selected' : ''}>Rotate -  Rotates the layer around a center. Ideal for circular or conic gradients. </option>                
+                <option value="rotate" ${anim.type === 'rotate' ? 'selected' : ''}>Rotate -  Rotates the layer. Ideal for circular shapees. </option>                
                 <option value="step-rotate" ${anim.type === 'step-rotate' ? 'selected' : ''}>Step Rotate - Rotates the layer in discrete jumps. Useful for glitchy or mechanical motion.</option>
                 <option value="pulse" ${anim.type === 'pulse' ? 'selected' : ''}>Pulse - Animates the layer's opacity to create a pulsing effect. Great for ambient visuals.</option>
-                <option value="hue" ${anim.type === 'hue' ? 'selected' : ''}>Hue - Shifts across the color wheel, cycling through hues. Gives a psychedelic feel..</option>
+                <option value="hue" ${anim.type === 'hue' ? 'selected' : ''}>Hue - Shifts across the color wheel, cycling through hues. Gives a psychedelic feel.</option>
                 <option value="slide" ${anim.type === 'slide' ? 'selected' : ''}>Slide - Animates the gradient’s position to simulate motion, like running fabric.</option>
                 <option value="blur" ${anim.type === 'blur' ? 'selected' : ''}>Blur - Softens and sharpens the layer repeatedly. Gives diffuse, dreamy effects.</option>
                 <option value="saturation" ${anim.type === 'saturation' ? 'selected' : ''}>Saturation - Increases and decreases color intensity. Dramatic washes or faded looks.</option>
                 <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale - Grows and shrinks the layer. Used for breathing effects or floating visuals.</option>
             </select>
         `;
+
+
+        
+                //<option value="wobble" ${anim.type === 'wobble' ? 'selected' : ''}>Wobble - Gives a continuous wiggle.</option>
+                //<option value="contrast" ${anim.type === 'contrast' ? 'selected' : ''}>Contrast Shift - Changes the filter: contrast() for a flashing or depth illusion.</option>        
+                //<option value="glowpulse" ${anim.type === 'glowpulse' ? 'selected' : ''}>Glow Pulse - Animates the layer's shadow to create a pulsing effect. Great for ambient visuals.</option>
 
         item.appendChild(typeLabel);
 
@@ -2054,6 +2118,12 @@ function renderAnimationControls() {
                     ❓
                  <span class="tooltip-text">
                           Hue animation cycles the color values by spinning around the color wheel.
+                          <div class="hue-wheel-tooltip">
+  <div class="hue-wheel">
+    <div class="hue-zero-marker">0°</div>
+    <div class="hue-range-indicator" style="--start: 30deg; --end: 150deg;"></div>
+  </div>
+</div>
                    </span>
                   </span>
         <input type="number" value="${anim.fromHue ?? 0}" onchange="updateAnimation(${index}, 'fromHue', this.value)">
@@ -2191,6 +2261,7 @@ function addAnimation() {
         reverse: false
     });
     renderAnimationControls();
+    document.getElementById('animationList').classList.remove('hidden');
     createLayers();
 }
 
@@ -2203,6 +2274,20 @@ function updateAnimation(index, key, value) {
     if (key === 'reverse') value = Boolean(value);
 
     layer.animations[index][key] = value;
+    renderAnimationControls();
+    createLayers();
+}
+
+function syncDuration(animIndex) {
+    if (!layers || currentLayerIndex < 0) return;
+    const layer = layers[currentLayerIndex];
+    if (!layer.animations[animIndex]) return;
+
+    let dur = layer.animations[animIndex];
+    layer.animations.forEach((anim, index) => {
+        anim.duration = dur;
+    });
+
     renderAnimationControls();
     createLayers();
 }
@@ -2289,6 +2374,9 @@ function startDragStop(e, index) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('templateHeader').onclick = () => {
         const list = document.getElementById('templateList');
+        list.classList.toggle('hidden');
+    }; document.getElementById('animationHeader').onclick = () => {
+        const list = document.getElementById('animationList');
         list.classList.toggle('hidden');
     };
 });
@@ -2415,15 +2503,15 @@ function shareConfig() {
 function createimage() {
     //var canvas = document.createElement("canvas");
         const canvas = document.getElementById('gradientCanvas');
-        //const ctx = canvas.getContext('2d');
-    //renderGradientLayersToCanvas(ctx);
-    let gradients = [];
-    layers.forEach((layer, i) => {
-        if (!layer.visible) return;
-        //layerCSS += `  background: ${gradient};\n`;
-        gradients.push(buildGradientString(layer));
-    });
-    canvas.style.background = gradients.join(", ");
+        const ctx = canvas.getContext('2d');
+    renderGradientLayersToCanvas(ctx);
+    //let gradients = [];
+    //layers.forEach((layer, i) => {
+    //    if (!layer.visible) return;
+    //    //layerCSS += `  background: ${gradient};\n`;
+    //    gradients.push(buildGradientString(layer));
+    //});
+    //canvas.style.background = gradients.join(", ");
         // Create a linear gradient — you can change this
         //const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
         //gradient.addColorStop(0, '#FF5F6D');
@@ -2443,54 +2531,55 @@ function createimage() {
 function renderGradientLayersToCanvas(ctx) {
     let width = 3840;
     let height = 2160;
-    layers.forEach((layer, i) => {
+    layers.forEach((layer) => {
         if (!layer.visible) return;
-        
-        // Gradient Builder (same as your buildGradientString logic)
-        let gradient = "";
+
+        // Skip animations (static image export only)
+        const skipMorph = layer.animations?.some(a => a.type === 'morph');
+        if (skipMorph) return;
+
+        ctx.save();
+
+        // Build gradient
+        let gradient;
         if (layer.type === 'linear') {
-            const angle = (layer.angle || 0) * (Math.PI / 180);
+            const angle = (layer.angle ?? 0) * (Math.PI / 180);
             const x1 = width / 2 + Math.cos(angle) * width;
             const y1 = height / 2 + Math.sin(angle) * height;
-            gradient = ctx.createLinearGradient(0, 0, x1, y1);
+            gradient = ctx.createLinearGradient(0, 0, 3840, 2160);
         } else {
             const cx = width / 2;
             const cy = height / 2;
-            const r = Math.max(width, height);
-            gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            const radius = Math.sqrt(width * width + height * height) / 2;
+            gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
         }
-        
+
+        // Add color stops
         layer.colorStops.forEach(cs => {
-            gradient.addColorStop(percentToDecimal(cs.stop), cs.color);
+            const offset = parseFloat(percentToDecimal(cs.stop));
+            gradient.addColorStop(offset, cs.color);
         });
 
-        // Apply opacity (skip pulse logic)
-        ctx.globalAlpha = layer.opacity ?? 1;
+        // Set opacity
+        const skipPulse = layer.animations?.some(a => a.type === 'pulse');
+        ctx.globalAlpha = !skipPulse ? (layer.opacity ?? 1) : 1;
 
-        // Shape & blur simulation
-        ctx.save();
-
-        // Shape clipping
-        if (layer.shape === 'circle') {
-            ctx.beginPath();
-            ctx.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, Math.PI * 2);
-            ctx.clip();
+        // Set blur (modern browser support only)
+        const skipHue = layer.animations?.some(a => a.type === 'hue');
+        if (!skipPulse && !skipHue && layer.blur) {
+            ctx.filter = `blur(${layer.blur}px)`;
+        } else {
+            ctx.filter = 'none';
         }
 
-        // Set blur if not animated
-        //if (!skipPulse && !skipHue && layer.blur > 0) {
-            // Canvas doesn't have direct blur unless you're using `ctx.filter` (modern)
-        ctx.filter = `blur(${layer.blur}px)`;
-        //}
-
+        // No shape clipping for now — draw full canvas
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
 
-        ctx.restore();
-        ctx.globalAlpha = 1.0;
-        ctx.filter = 'none';
+        ctx.restore(); // Reset state for next layer
     });
 }
+
 function percentToDecimal(stop) {
     if (typeof stop === 'string' && stop.trim().endsWith('%')) {
         return parseFloat(stop) / 100;
