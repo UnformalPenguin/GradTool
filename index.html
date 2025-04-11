@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="layer-controls">
-                <button onclick="importConfig()">Import</button>
+                <!--<button onclick="importConfig()">Import</button>-->
                 <button onclick="shareConfig()">
                     Copy Share URL
                     <span class="tooltip-icon" tabindex="0">
@@ -69,9 +69,10 @@
 
                 <!--<button onclick="createimage()">Create Image</button>-->
 
-                <details id="randomizerSettingsPanel" open>
-                    <summary class="">🎲 Randomizer Settings</summary>
+                <details id="randomizerSettingsPanel" class="animated-border-box" open>
+                    <summary class="random-summary">🎲 Randomizer Settings</summary>
                     <div class="randomizer-settings">
+                        <hr />
                         <label>
                             Layer Count:
                             <input type="number" id="randLayerMin" value="1" min="1" max="10"> –
@@ -89,14 +90,14 @@
                             <input type="number" id="randBlurMin" value="0" step="0.5"> –
                             <input type="number" id="randBlurMax" value="6" step="0.5">
                         </label>
-                        <br />
+                        <hr />
                         <label>
                             Allowed Gradient Types:
                             <label><input type="checkbox" class="randType" value="linear" checked> Linear</label>
                             <label><input type="checkbox" class="randType" value="radial" checked> Radial</label>
                             <label><input type="checkbox" class="randType" value="conic" checked> Conic</label>
                         </label>
-                        <br />
+                        <hr />
                         <label>
                             Include Animations:
                             <label><input type="checkbox" class="randAnim" value="rotate" checked> Rotate</label>
@@ -106,7 +107,7 @@
                             <label><input type="checkbox" class="randAnim" value="scale" checked> Scale</label>
                             <label><input type="checkbox" class="randAnim" value="saturation" checked> Saturation</label>
                         </label>
-                        <br />
+                        <hr />
                         <label>
                             Animation Chance (%):
                             <input type="number" id="randAnimChance" value="60" min="0" max="100">
@@ -118,8 +119,8 @@
                             <input type="number" id="randOpacityMin" value="0.2" step="0.1" min="0" max="1"> –
                             <input type="number" id="randOpacityMax" value="1" step="0.1" min="0" max="1">
                         </label>
-                        <br />
-                        <button onclick="generateRandomGradientFromSettings()">🎲 Generate with Settings</button>
+                        <hr />
+                        <button onclick="generateRandomGradientFromSettings()" style="margin-left:0.5rem;margin-bottom:0.5rem;">🎲 Generate with Settings</button>
                     </div>
                 </details>
 
@@ -131,6 +132,8 @@
             </div>
             <div class="textarea-wrapper">
                 <textarea id="configInput" placeholder="Paste Config and click the Import button to load an exported config"></textarea>
+                <button class="copy-btn" onclick="importConfig()">Import</button>
+
             </div>
         </div>
 
@@ -298,9 +301,10 @@
                                 </div>
 
                                 <div class="color-meta">
-                                    <div class="field"><label>HEX</label><input type="text" id="hexInput" onchange="changeColorStopHex()"/></div>
-                                    <div class="field"><label>R</label><input type="number" id="rInput" onchange="changeColorStopHex()"/></div>
-                                    <div class="field"><label>G</label><input type="number" id="gInput" onchange="changeColorStopHex()"/></div>
+                                    <div class="field"><label>HEX</label><input type="text" id="hexInput" onchange="changeColorStopHex()" /></div>
+                                    <div class="field"><label>RGBA</label><input type="text" id="rgaInput" onchange="changeColorStopHex()" /></div>
+                                    <div class="field"><label>R</label><input type="number" id="rInput" onchange="changeColorStopHex()" /></div>
+                                    <div class="field"><label>G</label><input type="number" id="gInput" onchange="changeColorStopHex()" /></div>
                                     <div class="field"><label>B</label><input type="number" id="bInput" onchange="changeColorStopHex()" /></div>
                                     <div class="field"><label>A</label><input type="number" id="aInput" min="0" max="100" onchange="changeColorStopHex()" /></div>
                                 </div>

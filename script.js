@@ -498,6 +498,82 @@ const templates = [
                 "centerY": 50
             }
         ]
+    },
+    {
+        name: "Phase Shift",
+        preview: "linear-gradient(345deg, rgba(61,90,225,0.74) 0%, rgba(156,142,141,0.67) 100%)",
+        config: [
+            {
+                "type": "linear",
+                "shape": "circle",
+                "opacity": 0.66,
+                "blur": 5.9,
+                "animate": true,
+                "duration": 8,
+                "clockwise": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(61,90,225,0.74)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(156,142,141,0.67)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [
+                    {
+                        "type": "saturation",
+                        "duration": 8,
+                        "satfrom": 0.5,
+                        "satto": 2
+                    }
+                ],
+                "visible": true,
+                "angle": 345
+            },
+            {
+                "type": "linear",
+                "shape": "square",
+                "opacity": 0.81,
+                "blur": 4.2,
+                "animate": true,
+                "duration": 6,
+                "clockwise": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(40,97,132,0.53)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(5,109,106,0.88)",
+                        "stop": "25%"
+                    },
+                    {
+                        "color": "rgba(152,17,152,0.97)",
+                        "stop": "50%"
+                    },
+                    {
+                        "color": "rgba(122,176,35,0.95)",
+                        "stop": "75%"
+                    },
+                    {
+                        "color": "rgba(62,164,171,0.73)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [
+                    {
+                        "type": "hue",
+                        "duration": 6,
+                        "fromHue": 0,
+                        "toHue": "60"
+                    }
+                ],
+                "visible": true,
+                "angle": 58
+            }
+        ]
     }
     
     // Add more templates...
@@ -578,7 +654,7 @@ const templates = [
                                     If the lowest layer has no transparency, no other layers will be visible
                                 </span>
                             </span>
-                            <input type="range" id="layerOpacity-${i}" min="0" max="1" step="0.05" value="${layer.opacity}" onchange="updateLayerAt(${i})">
+                            <input type="range" id="layerOpacity-${i}" min="0" max="1" step="0.05" value="${layer.opacity}" onchange="updateLayerOpacity(${i})">
                         </label>`;
 
     
@@ -670,16 +746,13 @@ const templates = [
         }
 
 function updateCurrentLayer() {
-    updateLayerAt(currentLayerIndex);
-}
-
-function updateLayerAt(index) {
-    if (index < 0 || index >= layers.length) return;
-    const layer = layers[index];
+    if (currentLayerIndex < 0 || currentLayerIndex >= layers.length) return;
+    const layer = layers[currentLayerIndex];
 
     layer.type = document.getElementById('layerType').value;
     layer.shape = document.getElementById('layerShape').value;
-    layer.opacity = parseFloat(document.getElementById('layerOpacity-'+index).value);
+
+    layer.opacity = parseFloat(document.getElementById('layerOpacity-' + currentLayerIndex).value);
     layer.blur = parseFloat(document.getElementById('layerBlur').value);
     layer.animate = document.getElementById('layerAnimate').checked;
     //layer.duration = parseFloat(document.getElementById('layerDuration').value);
@@ -708,6 +781,13 @@ function updateLayerAt(index) {
         layer.repeating = document.getElementById('repeating')?.checked || false;
     }
 
+    createLayers();
+}
+
+function updateLayerOpacity(index) {
+    if (index < 0 || index >= layers.length) return;
+    const layer = layers[index];    
+    layer.opacity = parseFloat(document.getElementById('layerOpacity-'+index).value);
     createLayers();
 }
 
