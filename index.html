@@ -45,21 +45,12 @@
                 <textarea id="svgOutput" placeholder="SVG Output (generate and copy it)"></textarea>
                 <button class="copy-btn" onclick="copyToClipboard('svgOutput')">&#12222;</button>
                 <label>SVG Output (May not work with all gradients, styles, and animations)</label>
-                <div class="layer-controls">
-                    <button onclick="generateSVG()">Generate SVG</button>
+                <div>
                     <span id="svgMessage"></span>
                     <div id="svgPreview">
 
                     </div>
                 </div>
-            </div>
-            <div class="textarea-wrapper">
-                <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
-                <button class="copy-btn" onclick="copyToClipboard('configOutput')">&#12222;</button>
-                <label>JSON Configuration (For this application)</label>
-            </div>
-            <div class="textarea-wrapper">
-                <textarea id="configInput" placeholder="Paste Config to Import"></textarea>
             </div>
             <div class="layer-controls">
                 <button onclick="importConfig()">Import</button>
@@ -72,7 +63,74 @@
                         </span>
                     </span>
                 </button>
+                <button onclick="generateSVG()">Generate SVG</button>
+                <button onclick="generateRandomGradient()">🎲 Random Gradient</button>
+                <!--<button onclick="toggleRandomMenu()">Randomizer Settings</button>-->
+
                 <!--<button onclick="createimage()">Create Image</button>-->
+
+                <details id="randomizerSettingsPanel" open>
+                    <summary class="">🎲 Randomizer Settings</summary>
+                    <div class="randomizer-settings">
+                        <label>
+                            Layer Count:
+                            <input type="number" id="randLayerMin" value="1" min="1" max="10"> –
+                            <input type="number" id="randLayerMax" value="3" min="1" max="10">
+                        </label>
+
+                        <label style="margin-left:10px;">
+                            Color Stops:
+                            <input type="number" id="randStopMin" value="2" min="2" max="10"> –
+                            <input type="number" id="randStopMax" value="5" min="2" max="10">
+                        </label>
+
+                        <label style="margin-left:10px;">
+                            Blur Range:
+                            <input type="number" id="randBlurMin" value="0" step="0.5"> –
+                            <input type="number" id="randBlurMax" value="6" step="0.5">
+                        </label>
+                        <br />
+                        <label>
+                            Allowed Gradient Types:
+                            <label><input type="checkbox" class="randType" value="linear" checked> Linear</label>
+                            <label><input type="checkbox" class="randType" value="radial" checked> Radial</label>
+                            <label><input type="checkbox" class="randType" value="conic" checked> Conic</label>
+                        </label>
+                        <br />
+                        <label>
+                            Include Animations:
+                            <label><input type="checkbox" class="randAnim" value="rotate" checked> Rotate</label>
+                            <label><input type="checkbox" class="randAnim" value="pulse" checked> Pulse</label>
+                            <label><input type="checkbox" class="randAnim" value="blur" checked> Blur</label>
+                            <label><input type="checkbox" class="randAnim" value="hue" checked> Hue</label>
+                            <label><input type="checkbox" class="randAnim" value="scale" checked> Scale</label>
+                            <label><input type="checkbox" class="randAnim" value="saturation" checked> Saturation</label>
+                        </label>
+                        <br />
+                        <label>
+                            Animation Chance (%):
+                            <input type="number" id="randAnimChance" value="60" min="0" max="100">
+                        </label>
+
+
+                        <label>
+                            Opacity Range:
+                            <input type="number" id="randOpacityMin" value="0.2" step="0.1" min="0" max="1"> –
+                            <input type="number" id="randOpacityMax" value="1" step="0.1" min="0" max="1">
+                        </label>
+                        <br />
+                        <button onclick="generateRandomGradientFromSettings()">🎲 Generate with Settings</button>
+                    </div>
+                </details>
+
+            </div>
+            <div class="textarea-wrapper">
+                <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('configOutput')">&#12222;</button>
+                <label>JSON Configuration (For this application)</label>
+            </div>
+            <div class="textarea-wrapper">
+                <textarea id="configInput" placeholder="Paste Config and click the Import button to load an exported config"></textarea>
             </div>
         </div>
 
@@ -86,7 +144,8 @@
                     Project Name:
                     <input type="text" onchange="updateProjectName()" id="projectName" />
                     <label><input type="checkbox" id="enableTooltips" checked> Show tooltips</label>
-                </label>
+                </label> 
+
                 <!--<button onclick="saveToTemplates()">Save as Template</button>-->
                 <!--<button onclick="copyLayer()">Copy Layer</button>-->
                 <!--<button onclick="moveLayerUp()">Move Up</button>
@@ -113,17 +172,6 @@
 
                         <div id="dynamicInputs"></div>
 
-                        <label>
-                            Opacity:
-                            <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    Controls how transparent the layer is. 1 is fully visible, 0 is fully transparent.<br />
-                                    If the lowest layer has no transparency, no other layers will be visible
-                                </span>
-                            </span>
-                            <input type="range" id="layerOpacity" min="0" max="1" step="0.05" onchange="updateCurrentLayer()">
-                        </label>
 
                         <label>
                             Blur:
@@ -157,7 +205,8 @@
                                 ❓
                                 <span class="tooltip-text">
                                     A single layer can have multiple animations.<br />
-                                    They should apply in the order listed, but may not all play well together.
+                                    They should apply in the order listed, but may not all play well together.<br />
+                                    Click to visually toggle.
                                 </span>
                             </span>
                         </h4>

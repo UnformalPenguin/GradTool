@@ -383,7 +383,7 @@ const templates = [
                 "duration": 10,
                 "clockwise": true,
                 "animations": [],
-                "blur": 2,
+                "blur": 0,
                 "opacity": 1,
                 "visible": true,
                 "angle": 90,
@@ -419,12 +419,13 @@ const templates = [
                         "toHue": "20"
                     }
                 ],
-                "blur": 6,
+                "blur": 0,
                 "opacity": 0.8,
                 "repeating": false,
                 "visible": true,
                 "colors": "undefined",
-                "size": ""
+                "size": "",
+                "posType": "percent"
             },
             {
                 "type": "radial",
@@ -452,8 +453,8 @@ const templates = [
                         "intensity": "0.1"
                     }
                 ],
-                "blur": 2,
-                "opacity": 0.15,
+                "blur": 0,
+                "opacity": 0.4,
                 "repeating": false,
                 "visible": true,
                 "colors": "undefined",
@@ -521,7 +522,7 @@ const templates = [
                 duration: 10,
                 clockwise: true,
                 animations: [],
-                blur: 2,
+                blur: 0,
                 opacity: 1.0,
                 visible: true,
                 angle: 90,         // for linear
@@ -551,6 +552,36 @@ const templates = [
                 const actions = document.createElement('div');
                 actions.className = 'layer-actions';
 
+                const alphaSection = document.createElement('div');
+                alphaSection.className = 'layer-actions';
+                alphaSection.style.marginRight = "25px";
+
+
+                // Visibility toggle button (👁 or 🚫)
+                const visBtn = document.createElement('button');
+                visBtn.innerHTML = layer.visible ? '&#9788;' : '&#8709';
+                visBtn.className = "toggle-layer-btn";
+                visBtn.title = 'Toggle visibility';
+                visBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    layer.visible = !layer.visible;
+                    createLayers();
+                };
+                const slideeeee = document.createElement('div');
+                slideeeee.innerHTML = `
+                        <label>
+                            Opacity:
+                            <span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    Controls how transparent the layer is. 1 is fully visible, 0 is fully transparent.<br />
+                                    If the lowest layer has no transparency, no other layers will be visible
+                                </span>
+                            </span>
+                            <input type="range" id="layerOpacity-${i}" min="0" max="1" step="0.05" value="${layer.opacity}" onchange="updateLayerAt(${i})">
+                        </label>`;
+
+    
                 const moveBtns = document.createElement('div');
                 moveBtns.className = 'layer-actions';
                 moveBtns.style.marginRight = "25px";
@@ -584,18 +615,7 @@ const templates = [
                     copyThisLayer(i);
                     //createLayers();
                 };
-
-                // Visibility toggle button (👁 or 🚫)
-                const visBtn = document.createElement('button');
-                visBtn.innerHTML = layer.visible ? '&#9788;' : '&#8709';
-                visBtn.className = "toggle-layer-btn";
-                visBtn.title = 'Toggle visibility';
-                visBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    layer.visible = !layer.visible;
-                    createLayers();
-                };
-
+                
                 // Delete button (✕)
                 const delBtn = document.createElement('button');
                 delBtn.className = "delete-layer-btn";
@@ -608,14 +628,18 @@ const templates = [
                     createLayers();
                 };
 
+
+                alphaSection.appendChild(visBtn);
+                alphaSection.appendChild(slideeeee);
+
                 moveBtns.appendChild(moveDownBtn);
                 moveBtns.appendChild(moveUpBtn);
 
                 actions.appendChild(copyBtn);
-                actions.appendChild(visBtn);
                 actions.appendChild(delBtn);
 
                 div.appendChild(label);
+                div.appendChild(alphaSection);
                 div.appendChild(moveBtns);
                 div.appendChild(actions);
                 layerList.appendChild(div);
@@ -635,7 +659,7 @@ const templates = [
             document.getElementById('layerShape').value = layer.shape;
             //document.getElementById('layerColors').value = layer.colors;
             //document.getElementById('layerAnimType').value = layer.animType || 'none';
-            document.getElementById('layerOpacity').value = layer.opacity;
+            document.getElementById('layerOpacity-' + index).value = layer.opacity;
             document.getElementById('layerBlur').value = layer.blur;
             document.getElementById('layerAnimate').checked = layer.animate;
             //document.getElementById('layerClockwise').checked = layer.clockwise;
@@ -646,12 +670,16 @@ const templates = [
         }
 
 function updateCurrentLayer() {
-    if (currentLayerIndex < 0) return;
-    const layer = layers[currentLayerIndex];
+    updateLayerAt(currentLayerIndex);
+}
+
+function updateLayerAt(index) {
+    if (index < 0 || index >= layers.length) return;
+    const layer = layers[index];
 
     layer.type = document.getElementById('layerType').value;
     layer.shape = document.getElementById('layerShape').value;
-    layer.opacity = parseFloat(document.getElementById('layerOpacity').value);
+    layer.opacity = parseFloat(document.getElementById('layerOpacity-'+index).value);
     layer.blur = parseFloat(document.getElementById('layerBlur').value);
     layer.animate = document.getElementById('layerAnimate').checked;
     //layer.duration = parseFloat(document.getElementById('layerDuration').value);
@@ -1128,18 +1156,16 @@ function onPickerChange() {
                                     break;
 
                                 case 'slide':
-                                    div.style.backgroundSize = '200% 200%';
-                                    let dir1 = layer.reverse ? '0% 100%' : '200% 100%';
-                                    let dir2 = layer.reverse ? '200% 100%' : '0% 100%';
+                                    div.style.backgroundSize = '300% 300%';
                                     if (anim.direction === 'vertical') {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
-                        0% { background-position: 100% 0%; }
-                        100% { background-position: 100% 200%; }
+                        0% { background-position: 50% 0%; }
+                        100% { background-position: 50% 300%; }
                     }`;
                                     } else {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
-                        0% { background-position: 0% 100%; }
-                        100% { background-position: 200% 100%; }
+                        0% { background-position: 0% 50%; }
+                        100% { background-position: 300% 50%; }
                     }`;
                                     }
                                     break;
@@ -2661,3 +2687,230 @@ function togglePin() {
         //localStorage.setItem('previewPinned', 'true');
     }
 }
+
+function toggleRandomMenu() {
+    let menu = document.getElementById('randomizerSettingsPanel');
+    if (menu)
+        menu.classList.toggle('hidden');
+}
+
+
+function generateRandomGradient() {
+    //let menu = document.getElementById('randomizerSettingsPanel');
+    //if (menu && !menu.classList.includes('hidden')) {
+    //    generateRandomGradientFromSettings();
+    //    return;
+    //}
+    const newLayers = [];
+    let layerCount = Math.floor(Math.random() * 3) + 1; // 1–3 layers
+    if (Math.random() > .95) {
+        layerCount += Math.floor(Math.random() * 5) + 2;
+    }
+
+    for (let i = 0; i < layerCount; i++) {
+        const type = randomFrom(['linear', 'radial', 'conic'])
+        let shape = 'circle';
+        if (type === 'radial') {
+            shape = randomFrom(['circle', 'ellipse']);
+        }
+        else {
+            shape = randomFrom(['circle', 'square']);
+        }
+        const opacity = layerCount == 1 ? 1.0 : randFloat(0.2, 1 - (0.1 * i)).toFixed(2);
+        const blur = randFloat(0, 6).toFixed(1);
+        const animate = Math.random() > 0.4;
+        const duration = Math.floor(randFloat(4, 15));
+
+        let colorStopCount = Math.floor(Math.random() * 4) + 2;
+        if (Math.random() > .95) {
+            colorStopCount += Math.floor(Math.random() * 5) + 2;
+        }
+        const colorStops = Array.from({ length: colorStopCount }, (_, i) => {
+            const color = randomColor();
+            const stop = `${Math.floor((i / (colorStopCount - 1)) * 100)}%`;
+            return { color, stop };
+        });
+
+        const layer = {
+            type,
+            shape,
+            opacity: parseFloat(opacity),
+            blur: parseFloat(blur),
+            animate,
+            duration,
+            clockwise: Math.random() > 0.5,
+            colorStops,
+            animations: [],
+            visible:true
+        };
+
+        // Set type-specific settings
+        if (type === 'linear') {
+            layer.angle = Math.floor(Math.random() * 360);
+        }
+
+        if (type === 'conic') {
+            layer.startAngle = Math.floor(Math.random() * 360);
+            layer.centerX = Math.floor(randFloat(25, 75));
+            layer.centerY = Math.floor(randFloat(25, 75));
+        }
+
+        if (type === 'radial') {
+            layer.centerX = Math.floor(randFloat(0, 100));
+            layer.centerY = Math.floor(randFloat(0, 100));
+        }
+
+        // Add a random animation (optional)
+        if (animate) {
+            const animTypes = ['rotate', 'pulse', 'blur', 'hue', 'saturation', 'scale'];
+            const anim = {
+                type: randomFrom(animTypes),
+                duration,
+            };
+
+            // Add some default ranges for animations
+            if (anim.type === 'blur') {
+                anim.blurfrom = 0;
+                anim.blurto = parseFloat(blur) + randFloat(1, 3);
+            }
+            if (anim.type === 'hue') {
+                anim.fromHue = 0;
+                anim.toHue = Math.floor(randFloat(90, 270));
+            }
+            if (anim.type === 'saturation') {
+                anim.satfrom = 0.5;
+                anim.satto = 2;
+            }
+            if (anim.type === 'scale') {
+                anim.scalefrom = 1;
+                anim.scaleto = randFloat(1.1, 1.4);
+            }
+
+            layer.animations.push(anim);
+        }
+
+        newLayers.push(layer);
+    }
+
+    // Replace current project
+    layers = newLayers;
+    currentLayerIndex = -1;
+    createLayers();
+    renderLayerList();
+    renderDynamicInputs();
+}
+
+function generateRandomGradientFromSettings() {
+    const minLayers = +document.getElementById('randLayerMin').value;
+    const maxLayers = +document.getElementById('randLayerMax').value;
+    const minStops = +document.getElementById('randStopMin').value;
+    const maxStops = +document.getElementById('randStopMax').value;
+    const blurMin = +document.getElementById('randBlurMin').value;
+    const blurMax = +document.getElementById('randBlurMax').value;
+    const opacityMin = +document.getElementById('randOpacityMin').value;
+    const opacityMax = +document.getElementById('randOpacityMax').value;
+    const animChance = +document.getElementById('randAnimChance').value;
+
+    const allowedTypes = Array.from(document.querySelectorAll('.randType:checked')).map(i => i.value);
+    const allowedAnimations = Array.from(document.querySelectorAll('.randAnim:checked')).map(i => i.value);
+
+    const newLayers = [];
+    const layerCount = Math.floor(randFloat(minLayers, maxLayers + 1));
+
+    for (let i = 0; i < layerCount; i++) {
+        const type = randomFrom(allowedTypes);
+        const shape = randomFrom(['circle', 'square']);
+        const opacity = layerCount == 1 ? 1.0 : randFloat(opacityMin, opacityMax).toFixed(2);
+        const blur = randFloat(blurMin, blurMax).toFixed(1);
+        const animate = Math.random() * 100 < animChance;
+        const duration = Math.floor(randFloat(4, 15));
+
+        const stopCount = Math.floor(randFloat(minStops, maxStops + 1));
+        const colorStops = Array.from({ length: stopCount }, (_, i) => {
+            const color = randomColor();
+            const stop = `${Math.floor((i / (stopCount - 1)) * 100)}%`;
+            return { color, stop };
+        });
+
+        const layer = {
+            type,
+            shape,
+            opacity: parseFloat(opacity),
+            blur: parseFloat(blur),
+            animate,
+            duration,
+            clockwise: Math.random() > 0.5,
+            colorStops,
+            animations: [],
+            visible: true
+        };
+
+        if (type === 'linear') {
+            layer.angle = Math.floor(randFloat(0, 360));
+        } else if (type === 'conic') {
+            layer.startAngle = Math.floor(randFloat(0, 360));
+            layer.centerX = Math.floor(randFloat(25, 75));
+            layer.centerY = Math.floor(randFloat(25, 75));
+        } else if (type === 'radial') {
+            layer.centerX = Math.floor(randFloat(0, 100));
+            layer.centerY = Math.floor(randFloat(0, 100));
+        }
+
+        if (animate && allowedAnimations.length) {
+            const anim = {
+                type: randomFrom(allowedAnimations),
+                duration
+            };
+
+            if (anim.type === 'blur') {
+                anim.blurfrom = 0;
+                anim.blurto = parseFloat(blur) + randFloat(1, 3);
+            }
+
+            if (anim.type === 'hue') {
+                anim.fromHue = 0;
+                anim.toHue = Math.floor(randFloat(90, 270));
+            }
+
+            if (anim.type === 'saturation') {
+                anim.satfrom = 0.5;
+                anim.satto = 2;
+            }
+
+            if (anim.type === 'scale') {
+                anim.scalefrom = 1;
+                anim.scaleto = randFloat(1.1, 1.4);
+            }
+
+            layer.animations.push(anim);
+        }
+
+        newLayers.push(layer);
+    }
+
+    layers = newLayers;
+    currentLayerIndex = -1;
+    createLayers();
+    renderLayerList();
+    renderDynamicInputs();
+}
+
+
+
+
+function randomFrom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randFloat(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function randomColor() {
+    const r = Math.floor(randFloat(0, 255));
+    const g = Math.floor(randFloat(0, 255));
+    const b = Math.floor(randFloat(0, 255));
+    const a = randFloat(0.5, 1).toFixed(2);
+    return `rgba(${r},${g},${b},${a})`;
+}
+
