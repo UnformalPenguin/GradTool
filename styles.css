@@ -26,6 +26,7 @@ body {
     gap: 2rem;
     justify-content: center;
     height: 100%;
+    width:100%;
     flex-grow:1;
     overflow: hidden;
 }
@@ -37,6 +38,9 @@ body {
          margin-bottom: 1rem;
      }
 
+     .right-panel{
+         margin-right:18px;
+     }
 .left-panel,
 .right-panel {
     height: 100%;
