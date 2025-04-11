@@ -207,7 +207,7 @@ body {
         /*background: linear-gradient( 90deg, #ff00cc, #3333ff, #00ffee, #ffcc00, #ff00cc );*/
         background-size: 300% auto;
         animation: gradientMove 6s linear infinite;
-        border-image: linear-gradient( 90deg, #ff00cc, #3333ff, #00ffee, #ffcc00, #ff00cc ) 1;
+        border-image: linear-gradient( 90deg, #ff00cc, #3333ff, #00ffee, #ffcc00, #ff00cc );
         position: relative;
         /*border-radius: 10px;*/
         z-index: 0;
@@ -579,8 +579,9 @@ body {
     margin-bottom: 8px;
 }
 
-#animationHeader {
-    cursor:pointer;
+#animationHeader,
+#detailsHeader {
+    cursor: pointer;
 }
 
 .animation-item {
@@ -940,7 +941,7 @@ body.tooltips-disabled .tooltip-text {
 /* Hide pin toggle if on narrow screen */
 @media (max-width: 768px) {
     .pin-toggle {
-        display: none;
+        display: none !important;
     }
 }
 
