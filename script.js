@@ -574,6 +574,122 @@ const templates = [
                 "angle": 58
             }
         ]
+    },
+    {
+        name: "Eschatonic",
+        preview: "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(148,40,245,0.63) 25%, rgba(73,240,81,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%), linear-gradient(269deg, rgba(96,233,92,0.87) 0%, rgba(241,23,60,0.97) 25%, rgba(193,59,94,0.66) 50%, rgba(168,126,231,0.54) 75%, rgba(221,190,247,0.76) 100%)",
+        config: [
+            {
+                "type": "conic",
+                "shape": "square",
+                "opacity": 0.99,
+                "blur": 81.4,
+                "animate": false,
+                "duration": 2,
+                "clockwise": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(33, 47, 203, 0.65)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(83, 159, 103, 1)",
+                        "stop": "33%"
+                    },
+                    {
+                        "color": "rgba(165, 35, 204, 0.45)",
+                        "stop": "66.5%"
+                    },
+                    {
+                        "color": "rgba(65, 186, 193, 1)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [],
+                "visible": true,
+                "startAngle": 213,
+                "centerX": 32,
+                "centerY": 64
+            },
+            {
+                "type": "radial",
+                "shape": "circle",
+                "opacity": 0.86,
+                "blur": 26,
+                "animate": false,
+                "duration": 2,
+                "clockwise": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(99,110,131,0.89)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(148,40,245,0.63)",
+                        "stop": "25%"
+                    },
+                    {
+                        "color": "rgba(73,240,81,0.93)",
+                        "stop": "50%"
+                    },
+                    {
+                        "color": "rgba(173,136,195,0.85)",
+                        "stop": "75%"
+                    },
+                    {
+                        "color": "rgba(213,69,156,0.60)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [],
+                "visible": true,
+                "centerX": 58,
+                "centerY": 56
+            },
+            {
+                "type": "linear",
+                "shape": "circle",
+                "opacity": 0.65,
+                "blur": 10,
+                "animate": true,
+                "duration": 4,
+                "clockwise": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(96,233,92,0.87)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(241,23,60,0.97)",
+                        "stop": "25%"
+                    },
+                    {
+                        "color": "rgba(193,59,94,0.66)",
+                        "stop": "50%"
+                    },
+                    {
+                        "color": "rgba(168,126,231,0.54)",
+                        "stop": "75%"
+                    },
+                    {
+                        "color": "rgba(221,190,247,0.76)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [
+                    {
+                        "type": "blur",
+                        "duration": 10,
+                        "reverse": false
+                    }
+                ],
+                "visible": true,
+                "angle": 269,
+                "direction": "",
+                "repeating": false
+            }
+        ]
+
     }
     
     // Add more templates...
@@ -726,7 +842,7 @@ const templates = [
         function selectLayer(index) {
             currentLayerIndex = index;
 
-            renderColorStops();
+            selectColorStop(0);
             renderDynamicInputs();
             renderAnimationControls();
 
@@ -1029,8 +1145,9 @@ function renderColorStops() {
 function selectColorStop(index) {
     selectedStopIndex = index;
     //console.log("loading color" + layer.colorStops[selectedStopIndex]?.color)
-    //loadColorStopToPicker(layer.colorStops[selectedStopIndex]?.color);
     renderColorStops();
+    loadColorStopToPicker(layers[currentLayerIndex].colorStops[selectedStopIndex]?.color);
+
 }
 
 function updateColorEditor() {
@@ -2416,7 +2533,7 @@ function copyToClipboard(elementId) {
     // Copy the text inside the text field
     navigator.clipboard.writeText(el.value);
 
-    // Optional: UI feedback
+    // UI feedback
     const btn = document.querySelector(`[onclick="copyToClipboard('${elementId}')"]`);
     if (btn) {
         btn.innerHTML = '✔'; // ✅ visual feedback
@@ -2425,6 +2542,41 @@ function copyToClipboard(elementId) {
         setTimeout(() => btn.style.color = '#888', 1500);
     }
 }
+
+async function pasteToElement(id) {
+    const ele = document.getElementById(id);
+    if (!ele) {
+        console.error(`Element with ID '${id}' not found.`);
+        return;
+    }
+
+    try {
+        const clipText = await navigator.clipboard.readText();
+
+        // Handle input/textarea vs content-editable or other elements
+        if ('value' in ele) {
+            ele.value = clipText;
+        } else {
+            ele.textContent = clipText;
+        }
+
+        console.log("Pasted content:", clipText);
+
+        // UI feedback
+        const btn = document.querySelector(`[onclick="pasteToElement('${id}')"]`);
+        if (btn) {
+            btn.innerHTML = '✔';
+            btn.style.color = "green";
+            setTimeout(() => {
+                btn.innerHTML = 'Paste';
+                btn.style.color = '#888';
+            }, 1500);
+        }
+    } catch (err) {
+        console.error("Failed to paste from clipboard:", err);
+    }
+}
+
 
 
 function startDragStop(e, index) {
@@ -2533,10 +2685,9 @@ loadTemplate(templates[0].config);
 
 
 
-const colorField = document.getElementById('colorField');
-const cursor = document.getElementById('colorCursor');
 
 function setSBFromPosition(x, y) {
+    const colorField = document.getElementById('colorField');
     const rect = colorField.getBoundingClientRect();
     let s = (x - rect.left) / rect.width;
     let b = 1 - (y - rect.top) / rect.height;
@@ -2553,6 +2704,8 @@ function setSBFromPosition(x, y) {
 }
 
 function updateCursorPosition() {
+    const colorField = document.getElementById('colorField');
+    const cursor = document.getElementById('colorCursor');
     const rect = colorField.getBoundingClientRect();
     const x = saturation * rect.width;
     const y = (1 - brightness) * rect.height;
@@ -2561,22 +2714,7 @@ function updateCursorPosition() {
 }
 
 // Pointer events for drag/click
-colorField.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    setSBFromPosition(e.clientX, e.clientY);
 
-    const onMove = (ev) => {
-        setSBFromPosition(ev.clientX, ev.clientY);
-    };
-
-    const onUp = () => {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-});
 
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
@@ -2698,6 +2836,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkbox = document.getElementById('enableTooltips');
     checkbox.checked = "checked";
     document.body.classList.toggle('tooltips-disabled', false);
+
+
+    const colorField = document.getElementById('colorField');
+
+    colorField.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        setSBFromPosition(e.clientX, e.clientY);
+
+        const onMove = (ev) => {
+            setSBFromPosition(ev.clientX, ev.clientY);
+        };
+
+        const onUp = () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onUp);
+        };
+
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+    });
     
 });
 document.getElementById('enableTooltips').addEventListener('change', function () {
@@ -2869,6 +3027,9 @@ function generateRandomGradient() {
 
             layer.animations.push(anim);
         }
+        if (layer.animations.length === 0) {
+            layer.animate = false;
+        }
 
         newLayers.push(layer);
     }
@@ -2877,8 +3038,7 @@ function generateRandomGradient() {
     layers = newLayers;
     currentLayerIndex = -1;
     createLayers();
-    renderLayerList();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 function generateRandomGradientFromSettings() {
@@ -2886,6 +3046,8 @@ function generateRandomGradientFromSettings() {
     const maxLayers = +document.getElementById('randLayerMax').value;
     const minStops = +document.getElementById('randStopMin').value;
     const maxStops = +document.getElementById('randStopMax').value;
+    const minDur = +document.getElementById('randDurMin').value;
+    const maxDur = +document.getElementById('randDurMax').value;
     const blurMin = +document.getElementById('randBlurMin').value;
     const blurMax = +document.getElementById('randBlurMax').value;
     const opacityMin = +document.getElementById('randOpacityMin').value;
@@ -2904,7 +3066,7 @@ function generateRandomGradientFromSettings() {
         const opacity = layerCount == 1 ? 1.0 : randFloat(opacityMin, opacityMax).toFixed(2);
         const blur = randFloat(blurMin, blurMax).toFixed(1);
         const animate = Math.random() * 100 < animChance;
-        const duration = Math.floor(randFloat(4, 15));
+        const duration = Math.floor(randFloat(minDur, maxDur));
 
         const stopCount = Math.floor(randFloat(minStops, maxStops + 1));
         const colorStops = Array.from({ length: stopCount }, (_, i) => {
@@ -2965,7 +3127,9 @@ function generateRandomGradientFromSettings() {
 
             layer.animations.push(anim);
         }
-
+        if (layer.animations.length === 0) {
+            layer.animate = false;
+        }
         newLayers.push(layer);
     }
 
@@ -2973,7 +3137,7 @@ function generateRandomGradientFromSettings() {
     currentLayerIndex = -1;
     createLayers();
     renderLayerList();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 
