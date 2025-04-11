@@ -1156,16 +1156,16 @@ function onPickerChange() {
                                     break;
 
                                 case 'slide':
-                                    div.style.backgroundSize = '300% 300%';
+                                    div.style.backgroundSize = '200% 200%';
                                     if (anim.direction === 'vertical') {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
                         0% { background-position: 50% 0%; }
-                        100% { background-position: 50% 300%; }
+                        100% { background-position: 50% 100%; }
                     }`;
                                     } else {
                                         animStyleElem.innerHTML += `@keyframes ${animName} {
                         0% { background-position: 0% 50%; }
-                        100% { background-position: 300% 50%; }
+                        100% { background-position: 100% 50%; }
                     }`;
                                     }
                                     break;
@@ -1365,8 +1365,8 @@ function buildGradientString(layer) {
 
         function addLayer() {
             layers.push(defaultLayer());
-            selectLayer(layers.length - 1);
             createLayers();
+            selectLayer(layers.length - 1);
 }
 function addThisLayer(layer) {
     layers.push(layer);
@@ -1437,10 +1437,11 @@ function generateCSS() {
                         break;
 
                     case 'slide':
+                        layerCSS += `  background-size: 200% 200%;\n`;
                         const isVertical = anim.direction === 'vertical';
                         keyframes += `@keyframes ${animName} {
   0% { background-position: ${isVertical ? '50% 0%' : '0% 50%'}; }
-  100% { background-position: ${isVertical ? '50% 200%' : '200% 50%'}; }
+  100% { background-position: ${isVertical ? '50% 100%' : '100% 50%'}; }
 }\n\n`;
                         break;
 
@@ -2025,8 +2026,8 @@ function loadTemplate(config) {
 }
 
 function newProject() {
-    layers = [];
-    currentLayerIndex = -1;
+    layers = [defaultLayer()];
+    currentLayerIndex = 0;
     projectName = "new";
     document.getElementById('projectName').value = "new";
     createLayers();
