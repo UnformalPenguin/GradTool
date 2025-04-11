@@ -56,8 +56,9 @@ Under active developemt still, seeking to greatly improve the mobil experience a
 
 ---
 
+Send me your favorite gradients with the Copy Share URL : ![My Email](mailto:spira@nodeflow.net)
 
-![Demo Gradient](https://spiral.nodeflow.net)
+![Make your beautiful creations here!](https://spiral.nodeflow.net)
 
 Built with love by Keeley
 

@@ -206,7 +206,7 @@ const templates = [
                         reverse: false
                     }],
                 "visible": true,
-                "shape": "",
+                "shape": "circle",
                 "animType": "rotate",
                 "angle": 0
             },
@@ -243,8 +243,93 @@ const templates = [
                     }],
                 "visible": true,
                 "animType": "rotate",
-                "shape": "",
+                "shape": "circle",
                 "angle": 0
+            }
+        ]
+    },
+    {
+        name: "Planet 9 from Outer Space",
+        preview: "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(54,40,245,0.63) 25%, rgba(73,234,240,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%),linear-gradient(184deg, rgba(96,233,92,0.87) 0%, rgba(98,13,178,0.97) 22.6%, rgba(119,60,196,0.66) 48.2%, rgba(83,0,208,0.70) 88.5%, rgba(145,255,174,0.76) 100.0%)",
+        config: [
+            {
+                "type": "radial",
+                "shape": "circle",
+                "opacity": 0.86,
+                "blur": 26,
+                "animate": false,
+                "duration": 2,
+                "clockwise": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(99,110,131,0.89)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(54,40,245,0.63)",
+                        "stop": "25%"
+                    },
+                    {
+                        "color": "rgba(73,234,240,0.93)",
+                        "stop": "50%"
+                    },
+                    {
+                        "color": "rgba(173,136,195,0.85)",
+                        "stop": "75%"
+                    },
+                    {
+                        "color": "rgba(213,69,156,0.60)",
+                        "stop": "100%"
+                    }
+                ],
+                "animations": [],
+                "visible": true,
+                "centerX": 58,
+                "centerY": 56
+            },
+            {
+                "type": "linear",
+                "shape": "circle",
+                "opacity": 0.65,
+                "blur": 10,
+                "animate": true,
+                "duration": 4,
+                "clockwise": true,
+                "colorStops": [
+                    {
+                        "color": "rgba(96,233,92,0.87)",
+                        "stop": "0%"
+                    },
+                    {
+                        "color": "rgba(98,13,178,0.97)",
+                        "stop": "22.6%"
+                    },
+                    {
+                        "color": "rgba(119,60,196,0.66)",
+                        "stop": "48.2%"
+                    },
+                    {
+                        "color": "rgba(83,0,208,0.70)",
+                        "stop": "88.5%"
+                    },
+                    {
+                        "color": "rgba(145,255,174,0.76)",
+                        "stop": "100.0%"
+                    }
+                ],
+                "animations": [
+                    {
+                        "type": "blur",
+                        "duration": 1,
+                        "reverse": false,
+                        "blurfrom": "3",
+                        "blurto": "4"
+                    }
+                ],
+                "visible": true,
+                "angle": 184,
+                "direction": "",
+                "repeating": false
             }
         ]
     },
@@ -622,7 +707,53 @@ const templates = [
 
                 const label = document.createElement('div');
                 label.className = 'layer-info';
-                label.textContent = `Layer ${i + 1} (${layer.type})`;
+                label.innerHTML = `Layer ${i + 1} (${layer.type})`;
+                //only add tooltip on the first layer
+                if (i == 0) {
+                    label.innerHTML += `<span class="tooltip-icon" tabindex="0">
+                                <div class="layer-container">
+  <div class="layer-header">
+    <div class="info-icon">i
+      <div class="tooltip-card">
+        <h3>Managing Layers</h3>
+        <p class="tooltip-sub">The name and type of the layer</p>
+        <div class="tooltip-item">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+     stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z"/>
+</svg></span>
+          <div><strong>Visibility Toggle</strong><br><span>Show or hide the layer in the canvas</span></div>
+        </div>
+
+        <div class="tooltip-item">
+          <span class="icon"></span>
+          <div><strong>Opacity Slider</strong><br><span>Adjust the layer’s transparency</span></div>
+        </div>
+
+        <div class="tooltip-item">
+          <span class="icon">&#11205 &#11206</span>
+          <div><strong>Layer Order Buttons</strong><br><span>Change the layer’s position in the stack</span></div>
+        </div>
+
+        <div class="tooltip-item">
+          <span class="icon">&#10697</span>
+          <div><strong>Duplicate Layer</strong><br><span>Create a copy of the layer</span></div>
+        </div>
+
+        <div class="tooltip-item">
+          <span class="icon">❌</span>
+          <div><strong>Delete Layer</strong><br><span>Remove the layer from the stack</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                            </span>`;
+                }
                 label.onclick = () => selectLayer(i);
 
                 const actions = document.createElement('div');
@@ -635,7 +766,33 @@ const templates = [
 
                 // Visibility toggle button (👁 or 🚫)
                 const visBtn = document.createElement('button');
-                visBtn.innerHTML = layer.visible ? '&#9788;' : '&#8709';
+                visBtn.innerHTML = layer.visible ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+     stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z"/>
+</svg>`
+                    :
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Full eye shape -->
+  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+  <!-- Eye iris (partially visible for contrast) -->
+  <circle cx="12" cy="12" r="3"/>
+  <!-- Slash -->
+  <line x1="3" y1="3" x2="21" y2="21"/>
+</svg>
+`;
+                //only add tooltip on the first layer
+                //if (i == 0) {
+                //    visBtn.innerHTML += `<span class="tooltip-icon" tabindex="0">
+                //                ❓
+                //                <span class="tooltip-text">
+                //                    Toggles the visibility of this layer.
+                //                </span>
+                //            </span>`;
+                //}
                 visBtn.className = "toggle-layer-btn";
                 visBtn.title = 'Toggle visibility';
                 visBtn.onclick = (e) => {
@@ -647,13 +804,6 @@ const templates = [
                 slideeeee.innerHTML = `
                         <label>
                             Opacity:
-                            <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    Controls how transparent the layer is. 1 is fully visible, 0 is fully transparent.<br />
-                                    If the lowest layer has no transparency, no other layers will be visible
-                                </span>
-                            </span>
                             <input type="range" id="layerOpacity-${i}" min="0" max="1" step="0.05" value="${layer.opacity}" onchange="updateLayerOpacity(${i})">
                         </label>`;
 
@@ -681,11 +831,15 @@ const templates = [
                     //createLayers();
                 };
 
+
+                
+
                 // Visibility toggle button (👁 or 🚫)
                 const copyBtn = document.createElement('button');
                 copyBtn.innerHTML = '&#10697';
                 copyBtn.className = "toggle-layer-btn";
                 copyBtn.title = 'Copy Layer';
+                copyBtn.style.marginRight = "12px";
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
                     copyThisLayer(i);
@@ -707,7 +861,7 @@ const templates = [
 
                 alphaSection.appendChild(visBtn);
                 alphaSection.appendChild(slideeeee);
-
+                
                 moveBtns.appendChild(moveDownBtn);
                 moveBtns.appendChild(moveUpBtn);
 
@@ -726,7 +880,7 @@ const templates = [
         function selectLayer(index) {
             currentLayerIndex = index;
 
-            renderColorStops();
+            selectColorStop(0);
             renderDynamicInputs();
             renderAnimationControls();
 
@@ -818,13 +972,10 @@ function renderDynamicInputs() {
                             <option value="to left">to left (270dedg)</option>
                         </select>
             </label>
-            <label>Angle (deg):<span class="tooltip-icon" tabindex="0">❓
-    <span class="tooltip-text">
-      The angle determines the direction of the gradient, measured in degrees.<br>
-      For example, <code>90deg</code> means left-to-right.
-    </span>
-  </span>
-                <input type="number" id="linearAngle" value="${layer.angle || 0}" onchange="updateCurrentLayer()">
+            <label>Angle (deg):`;
+        var angletip = createSectionedTooltip("Angle", "The angle determines the direction of the gradient, measured in degrees.<br> For example, <code>90deg</code> means left-to-right.");
+        html += angletip;
+        html +=   `<input type="number" id="linearAngle" value="${layer.angle || 0}" onchange="updateCurrentLayer()">
                 
             </label>
             <label>
@@ -1023,13 +1174,14 @@ function renderColorStops() {
         renderColorStops();
         createLayers();
     };
+
     updateColorEditor();
 }
 
 function selectColorStop(index) {
     selectedStopIndex = index;
     //console.log("loading color" + layer.colorStops[selectedStopIndex]?.color)
-    //loadColorStopToPicker(layer.colorStops[selectedStopIndex]?.color);
+    loadColorStopToPicker(layers[currentLayerIndex].colorStops[selectedStopIndex]?.color);
     renderColorStops();
 }
 
@@ -1041,7 +1193,7 @@ function updateColorEditor() {
     const rgba = rgbaFromCss(stop.color);
     document.getElementById('colorPicker').value = hexFromRgba(stop.color);
     document.getElementById('alphaSlider').value = rgba.a;
-    //document.getElementById('hexInput').value = stop.color;
+    document.getElementById('hexInput').value = stop.color;
     document.getElementById('stopInput').value = parseFloat(stop.stop);
 }
 
@@ -1450,16 +1602,19 @@ function buildGradientString(layer) {
 }
 function addThisLayer(layer) {
     layers.push(layer);
-    selectLayer(layers.length - 1);
     createLayers();
+    selectLayer(layers.length - 1);
 }
 
 
 function generateCSS() {
+    let width = document.getElementById('previewwWidth');
+    let height = document.getElementById('previewwHeight');
+
     const containerStyles = `.spiral-container {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: ${width != null ? width.value + 'px' : '300px'};
+  height: ${height != null ? height.value + 'px' : '300px'};
   overflow: hidden;
 }
 
@@ -1603,8 +1758,10 @@ function generateCSS() {
 }
 
 function generateSVG() {
-    const svgWidth = 300;
-    const svgHeight = 300;
+    let width = document.getElementById('previewwWidth');
+    let height = document.getElementById('previewwHeight');
+    const svgWidth = width != null ? width.value : 300;
+    const svgHeight = height != null ? height.value : 300;
     const centerX = svgWidth / 2;
     const centerY = svgHeight / 2;
     const defs = [];
@@ -2101,6 +2258,7 @@ function loadTemplate(config) {
     currentLayerIndex = -1;
     createLayers();
     if (layers.length > 0) {
+        console.log("loading template");
         selectLayer(0);
     }
 }
@@ -2111,8 +2269,7 @@ function newProject() {
     projectName = "new";
     document.getElementById('projectName').value = "new";
     createLayers();
-    renderColorStops();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 
@@ -2152,13 +2309,7 @@ function renderAnimationControls() {
 
         // Duration
         const durationLabel = document.createElement('label');
-        durationLabel.innerHTML = `Duration (s):
-                    <span class="tooltip-icon" tabindex="0">
-                    ❓
-                 <span class="tooltip-text">
-                        How long it will take to complete a full animation loop
-                   </span>
-                  </span>
+        durationLabel.innerHTML = `Duration (s): ` + createSectionedTooltip("Animation Duration", "How long it will take to complete a full animation loop") + `
             <input type="number" value="${anim.duration || defaultDuration}" 
             onchange="updateAnimation(${index}, 'duration', this.value)">
         `;
@@ -2193,23 +2344,11 @@ function renderAnimationControls() {
         if (anim.type === 'pulse') {
             const intLabel = document.createElement('label');
             intLabel.innerHTML = `
-             <label>From:
-                    <span class="tooltip-icon" tabindex="0">
-                    ❓
-                 <span class="tooltip-text">
-                        Starting Opacity for animation loop
-                   </span>
-                  </span>
+             <label>From: ` + createSectionedTooltip("Starting Opacity", "Transparency the animation loop starts at.") + `
             <input type="number" min="0" max="1" step="0.05" value="${anim.pulsefrom ?? 0}" 
                 onchange="updateAnimation(${index}, 'pulsefrom', this.value)">
         </label>
-        <label>To:
-                    <span class="tooltip-icon" tabindex="0">
-                    ❓
-                 <span class="tooltip-text">
-                        Final Opacity for animation loop
-                   </span>
-                  </span>
+        <label>To:` + createSectionedTooltip("Ending Opacity", "Transparency the animation loop ends at.") + `
             <input type="number" min="0" max="1" step="0.05" value="${anim.pulseto ?? 0.5}" 
                 onchange="updateAnimation(${index}, 'pulseto', this.value)">
         </label>
@@ -2220,19 +2359,13 @@ function renderAnimationControls() {
 
         if (anim.type === 'hue') {
             const fromHueLabel = document.createElement('label');
-            fromHueLabel.innerHTML = `From Hue (deg):
-                    <span class="tooltip-icon" tabindex="0">
-                    ❓
-                 <span class="tooltip-text">
-                          Hue animation cycles the color values by spinning around the color wheel.
-                          <div class="hue-wheel-tooltip">
-  <div class="hue-wheel">
+            const hueTip = createSectionedTooltip("Hue Animation", `This will cycle through colors by spinning around the color wheel.<br> Able to specify start and end degrees <div class="hue - wheel - tooltip">
+                <div class= "hue-wheel" >
     <div class="hue-zero-marker">0°</div>
     <div class="hue-range-indicator" style="--start: 30deg; --end: 150deg;"></div>
-  </div>
-</div>
-                   </span>
-                  </span>
+  </div >
+</div > `);
+            fromHueLabel.innerHTML = `From Hue (deg): ` + hueTip + `                    
         <input type="number" value="${anim.fromHue ?? 0}" onchange="updateAnimation(${index}, 'fromHue', this.value)">
     `;
             item.appendChild(fromHueLabel);
@@ -2533,10 +2666,9 @@ loadTemplate(templates[0].config);
 
 
 
-const colorField = document.getElementById('colorField');
-const cursor = document.getElementById('colorCursor');
 
 function setSBFromPosition(x, y) {
+    const colorField = document.getElementById('colorField');
     const rect = colorField.getBoundingClientRect();
     let s = (x - rect.left) / rect.width;
     let b = 1 - (y - rect.top) / rect.height;
@@ -2553,6 +2685,8 @@ function setSBFromPosition(x, y) {
 }
 
 function updateCursorPosition() {
+    const colorField = document.getElementById('colorField');
+    const cursor = document.getElementById('colorCursor');
     const rect = colorField.getBoundingClientRect();
     const x = saturation * rect.width;
     const y = (1 - brightness) * rect.height;
@@ -2877,8 +3011,7 @@ function generateRandomGradient() {
     layers = newLayers;
     currentLayerIndex = -1;
     createLayers();
-    renderLayerList();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 function generateRandomGradientFromSettings() {
@@ -2972,8 +3105,7 @@ function generateRandomGradientFromSettings() {
     layers = newLayers;
     currentLayerIndex = -1;
     createLayers();
-    renderLayerList();
-    renderDynamicInputs();
+    selectLayer(0);
 }
 
 
@@ -2995,3 +3127,41 @@ function randomColor() {
     return `rgba(${r},${g},${b},${a})`;
 }
 
+function updatePreviewSize() {
+    let width = document.getElementById('previewwWidth');
+    let height = document.getElementById('previewwHeight');
+    if (width && height) {
+        let prev = document.getElementById('spiral');
+        if (prev) {
+            prev.style.width = width.value + "px";
+            prev.style.height = height.value + "px";
+        }
+    }
+}
+
+function createTooltip(text) {
+    return `<span class="tooltip-icon" tabindex="0">
+                                ❓
+                                <span class="tooltip-text">
+                                    ${text}
+                                </span>
+                            </span>`;
+}
+
+function createSectionedTooltip(header, text) {
+
+    return `<span class="tooltip-icon" tabindex="0">
+ <div class="layer-container">    
+  <div class="layer-header">
+    <div class="info-icon">i
+      <div class="tooltip-card">
+        <h3>${header}</h3>
+        <div class="tooltip-item">
+          <div><span>${text}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</span>`;
+}

@@ -26,9 +26,9 @@
 
             <div id="previewWindow" class="pinned">
                 <div id="previewHeader" class="">
-                    <span class="tooltip-icon" tabindex="0">
+                    <span class="" tabindex="0">
                         <button onmousedown="togglePin()" class="pin-toggle">📌</button>
-                        <span class="tooltip-text">
+                        <span class="tooltip-icon tooltip-text">
                             Unpinning the window allows it to become a draggable and resizable window.
                         </span>
                     </span>
@@ -41,32 +41,52 @@
                 <button class="copy-btn" onclick="copyToClipboard('cssOutput')">&#12222;</button>
                 <label>HTML Output (Includes styles and animations)</label>
             </div>
-            <div class="textarea-wrapper">
-                <textarea id="svgOutput" placeholder="SVG Output (generate and copy it)"></textarea>
-                <button class="copy-btn" onclick="copyToClipboard('svgOutput')">&#12222;</button>
-                <label>SVG Output (May not work with all gradients, styles, and animations)</label>
-                <div>
-                    <span id="svgMessage"></span>
-                    <div id="svgPreview">
 
-                    </div>
-                </div>
-            </div>
-            <div class="layer-controls">
+            <div class="layer-controls preview-actions">
                 <!--<button onclick="importConfig()">Import</button>-->
                 <button onclick="shareConfig()">
                     Copy Share URL
                     <span class="tooltip-icon" tabindex="0">
-                        ❓
-                        <span class="tooltip-text">
-                            This copies a link to your clipboard that will load this gradient upon navigation.
-                        </span>
+                        <div class="layer-container">
+                            <div class="layer-header">
+                                <div class="info-icon">
+                                    i
+                                    <div class="tooltip-card">
+                                        <div class="tooltip-item">
+                                            <div><span>Copies a sharable link to your clipboard that will navigate to the exported gradient</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </span>
                 </button>
                 <button onclick="generateSVG()">Generate SVG</button>
                 <button onclick="generateRandomGradient()">🎲 Random Gradient</button>
                 <!--<button onclick="toggleRandomMenu()">Randomizer Settings</button>-->
-
+                <button onclick="generateRandomGradient()" style="background: linear-gradient( 90deg, rgba(255, 0, 204, 0.5), rgba(51, 51, 255, 0.5), rgba(0, 255, 238, 0.5), rgba(255, 204, 0, 0.49), rgba(255, 0, 204, 0.5) ); "> 🎲 Random Gradient</button>
+                <label style="margin-left:30px;">
+                    Image Size
+                    <span class="tooltip-icon" tabindex="0">
+                        <div class="layer-container">
+                            <div class="layer-header">
+                                <div class="info-icon">
+                                    i
+                                    <div class="tooltip-card">
+                                        <h3>Image Size</h3>
+                                        <div class="tooltip-item">
+                                            <div><span>These values control the size of the preview window and of the exports</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                     (Width x Height):
+                    <input type="number" id="previewwWidth" value="500" onchange="updatePreviewSize()">px –
+                    <input type="number" id="previewwHeight" value="500" onchange="updatePreviewSize()">px
+                </label>
+                <!--<button onclick="toggleRandomMenu()">Randomizer Settings</button>-->
                 <!--<button onclick="createimage()">Create Image</button>-->
 
                 <details id="randomizerSettingsPanel" class="animated-border-box" open>
@@ -120,10 +140,21 @@
                             <input type="number" id="randOpacityMax" value="1" step="0.1" min="0" max="1">
                         </label>
                         <hr />
-                        <button onclick="generateRandomGradientFromSettings()" style="margin-left:0.5rem;margin-bottom:0.5rem;">🎲 Generate with Settings</button>
+                        <button onclick="generateRandomGradientFromSettings()" style="margin-left: 0.5rem; margin-bottom: 0.5rem; background: linear-gradient( 90deg, rgba(255, 0, 204, 0.5), rgba(51, 51, 255, 0.5), rgba(0, 255, 238, 0.5), rgba(255, 204, 0, 0.49), rgba(255, 0, 204, 0.5) ); ">🎲 Generate with Settings</button>
                     </div>
                 </details>
 
+            </div>
+            <div class="textarea-wrapper">
+                <textarea id="svgOutput" placeholder="SVG Output (generate and copy it)"></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('svgOutput')">&#12222;</button>
+                <label>SVG Output (May not work with all gradients, styles, and animations)</label>
+                <div>
+                    <span id="svgMessage"></span>
+                    <div id="svgPreview">
+
+                    </div>
+                </div>
             </div>
             <div class="textarea-wrapper">
                 <textarea id="configOutput" placeholder="Exported Config (copy it)"></textarea>
@@ -147,12 +178,12 @@
                     Project Name:
                     <input type="text" onchange="updateProjectName()" id="projectName" />
                     <label><input type="checkbox" id="enableTooltips" checked> Show tooltips</label>
-                </label> 
+                </label>
 
                 <!--<button onclick="saveToTemplates()">Save as Template</button>-->
                 <!--<button onclick="copyLayer()">Copy Layer</button>-->
                 <!--<button onclick="moveLayerUp()">Move Up</button>
-    <button onclick="moveLayerDown()">Move Down</button>-->
+                <button onclick="moveLayerDown()">Move Down</button>-->
                 <!--<button onclick="generateCSS()">Generate & Show CSS</button>-->
                 <!--<button onclick="exportConfig()">Export</button>-->
                 <!--<button onclick="importConfig()">Import</button>-->
@@ -179,10 +210,19 @@
                         <label>
                             Blur:
                             <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    Adds a soft blur to the entire layer, creating a smoother or hazier effect.
-                                </span>
+                                <div class="layer-container">
+                                    <div class="layer-header">
+                                        <div class="info-icon">
+                                            i
+                                            <div class="tooltip-card">
+                                                <h3>Blur Value</h3>
+                                                <div class="tooltip-item">
+                                                    <div><span>Adds a soft blurry effect to the entire layer, creating haze</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </span>
                             <input type="range" id="layerBlur" min="0" max="10" step="0.5" onchange="updateCurrentLayer()">
                         </label>
@@ -191,11 +231,20 @@
                             <input type="checkbox" id="layerAnimate" onchange="updateCurrentLayer()">
                             Animate
                             <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    If checked, then the Layer Animations will be applied. Add multiple, but not all may mesh well together
-                                </span>
-                            </span>
+                                <div class="layer-container">
+                                    <div class="layer-header">
+                                        <div class="info-icon">
+                                            i
+                                            <div class="tooltip-card">
+                                                <h3>Animating Layers</h3>
+                                                <div class="tooltip-item">
+                                                    <div><span>Check this box to start adding and applying animations to this layer.</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>                            
                         </label>
 
                     </div>
@@ -205,12 +254,23 @@
                         <h4 id="animationHeader">
                             Layer Animations
                             <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    A single layer can have multiple animations.<br />
-                                    They should apply in the order listed, but may not all play well together.<br />
-                                    Click to visually toggle.
-                                </span>
+                                <div class="layer-container">
+                                    <div class="layer-header">
+                                        <div class="info-icon">
+                                            i
+                                            <div class="tooltip-card">
+                                                <h3>Animations in Layer</h3>
+                                                <div class="tooltip-item">
+                                                    <div><span>
+                                                  A single layer can have multiple animations.<br />
+                                                They apply in the order listed, but may not all play well together.<br />
+                                                 Click to visually toggle.
+                                                </span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </span>
                         </h4>
                         <div id="animationList"></div>
@@ -219,30 +279,30 @@
                         </button>
                     </div>
                     <!--<label>
-        Animation Type:
-        <select id="layerAnimType" onchange="updateCurrentLayer()">
-            <option value="rotate">Rotate</option>-->
+                    Animation Type:
+                    <select id="layerAnimType" onchange="updateCurrentLayer()">
+                        <option value="rotate">Rotate</option>-->
                     <!--<option value="pulse">Pulse</option>-->
                     <!--<option value="hue">Hue Shift</option>
-        <option value="slide">Slide Gradient</option>-->
+                    <option value="slide">Slide Gradient</option>-->
                     <!--<option value="morph">Morph Gradient</option>-->
                     <!--</select>
-        </label>-->
+                    </label>-->
                     <!--<label id="layerClockBlock">
-            Clockwise:
-            <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
-        </label>
+                        Clockwise:
+                        <input type="checkbox" id="layerClockwise" onchange="updateCurrentLayer()" checked>
+                    </label>
 
-        <label id="layerDurationBlock">
-            Duration (s):
-            <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
-        </label>
-        </div>
+                    <label id="layerDurationBlock">
+                        Duration (s):
+                        <input type="number" id="layerDuration" min="1" max="60" step="0.5" onchange="updateCurrentLayer()">
+                    </label>
+                    </div>
 
-        <div>
-            <button onclick="toggleVisibility()">Show/Hide Layer</button>
-            <button onclick="deleteLayer()">Delete Layer</button>
-        </div>-->
+                    <div>
+                        <button onclick="toggleVisibility()">Show/Hide Layer</button>
+                        <button onclick="deleteLayer()">Delete Layer</button>
+                    </div>-->
 
 
                 </div>
@@ -250,18 +310,7 @@
 
                 <div id="animate-block">
                     <div class="animation-controls">
-                        <h4>
-                            Color Stops <span class="tooltip-icon" tabindex="0">
-                                ❓
-                                <span class="tooltip-text">
-                                    Color stops define which colors appear where along your gradient. These control the timing and flow of the colors. <br />
-                                    Each stop includes a color and a position (e.g., “red at 0%”). <br />
-                                    Drag stops left/right to change position. <br />
-                                    Click on the track to add a new stop
-                                </span>
-                            </span>
-                        </h4>
-                       
+                        
                         <div class="color-controls hidden">
                             <h4>Color Stops</h4>
                             <div id="colorStopsContainer"></div>
@@ -269,24 +318,67 @@
                         </div>
 
                         <div class="color-stop-editor">
+                            <h4>
+                                Color Stops 
+                                <span class="tooltip-icon" tabindex="0">
+                                    <div class="layer-container">
+                                        <div class="layer-header">
+                                            <div class="info-icon">
+                                                i
+                                                <div class="tooltip-card">
+                                                    <h3>Color Arrangment</h3>
+                                                    <div class="tooltip-item">
+                                                        <div>
+                                                            <span>
+                                                                Color stops define which colors appear where along your gradient. These control the timing and flow of the colors. <br />
+                                                                Each stop includes a color and a position (e.g., “red at 0%”). <br />
+                                                                Drag stops left/right to change position. <br />
+                                                                Click on the track to add a new stop
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </span>
+                            </h4>
                             <div class="color-track" id="colorTrack"></div>
                             <div class="color-values" id="colorValueInputs"></div>
                             <div class="color-details">
                                 <input type="color" id="colorPicker" style="width:50px; height:50px;" onchange="changeColorStopColor()" />
                                 <label>Alpha:</label>
                                 <span class="tooltip-icon" tabindex="0">
-                                    ❓
-                                    <span class="tooltip-text">
-                                        This slider changes the transparency (alpha) of the color.
-                                    </span>
+                                    <div class="layer-container">
+                                        <div class="layer-header">
+                                            <div class="info-icon">
+                                                i
+                                                <div class="tooltip-card">
+                                                    <h3>Alpha Value</h3>
+                                                    <div class="tooltip-item">
+                                                        <div><span>This slider changes the transparency (alpha) of the color.</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </span>
                                 <input type="range" id="alphaSlider" min="0" max="1" step="0.01" onchange="changeColorStopAlpha()" />
                                 <label>Stop Pos:</label>
                                 <span class="tooltip-icon" tabindex="0">
-                                    ❓
-                                    <span class="tooltip-text">
-                                        Another means of changing the position of the selected color stop.
-                                    </span>
+                                    <div class="layer-container">
+                                        <div class="layer-header">
+                                            <div class="info-icon">
+                                                i
+                                                <div class="tooltip-card">
+                                                    <h3>Color Stop Position</h3>
+                                                    <div class="tooltip-item">
+                                                        <div><span>Along with the stop track bar, another means of changing the position of a selected color stop.</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </span>
                                 <input type="number" id="stopInput" title="Manually change stop position" style="max-width:40%;" onchange="changeColorStopPosition()" />
                             </div>
@@ -322,27 +414,29 @@
 
             </div>
 
-                <!--<canvas id="gradientCanvas"></canvas>-->
+            <!--<canvas id="gradientCanvas"></canvas>-->
 
-            </div>
+        </div>
     </div>
 
     <script src="./scripts/curveutils.js"></script>
     <script src="script.js"></script>
 
-    <footer class="site-footer">
-        <div class="footer-container">
-            <p>All rights reserved.</p>
-            <p>Page is under active development, please enjoy despite any bugs :)</p>
-            <nav>
-                <a href="privacy.html">Privacy Policy</a>
-                <span>|</span>
-                <a href="https://github.com/UnformalPenguin/GradTool">GitHub</a>
-                <span>|</span>
-                <a href="mailto:spira@nodeflow.net">Contact Us</a>
-            </nav>
+    <details id="footerPanel" class="">
+        <summary class="random-summary">Site Info</summary>
+        <div class="site-footer">
+            <div class="footer-container">
+                <p>All rights reserved.</p>
+                <nav>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <span>|</span>
+                    <a href="https://github.com/UnformalPenguin/GradTool">GitHub</a>
+                    <span>|</span>
+                    <a href="mailto:spira@nodeflow.net">Contact Us</a>
+                </nav>
+            </div>
         </div>
-    </footer>
+        </details>
 </body>
 
 
