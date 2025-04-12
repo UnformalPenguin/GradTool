@@ -42,6 +42,12 @@
                             <input type="number" id="randStopMax" value="5" min="2" max="10">
                         </label>
 
+                        <label style="margin-left:10px;">
+                            Color Alpha:
+                            <input type="number" id="colorAlphaMin" value="1" min="0" max="1" step="0.05"> –
+                            <input type="number" id="colorAlphaMax" value="1" min="0" max="1" step="0.05">
+                        </label>
+
                         <hr />
                         <label>
                             Allowed Gradient Types:
@@ -203,9 +209,9 @@
             <div class="layer-list" id="layerList"></div>
 
             <div class="layer-editor" id="layerEditor">
-                <div id="layer-block">
-                    <div class="layer-controls">
-                        <h4 id="detailsHeader">Layer Details</h4>
+                <div id="layer-block" class="">
+                    <div class="layer-controls editor-section">
+                        <h4 id="detailsHeader" class="section-header">Layer Details</h4>
                         <div id="layer-details-block">
                             <label>
                                 Type:
@@ -262,9 +268,10 @@
 
                         </div>
                     </div>
-                    <div id="animate-block">
-                        <div class="layer-controls">
-                            <h4 id="animationHeader">
+                    
+                    <div id="animate-block" class="">
+                        <div class="layer-controls editor-section">
+                            <h4 id="animationHeader" class="section-header">
                                 Layer Animations
                                 <span class="tooltip-icon" tabindex="0">
                                     <div class="layer-container">
@@ -323,17 +330,17 @@
                     </div>
 
 
-                    <div id="animate-block">
-                        <div class="animation-controls color-controls">
+                    <div id="color-block">
+                        <div class="color-controls editor-section">
 
                             <div class="color-controls hidden">
-                                <h4>Color Stops</h4>
+                                <h4 >Color Stops</h4>
                                 <div id="colorStopsContainer"></div>
                                 <button onclick="addColorStop()">Add Color Stop</button>
                             </div>
 
                             <div class="color-stop-editor">
-                                <h4>
+                                <h4 id="colorHeader" class="section-header"> 
                                     Color Stops
                                     <span class="tooltip-icon" tabindex="0">
                                         <div class="layer-container">

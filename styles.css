@@ -145,7 +145,7 @@ body {
 
      .layer-controls, .layer-editor, .layer-list {
          margin: 1rem 0;
-         width: 100%;
+         /*width: 100%;*/
          /*max-width: 700px;*/
      }
 
@@ -298,6 +298,7 @@ body {
         background: linear-gradient(135deg, rgba(58, 0, 74, 0.9), rgba(0, 72, 97, 0.8));
         border: #43009b solid;
         font-weight: bold;
+        box-shadow: 0 0 6px rgba(160, 60, 255, 0.5);
     }
 
      .layer-editor label {
@@ -324,24 +325,72 @@ body {
     cursor: pointer;
 }
 
-.layer-editor input[type="text"],
-.layer-editor input[type="number"],
-.layer-editor select {
+
+/*.layer-editor select {
     width: 100%;
-    padding: 0.3rem;
+    padding: 0.5rem;
     border: none;
-    background: #333;
+    background: #e0dffb;
     color: #fff;
     border-radius: 4px;
-    margin-top: 0.2rem;
+    margin-top: 0.3rem;
+    margin-right: 1rem;
+}*/
+
+select {
+    width: 100%;
+    padding: 0.6rem 0.6rem;
+    background: #2c2c2c;
+    border: none;
+    border-radius: 4px;
+    margin-top: 0.6rem;
+    margin-right: 1.5rem;
+    font-family: inherit;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='white' height='10' viewBox='0 0 24 24' width='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 0.65rem;
+    cursor: pointer;
+    background: #28243a;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.4), 0 0 6px rgba(100, 0, 150, 0.25);
+    color: #fff;
+    transition: box-shadow 0.2s ease;
 }
 
-#layerEditor {
-    background: linear-gradient(180deg, rgba(1, 61, 78, 1.00) 0%, rgba(25,0,57,1.00) 7%, rgba(51, 0, 87, 1.00) 100%);
+    select:focus {
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.4), 0 0 8px rgba(160, 60, 255, 0.45);
+        outline: none;
+    }
+
+
+.layer-editor input[type="text"],
+.layer-editor input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #4a3b6a;
+    background: #1a1a2e;
+    color: #e0dffb;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    margin-right: 1.5rem;
 }
-#animate-block,
-.color-controls {
-    background: linear-gradient(180deg, rgba(1, 61, 78, 1.00) 0%, rgba(25,0,57,1.00) 25%, rgba(51, 0, 87, 1.00) 100%);
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 6px rgba(160, 60, 255, 0.5);
+}
+
+.section-header {
+    background: linear-gradient(60deg, #4f034c 0%, #300057 50%, rgb(0, 46, 87) 100%);
+    padding: 1rem;
+}
+/*#layer-details-block {
+    background: linear-gradient(180deg, rgba(1, 61, 78, 1.00) 0%, rgba(25,0,57,1.00) 50%, rgba(51, 0, 87, 1.00) 100%);
+}*/
+.editor-section {
+    background: linear-gradient(202deg, rgb(0, 46, 87) 0%, rgba(25,0,57,1.00) 50%, rgba(51, 0, 87, 1.00) 100%);
+    margin-top: 1rem;
 }
 /*.layer-editor input[type="number"]
 {
@@ -601,7 +650,7 @@ body {
 
 .animation-item {
     /*background: #1f1f2f;*/
-    padding: 0.5rem;
+    /*padding: 0.5rem;*/
     border-radius: 4px;
     margin-bottom: 0.5rem;
 }
@@ -610,16 +659,6 @@ body {
         font-size: 0.85rem;
         display: block;
         margin: 0.3rem 0;
-    }
-
-    .animation-item select,
-    .animation-item input {
-        background: #333;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 0.3rem;
-        margin-top: 0.2rem;
     }
 
 

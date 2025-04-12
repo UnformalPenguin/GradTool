@@ -969,9 +969,7 @@ const templates = [
                 delBtn.title = 'Delete layer';
                 delBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (currentLayerIndex === i) currentLayerIndex = -1;
-                    layers.splice(i, 1);
-                    createLayers();
+                    deleteLayer(i);
                 };
 
 
@@ -2180,11 +2178,21 @@ function buildFilterString(layer) {
         //}
 
         // --- Modified deleteLayer ---
-        function deleteLayer() {
-            if (currentLayerIndex < 0) return;
-            layers.splice(currentLayerIndex, 1);
-            currentLayerIndex = -1;
+        function deleteLayer(index) {
+            if (index < 0) return;
+            var current = currentLayerIndex === index;
+            var downshift = index < currentLayerIndex;
+            layers.splice(index, 1);
+
             createLayers();
+            if (layers.length > 0) {
+                if (current) {
+                    selectLayer(0);
+                }
+                else if (downshift) {
+                    selectLayer(currentLayerIndex - 1);
+                }
+            }
         }
 
 
@@ -3275,6 +3283,8 @@ function generateRandomGradientFromSettings() {
     const maxLayers = +document.getElementById('randLayerMax').value;
     const minStops = +document.getElementById('randStopMin').value;
     const maxStops = +document.getElementById('randStopMax').value;
+    const minAlpha = +document.getElementById('colorAlphaMin').value;
+    const maxAlpha = +document.getElementById('colorAlphaMax').value;
     const minDur = +document.getElementById('randDurMin').value;
     const maxDur = +document.getElementById('randDurMax').value;
     const blurMin = +document.getElementById('randBlurMin').value;
@@ -3299,7 +3309,8 @@ function generateRandomGradientFromSettings() {
 
         const stopCount = Math.floor(randFloat(minStops, maxStops + 1));
         const colorStops = Array.from({ length: stopCount }, (_, i) => {
-            const color = randomColor();
+            const color = randomColor(minAlpha, maxAlpha);
+
             const stop = `${Math.floor((i / (stopCount - 1)) * 100)}%`;
             return { color, stop };
         });
@@ -3379,11 +3390,11 @@ function randFloat(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function randomColor() {
+function randomColor(minAlpha = 0.5, maxAlpha = 1.0) {
     const r = Math.floor(randFloat(0, 255));
     const g = Math.floor(randFloat(0, 255));
     const b = Math.floor(randFloat(0, 255));
-    const a = randFloat(0.5, 1).toFixed(2);
+    const a = randFloat(minAlpha, maxAlpha).toFixed(2);
     return `rgba(${r},${g},${b},${a})`;
 }
 
