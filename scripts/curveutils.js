@@ -108,3 +108,177 @@ function getEmbedding(config) {
     //console.log(shareURL + " " + config); // ready to share
     return shareURL;
 }
+
+
+
+
+
+
+//CLIPPING
+
+function fullClipPathString(clip) {
+    if (!clip.doclip || clip.shape === 'none') return 'none';
+        
+    if (clip.shape === 'custom') {
+        if (clip.customValue && isValidClipPath(clip.customValue)) {
+            return clip.customValue;
+        }
+        return 'none';
+    }
+    else {
+        return getPresetClipPath(clip.shape, clip.options || {});
+
+    }
+
+    return 'none';
+}
+
+
+
+
+function getPresetClipPath(preset, options = {}) {
+    switch (preset) {
+        case 'triangle':
+            return `polygon(50% 0%, 0% 100%, 100% 100%)`;
+
+        case 'hexagon':
+            return `polygon(
+                25% 5%,
+                75% 5%,
+                100% 50%,
+                75% 95%,
+                25% 95%,
+                0% 50%
+            )`;
+
+        case 'star':
+            return buildStarClipPath(options.points || 5, options.innerRadius || 40, options.outerRadius || 100, options.rotation || 0);
+
+        case 'polygon':
+            return buildRegularPolygonPath(options.sides || 6, options.radius || 50, options.rotation || 0);
+
+        case 'blob':
+            return `path("${options.path || generateRandomBlobPath(options.seed || 1)}")`;
+
+        case 'circle':
+            return `circle(${options.radius || '50%'} at ${options.cx || '50%'} ${options.cy || '50%'})`;
+
+        case 'ellipse':
+            return `ellipse(${options.rx || '50%'} ${options.ry || '50%'} at ${options.cx || '50%'} ${options.cy || '50%'})`;
+
+        case 'inset':
+            return `inset(${options.top || '10%'} ${options.right || '10%'} ${options.bottom || '10%'} ${options.left || '10%'})`;
+
+        default:
+            return 'none';
+    }
+}
+
+function buildStarClipPath(points, innerRadius, outerRadius, rotationDeg = 0) {
+    const angleStep = Math.PI / points;
+    let path = [];
+
+    for (let i = 0; i < 2 * points; i++) {
+        const angle = i * angleStep - Math.PI / 2 + (rotationDeg * Math.PI / 180);
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const x = 50 + radius * Math.cos(angle) / 100 * 50;
+        const y = 50 + radius * Math.sin(angle) / 100 * 50;
+        path.push(`${x}% ${y}%`);
+    }
+
+    return `polygon(${path.join(', ')})`;
+}
+
+function buildRegularPolygonPath(sides, radius, rotationDeg = 0) {
+    const angleStep = (2 * Math.PI) / sides;
+    let path = [];
+
+    for (let i = 0; i < sides; i++) {
+        const angle = i * angleStep - Math.PI / 2 + (rotationDeg * Math.PI / 180);
+        const x = 50 + radius * Math.cos(angle) / 100 * 50;
+        const y = 50 + radius * Math.sin(angle) / 100 * 50;
+        path.push(`${x}% ${y}%`);
+    }
+
+    return `polygon(${path.join(', ')})`;
+}
+
+function generateRandomBlobPath(seed) {
+    // Placeholder – use something like https://blobs.dev or a Perlin-based generator later
+    // Could also store pre-seeded blobs
+    return "M62.3,-63.5C76.5,-47.5,80.3,-23.8,75.4,-4.2C70.5,15.3,56.8,30.6,42.6,44.8C28.4,59,14.2,72.1,-2.6,74.8C-19.4,77.5,-38.8,69.8,-51.3,56.4C-63.7,43,-69.2,24,-68.2,6.1C-67.2,-11.8,-59.8,-28.6,-48.2,-44.3C-36.6,-60,-20.8,-74.6,0.4,-75.2C21.5,-75.8,43,-62.5,62.3,-63.5Z";
+}
+
+function isValidClipPath(value) {
+    return /^(polygon|circle|ellipse|inset|path)\(.*\)$/.test(value.trim());
+}
+
+
+function getPresetDetails(preset) {
+    switch (preset) {
+        case 'triangle':
+            return `{
+                sides: 3,
+  rotation: 0,
+  direction: 'up' | 'right' | 'down' | 'left'
+}`;
+        case 'hexagon':
+            return `{
+                sides: 3–12,
+  rotation: degrees,
+  radius: % (size relative to layer bounds)
+}`;
+        case 'star':
+            return `
+                {
+  points: 5–12,
+  innerRadius: %,  // depth of the indent
+  outerRadius: %,
+  rotation: degrees
+}
+`;
+                case 'blob':
+            return `{
+  seed: number,
+  complexity: 3–12,
+  variation: 0.1–1,
+  symmetry: true/false,
+  path: string (optional override),
+}`;
+
+        case 'circle':
+        case 'ellipse':
+            return `{
+  shape: 'circle' | 'ellipse',
+  radiusX: % | px,
+  radiusY: % | px,
+  centerX: %,
+  centerY: %
+}}`;
+                default:
+            return 'none';
+    }
+}
+
+function generateClipPathForSVG(layer, clipId, svgWidth, svgHeight, cx, cy) {
+    if (!layer.clip || layer.clip.shape === 'none') return null;
+
+    const path = fullClipPathString(layer);
+    if (!path || path === 'none') return null;
+
+    // Polygon or basic types
+    if (path.startsWith('triangle') || path.startsWith('star') || path.startsWith('blob') || path.startsWith('hexagon') 
+    || path.startsWith('polygon') || path.startsWith('circle') || path.startsWith('ellipse') || path.startsWith('inset')) {
+        return `<clipPath id="${clipId}">
+  <rect x="0" y="0" width="${svgWidth}" height="${svgHeight}" style="clip-path:${path};" />
+</clipPath>`;
+    }
+
+    // SVG path directly
+    if (path.startsWith('path')) {
+        const d = path.match(/"([^"]+)"/)?.[1];
+        return `<clipPath id="${clipId}"><path d="${d}" transform="translate(${cx}, ${cy}) scale(0.5)" /></clipPath>`;
+    }
+
+    return null;
+}

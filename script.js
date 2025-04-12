@@ -1001,6 +1001,10 @@ const templates = [
             const layer = layers[index];
             document.getElementById('layerType').value = layer.type;
             document.getElementById('layerShape').value = layer.shape;
+            document.getElementById('doclip').checked = layer.clip ? layer.clip.doclip : false;
+            document.getElementById('clipshape').value = layer.clip ? layer.clip.shape : 'triangle';
+            //document.getElementById('clipunit').value = layer.clip ? layer.clip.unit : 'percent';
+
             //document.getElementById('layerColors').value = layer.colors;
             //document.getElementById('layerAnimType').value = layer.animType || 'none';
             document.getElementById('layerOpacity-' + index).value = layer.opacity;
@@ -1019,6 +1023,13 @@ function updateCurrentLayer() {
 
     layer.type = document.getElementById('layerType').value;
     layer.shape = document.getElementById('layerShape').value;
+
+    if (!layer.clip) {
+        layer.clip = {};
+    }
+    layer.clip.doclip = document.getElementById('doclip').checked;
+    layer.clip.shape = document.getElementById('clipshape').value;
+    //layer.clip.unit = document.getElementById('clipunit').value;
 
     layer.opacity = parseFloat(document.getElementById('layerOpacity-' + currentLayerIndex).value);
     layer.blur = parseFloat(document.getElementById('layerBlur').value);
@@ -1465,6 +1476,7 @@ function onPickerChange() {
     }
 }
 
+
         function createLayers() {
             const container = document.getElementById('spiral');
             container.innerHTML = '';
@@ -1476,7 +1488,7 @@ function onPickerChange() {
                 document.head.appendChild(animStyleElem);
             }
             animStyleElem.innerHTML = '';
-
+                        
             let animated = false;
             layers.forEach((layer, i) => {
                 if (!layer.visible) return;
@@ -1490,6 +1502,8 @@ function onPickerChange() {
                 //div.style.background = gradient;
                 //div.style.filter = `blur(${layer.blur}px)`;
                 //div.style.opacity = layer.opacity;
+                
+
                 if (!layer.animations.some(a => a.type === 'morph')) {
                     div.style.background = gradient;
                 }
@@ -1500,7 +1514,17 @@ function onPickerChange() {
                     div.style.opacity = layer.opacity;
                 }
 
-                div.style.borderRadius = layer.shape === 'square' ? '0' : '50%';
+                // Shape handling — border-radius is fallback if no clip-path
+                if (layer.clip && layer.clip.doclip && layer.clip.shape) {
+                    const clipPath = fullClipPathString(layer.clip);
+                    if (clipPath !== 'none') {
+                        div.style.clipPath = clipPath;
+                    } else {
+                        div.style.borderRadius = `${layer.shape === 'square' ? '0%' : '50%'}`;
+                    }
+                } else {
+                    div.style.borderRadius = `${layer.shape === 'square' ? '0%' : '50%'}`;
+                }
 
             //    if (layer.animate) {
             //        animated = true;
@@ -1550,10 +1574,11 @@ function onPickerChange() {
                         layer.animations.forEach((anim, aIndex) => {
                             const animName = `${projectName}_layer${i}_anim${aIndex}`;
                             const duration = anim.duration || defaultDuration;
+                            const delay = anim.delay || 0;
 
                             div.style.animation = div.style.animation
                                 ? `${div.style.animation}, ${animName} ${duration}s linear infinite`
-                                : `${animName} ${duration}s linear infinite`;
+                                : `${animName} ${duration}s ${delay}s linear infinite`;
 
                             switch (anim.type) {
                                 case 'rotate':
@@ -1707,7 +1732,23 @@ function onPickerChange() {
 
                                     div.style.animationDirection = 'alternate';
                                     break;
-                                    
+
+                                case 'translate':
+                                    const transX = anim.transX ?? 1;
+                                    const transY = anim.transY ?? 2;
+                                    if (transX < 0)
+                                        transX = transX * -1;
+                                    if (transY < 0)
+                                        transY = transY * -1;
+
+                                    animStyleElem.innerHTML += `@keyframes ${animName} {
+        0% { transform: translate(-${transX}px, -${transY}px); }
+  50% { transform: translate(${transX}px, ${transY}px); }
+        100% { transform: translate(-${transX}px, -${transY}px); }
+    }`;
+
+                                    div.style.animationDirection = 'alternate';
+                                    break;
 
 
                                 case 'scale':
@@ -1843,7 +1884,18 @@ function generateCSS() {
         layerCSS += `  background: ${gradient};\n`;
         layerCSS += `  filter: ${buildFilterString(layer)};\n`;
         layerCSS += `  opacity: ${layer.opacity};\n`;
-        layerCSS += `  border-radius: ${layer.shape === 'square' ? '0%' : '50%'};\n`;
+
+        // Shape handling — border-radius is fallback if no clip-path
+        if (layer.clip && layer.clip.doclip && layer.clip.shape) {
+            const clipPath = fullClipPathString(layer.clip);
+            if (clipPath !== 'none') {
+                layerCSS += `  clip-path: ${clipPath};\n`;
+            } else {
+                layerCSS += `  border-radius: ${layer.shape === 'square' ? '0%' : '50%'};\n`;
+            }
+        } else {
+            layerCSS += `  border-radius: ${layer.shape === 'square' ? '0%' : '50%'};\n`;
+        }
 
         if (layer.animate && layer.animations && layer.animations.length) {
             let animationParts = [];
@@ -1852,9 +1904,10 @@ function generateCSS() {
                 const animName = `${projectName}_layer${i}_anim${aIndex}`;
                 animationNames.push(animName);
                 const duration = anim.duration || 5;
+                const delay = anim.delay || 0;
 
                 // Add CSS animation line
-                animationParts.push(`${animName} ${duration}s linear infinite ${anim.type === 'hue' || anim.type === 'blur' || anim.type === 'saturation' ? 'alternate' : ''}`.trim());
+                animationParts.push(`${animName} ${duration}s ${delay}s linear infinite ${anim.type === 'hue' || anim.type === 'blur' || anim.type === 'saturation' ? 'alternate' : ''}`.trim());
 
                 // Generate @keyframes for each animation type
                 switch (anim.type) {
@@ -1943,6 +1996,20 @@ function generateCSS() {
     50% { filter: contrast(140%); }
   }\n\n`;
                         break;
+
+                    case 'translate':
+                        const transX = anim.transX ?? 4;
+                        const transY = anim.transY ?? 4;
+                        if (transX < 0)
+                            transX = transX * -1;
+                        if (transY < 0)
+                            transY = transY * -1;
+
+                        keyframes += `@keyframes ${animName} {
+        0% { transform: translate(-${transX}px, -${transY}px); }
+  50% { transform: translate(${transX}px, ${transY}px); }
+        100% { transform: translate(-${transX}px, -${transY}px); }
+    }\n\n`;
                 }
             });
 
@@ -1971,8 +2038,10 @@ function generateSVG() {
     const svgHeight = height != null ? height.value : 300;
     const centerX = svgWidth / 2;
     const centerY = svgHeight / 2;
+
     const defs = [];
     const filters = [];
+    const clipPaths = [];
     const layersSvg = [];
 
     let msg = document.getElementById("svgMessage");
@@ -1981,6 +2050,7 @@ function generateSVG() {
     layers.forEach((layer, i) => {
         const gradientId = `${projectName}-grad-${i}`;
         const filterId = `${projectName}-filter-${i}`;
+        const clipId = `${projectName}-clip-${i}`;
         const isCircle = layer.shape !== 'square';
 
         if (!layer.colorStops || layer.colorStops.length === 0) return;
@@ -1988,53 +2058,50 @@ function generateSVG() {
             msg.innerHTML = "Conical Layers not supported in SVG";
             return;
         }
-        // Build gradient stops
-        const stops = layer.colorStops.map(cs =>
-            `<stop offset="${cs.stop}" stop-color="${cs.color}" />`
-        ).join('\n');
 
-        // Build gradient definition
+        // Normalize color stops
+        const stops = layer.colorStops.map(cs => {
+            const offset = cs.stop.includes('%') ? cs.stop : `${parseFloat(cs.stop) * 100}%`;
+            return `<stop offset="${offset}" stop-color="${cs.color}" />`;
+        }).join('\n');
+
+        // === Gradient Definitions ===
         let gradientDef = '';
-        const gradientType = layer.repeating ? 'repeating' : '';
-        let gradientTransform = '';
 
         if (layer.type === 'linear') {
-            const angle = layer.angle ?? 0;
-            const rad = angle * Math.PI / 180;
-            const x1 = 50 - Math.cos(rad) * 50;
-            const y1 = 50 - Math.sin(rad) * 50;
-            const x2 = 50 + Math.cos(rad) * 50;
-            const y2 = 50 + Math.sin(rad) * 50;
+            const cssAngle = layer.angle ?? 0;
+            const svgAngle = (450 - cssAngle) % 360;
+            const angleRad = svgAngle * Math.PI / 180;
+            const x1 = centerX - Math.cos(angleRad) * centerX;
+            const y1 = centerY - Math.sin(angleRad) * centerY;
+            const x2 = centerX + Math.cos(angleRad) * centerX;
+            const y2 = centerY + Math.sin(angleRad) * centerY;
 
-            gradientDef = `<linearGradient id="${gradientId}" gradientUnits="userSpaceOnUse"
-  x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
+            const gradientTag = layer.repeating ? 'linearGradient' : 'linearGradient';
+            gradientDef = `<${gradientTag} id="${gradientId}" gradientUnits="userSpaceOnUse"
+  x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
   ${stops}
-</linearGradient>`;
+</${gradientTag}>`;
         }
 
         else if (layer.type === 'radial') {
-            const posX = layer.centerX ?? 50;
-            const posY = layer.centerY ?? 50;
-            gradientDef = `<radialGradient id="${gradientId}" cx="${posX}%" cy="${posY}%" r="50%" fx="${posX}%" fy="${posY}%" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
+            const posX = typeof layer.centerX === 'number' ? layer.centerX : centerX;
+            const posY = typeof layer.centerY === 'number' ? layer.centerY : centerY;
+            const r = Math.min(svgWidth, svgHeight) / 2;
+
+            gradientDef = `<radialGradient id="${gradientId}" cx="${posX}" cy="${posY}" r="${r}"
+  fx="${posX}" fy="${posY}" gradientUnits="userSpaceOnUse" spreadMethod="${layer.repeating ? 'repeat' : 'pad'}">
   ${stops}
 </radialGradient>`;
         }
 
-        else if (layer.type === 'conic') {
-            // SVG doesn't support native conic gradients
-            gradientDef = `<!-- Conic gradients are not natively supported in SVG -->`;
-        }
-
         defs.push(gradientDef);
 
-        // Handle filters (blur, hue, saturation)
-        let filterContent = '';
+        // === Filters ===
         const filterParts = [];
-
         if (layer.animate && Array.isArray(layer.animations)) {
             layer.animations.forEach((anim) => {
                 const dur = `${anim.duration || 5}s`;
-
                 if (anim.type === 'blur') {
                     filterParts.push(`<feGaussianBlur in="SourceGraphic" stdDeviation="${anim.blurfrom ?? 0}">
   <animate attributeName="stdDeviation"
@@ -2042,7 +2109,6 @@ function generateSVG() {
     dur="${dur}" repeatCount="indefinite" />
 </feGaussianBlur>`);
                 }
-
                 if (anim.type === 'saturation') {
                     filterParts.push(`<feColorMatrix type="saturate" values="${anim.satfrom ?? 1}">
   <animate attributeName="values"
@@ -2050,7 +2116,6 @@ function generateSVG() {
     dur="${dur}" repeatCount="indefinite" />
 </feColorMatrix>`);
                 }
-
                 if (anim.type === 'hue') {
                     filterParts.push(`<feColorMatrix type="hueRotate" values="${anim.fromHue ?? 0}">
   <animate attributeName="values"
@@ -2065,40 +2130,40 @@ function generateSVG() {
             filters.push(`<filter id="${filterId}">\n${filterParts.join('\n')}\n</filter>`);
         }
 
-        // Build shape animations
+        // === Clip Paths ===
+        const clipPathDef = generateClipPathForSVG(layer, clipId, svgWidth, svgHeight, centerX, centerY);
+        if (clipPathDef) clipPaths.push(clipPathDef);
+
+        // === Animations ===
         let shapeAnimations = '';
         if (layer.animate && layer.animations) {
             layer.animations.forEach((anim) => {
                 const dur = `${anim.duration || 5}s`;
-
                 if (anim.type === 'rotate') {
-                    shapeAnimations += `
-<animateTransform attributeName="transform" type="rotate"
+                    shapeAnimations += `<animateTransform attributeName="transform" type="rotate"
   from="0 ${centerX} ${centerY}" to="${anim.reverse ? -360 : 360} ${centerX} ${centerY}"
-  dur="${dur}" repeatCount="indefinite" />`;
+  dur="${dur}" repeatCount="indefinite" />\n`;
                 }
-
                 if (anim.type === 'scale') {
-                    shapeAnimations += `
-<animateTransform attributeName="transform" type="scale"
+                    shapeAnimations += `<animateTransform attributeName="transform" type="scale"
   values="${anim.scalefrom ?? 1};${anim.scaleto ?? 1.1};${anim.scalefrom ?? 1}"
-  dur="${dur}" repeatCount="indefinite" />`;
+  dur="${dur}" repeatCount="indefinite" />\n`;
                 }
-
                 if (anim.type === 'pulse') {
-                    shapeAnimations += `
-<animate attributeName="opacity"
+                    shapeAnimations += `<animate attributeName="opacity"
   values="${layer.opacity};${Math.max(0.1, layer.opacity - 0.2)};${layer.opacity}"
-  dur="${dur}" repeatCount="indefinite" />`;
+  dur="${dur}" repeatCount="indefinite" />\n`;
                 }
             });
         }
 
+        // === Final Layer Shape ===
         const filterAttr = filterParts.length > 0 ? `filter="url(#${filterId})"` : '';
-        const commonAttrs = `fill="url(#${gradientId})" opacity="${layer.opacity}" ${filterAttr}`;
+        const clipAttr = clipPathDef ? `clip-path="url(#${clipId})"` : '';
+        const commonAttrs = `fill="url(#${gradientId})" opacity="${layer.opacity}" ${filterAttr} ${clipAttr}`;
 
         const shape = isCircle
-            ? `<circle cx="${centerX}" cy="${centerY}" r="${centerX}" ${commonAttrs}>
+            ? `<circle cx="${centerX}" cy="${centerY}" r="${Math.min(centerX, centerY)}" ${commonAttrs}>
   ${shapeAnimations}
 </circle>`
             : `<rect x="0" y="0" width="${svgWidth}" height="${svgHeight}" ${commonAttrs}>
@@ -2108,10 +2173,12 @@ function generateSVG() {
         layersSvg.push(shape);
     });
 
+    // === Full SVG Output ===
     const svg = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     ${defs.join('\n')}
     ${filters.join('\n')}
+    ${clipPaths.join('\n')}
   </defs>
   ${layersSvg.join('\n')}
 </svg>`;
@@ -2119,6 +2186,7 @@ function generateSVG() {
     document.getElementById('svgOutput').value = svg;
     document.getElementById('svgPreview').innerHTML = svg;
 }
+
 
 function buildFilterString(layer) {
     if (!layer.animate || !Array.isArray(layer.animations)) {
@@ -2514,6 +2582,7 @@ function renderAnimationControls() {
                 <option value="blur" ${anim.type === 'blur' ? 'selected' : ''}>Blur - Softens and sharpens the layer repeatedly. Gives diffuse, dreamy effects.</option>
                 <option value="saturation" ${anim.type === 'saturation' ? 'selected' : ''}>Saturation - Increases and decreases color intensity. Dramatic washes or faded looks.</option>
                 <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale - Grows and shrinks the layer. Used for breathing effects or floating visuals.</option>
+                <option value="translate" ${anim.type === 'translate' ? 'selected' : ''}>Translate - X/Y drift / float / parallax-like effect.</option>
             </select>
         `;
 
@@ -2532,6 +2601,14 @@ function renderAnimationControls() {
             onchange="updateAnimation(${index}, 'duration', this.value)">
         `;
         item.appendChild(durationLabel);
+
+        // Delay
+        const delayLabel = document.createElement('label');
+        delayLabel.innerHTML = `Delay (s): ` + createSectionedTooltip("Animation Delay", "How long before the animation starts") + `
+            <input type="number" value="${anim.delay || 0}" 
+            onchange="updateAnimation(${index}, 'delay', this.value)">
+        `;
+        item.appendChild(delayLabel);
 
         // Type-specific options
         if (anim.type === 'rotate') {
@@ -2695,6 +2772,22 @@ function renderAnimationControls() {
     `;
         }
 
+        if (anim.type === 'translate') {
+            const transLabel = document.createElement('label');
+            transLabel.innerHTML = `
+             <label>Translate X: ` + createSectionedTooltip("X Translation", "Horizontal movement from -X to X") + `
+            <input type="number" step="1" value="${anim.transX ?? 0}" 
+                onchange="updateAnimation(${index}, 'transX', this.value)">px
+        </label>
+             <label>Translate Y: ` + createSectionedTooltip("Y Translation", "Vertical movement from -Y to Y") + `
+            <input type="number" step="1" value="${anim.transY ?? 0.5}" 
+                onchange="updateAnimation(${index}, 'transY', this.value)">px
+        </label>
+
+            `;
+            item.appendChild(transLabel);
+        }
+
 
         // Remove button
         const removeBtn = document.createElement('button');
@@ -2729,6 +2822,7 @@ function updateAnimation(index, key, value) {
     if (!layer.animations[index]) return;
 
     if (key === 'duration') value = parseFloat(value);
+    if (key === 'delay') value = parseFloat(value);
     if (key === 'reverse') value = Boolean(value);
 
     layer.animations[index][key] = value;

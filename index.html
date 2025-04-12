@@ -222,6 +222,28 @@
                                 </select>
                             </label>
 
+                            <label>
+                                Add Clipping:
+                                <input type="checkbox" id="doclip" onchange="updateCurrentLayer()" />
+                                Clip Shape:
+                                <select id="clipshape" onchange="updateCurrentLayer();">
+                                    <option value="triangle">Triangle</option>
+                                    <option value="hexagon">Hexagon</option>
+                                    <option value="star">Star</option>
+                                    <!--<option value="blob">Blob</option>-->
+                                    <!--<option value="custom">Custom</option>-->
+                                </select>
+                                <!--Clip Units:
+                                <select id="clipunit" onchange="updateCurrentLayer();">
+                                    <option value="percent">Percent</option>
+                                    <option value="px">Pixel</option>
+                                    <option value="rem">rem</option>
+                                    <option value="vw">vw</option>
+                                    <option value="vh">vh</option>
+                                </select>-->
+                            </label>
+
+                            <div id="dynamicClippingInputs"></div>
 
                             <div id="dynamicInputs"></div>
 
