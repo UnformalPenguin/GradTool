@@ -1274,22 +1274,48 @@ function renderColorStops() {
 
         //labels.appendChild(label);
     });
-
+    
     track.onclick = (e) => {
-        if (isDraggingStop) return; // Prevent accidental add from drag-release
+        if (isDraggingStop) return;
+
         const rect = track.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        const percent = Math.min(100, Math.max(0, (x / rect.width) * 100)).toFixed(1) + '%';
+        const percent = Math.min(100, Math.max(0, (x / rect.width) * 100));
+        const percentStr = percent.toFixed(1) + '%';
 
         const layer = layers[currentLayerIndex];
-        const color = layer.colorStops[selectedStopIndex]?.color || interpolateColorStops(layer.colorStops, percent);
 
-        layer.colorStops.push({ color, stop: percent });
-        selectedStopIndex = layer.colorStops.length - 1;
+        if (layer.colorStops.some(stop => stop.stop === percentStr)) return;
 
-        renderColorStops();
+        const sortedStops = [...layer.colorStops].sort((a, b) => parseFloat(a.stop) - parseFloat(b.stop));
+
+        // Find neighbors for interpolation
+        let lower = sortedStops[0], upper = sortedStops[sortedStops.length - 1];
+        for (let i = 0; i < sortedStops.length - 1; i++) {
+            const stopA = parseFloat(sortedStops[i].stop);
+            const stopB = parseFloat(sortedStops[i + 1].stop);
+            if (percent >= stopA && percent <= stopB) {
+                lower = sortedStops[i];
+                upper = sortedStops[i + 1];
+                break;
+            }
+        }
+
+        const range = parseFloat(upper.stop) - parseFloat(lower.stop);
+        const t = range === 0 ? 0 : (percent - parseFloat(lower.stop)) / range;
+        const color = interpolateRGB(lower.color, upper.color, t);
+
+        const newStop = { color, stop: percentStr };
+        layer.colorStops.push(newStop);
+        layer.colorStops.sort((a, b) => parseFloat(a.stop) - parseFloat(b.stop));
+
+        //selectedStopIndex = layer.colorStops.findIndex(stop => stop === newStop);
+        selectColorStop(layer.colorStops.findIndex(stop => stop === newStop));
+
         createLayers();
+        updateColorFieldBackground();
     };
+
 
     updateColorEditor();
 }
@@ -1310,8 +1336,9 @@ function updateColorEditor() {
     const rgba = rgbaFromCss(stop.color);
     document.getElementById('colorPicker').value = hexFromRgba(stop.color);
     document.getElementById('alphaSlider').value = rgba.a;
-    document.getElementById('hexInput').value = stop.color;
     document.getElementById('stopInput').value = parseFloat(stop.stop);
+
+    updateColorFromUI();
 }
 
 function changeColorStopColor() {
@@ -1331,6 +1358,7 @@ function changeColorStopAlpha() {
     layer.colorStops[selectedStopIndex].color = rgbaStringFromHex(hex, alpha);
     renderColorStops();
     createLayers();
+    selectColorStop(selectedStopIndex);
 }
 
 function changeColorStopHex() {
@@ -1340,6 +1368,16 @@ function changeColorStopHex() {
     layer.colorStops[selectedStopIndex].color = rgbaStringFromHex(hex, a);
     renderColorStops();
     createLayers();
+    selectColorStop(selectedStopIndex);
+}
+
+function changeColorStopRgba() {
+    const rgba = document.getElementById('rgbaInput').value;
+    const layer = layers[currentLayerIndex];
+    layer.colorStops[selectedStopIndex].color = rgba;
+    renderColorStops();
+    createLayers();
+    selectColorStop(selectedStopIndex);
 }
 
 function changeColorStopPosition() {
@@ -1351,11 +1389,65 @@ function changeColorStopPosition() {
 }
        
 
-        function addColorStop() {
-            if (currentLayerIndex < 0) return;
-            layers[currentLayerIndex].colorStops.push({ color: interpolateColorStops(layers[currentLayerIndex].colorStops, 100), stop: '100%' });
-            renderColorStops();
-            createLayers();
+function addColorStop() {
+    if (currentLayerIndex < 0) return;
+
+    const stops = layers[currentLayerIndex].colorStops;
+    if (stops.length < 2) {
+        // Not enough stops to find a gap, just add at 50% default
+        const color = stops[0]?.color || 'rgba(218, 118, 210, 1.00)';
+        stops.push({ color, stop: '50%' });
+        selectedStopIndex = stops.length - 1;
+    } else {
+        const sorted = [...stops].sort((a, b) => parseFloat(a.stop) - parseFloat(b.stop));
+
+        let maxGap = 0;
+        let insertIndex = 0;
+        let insertStop = 50;
+
+        for (let i = 0; i < sorted.length - 1; i++) {
+            const stopA = parseFloat(sorted[i].stop);
+            const stopB = parseFloat(sorted[i + 1].stop);
+            const gap = stopB - stopA;
+
+            if (gap > maxGap) {
+                maxGap = gap;
+                insertIndex = i;
+                insertStop = stopA + gap / 2;
+            }
+        }
+
+        const color = interpolateRGB(sorted[insertIndex].color, sorted[insertIndex + 1].color, 0.5);
+        const newStop = { color, stop: insertStop.toFixed(1) + '%' };
+        stops.push(newStop);
+        stops.sort((a, b) => parseFloat(a.stop) - parseFloat(b.stop));
+        //selectedStopIndex = stops.findIndex(stop => stop === newStop);
+        selectColorStop(stops.findIndex(stop => stop === newStop));
+
+    }
+
+    renderColorStops();
+    createLayers();
+}
+
+function interpolateRGB(color1, color2, t = 0.5) {
+    const r1 = parseColor(color1);
+    const r2 = parseColor(color2);
+
+    const avg = {
+        r: (r1.r + r2.r) / 2,
+        g: (r1.g + r2.g) / 2,
+        b: (r1.b + r2.b) / 2
+    };
+
+    // Flip it for contrast
+    const contrast = {
+        r: 255 - avg.r,
+        g: 255 - avg.g,
+        b: 255 - avg.b
+    };
+
+    return `rgba(${contrast.r},${contrast.g},${contrast.b}, 1.0)`;
 }
 
 function removeColorStop() {
@@ -2170,6 +2262,7 @@ function updateColorFromUI() {
 
     // Update UI
     document.getElementById('hexInput').value = hex;
+    document.getElementById('rgbaInput').value = rgba;
     document.getElementById('rInput').value = rgb.r;
     document.getElementById('gInput').value = rgb.g;
     document.getElementById('bInput').value = rgb.b;
