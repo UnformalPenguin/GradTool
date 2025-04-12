@@ -1579,7 +1579,6 @@ function onPickerChange() {
                             div.style.animation = div.style.animation
                                 ? `${div.style.animation}, ${animName} ${duration}s linear infinite`
                                 : `${animName} ${duration}s ${delay}s linear infinite`;
-
                             switch (anim.type) {
                                 case 'rotate':
                                     animStyleElem.innerHTML += `@keyframes ${animName} {
@@ -1696,16 +1695,17 @@ function onPickerChange() {
         0% { filter: saturate(${satFrom}); }
         100% { filter: saturate(${satTo}); }
     }`;
+                                    break;
 
 
                                 case 'glowpulse':
                                     //const satFrom = anim.satfrom ?? 1;
                                     //const satTo = anim.satto ?? 2;
-
                                     animStyleElem.innerHTML += `@keyframes ${animName} {
         0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
     50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
     }`;
+                                    break;
 
 
                                 case 'wobble':
@@ -1719,6 +1719,7 @@ function onPickerChange() {
     75% { transform: rotate(-1deg) scale(0.9); }
     100% { transform: rotate(0deg) scale(1); }
     }`;
+                                    break;
 
 
                                 case 'contrast':
@@ -1734,17 +1735,23 @@ function onPickerChange() {
                                     break;
 
                                 case 'translate':
-                                    const transX = anim.transX ?? 1;
-                                    const transY = anim.transY ?? 2;
-                                    if (transX < 0)
-                                        transX = transX * -1;
-                                    if (transY < 0)
-                                        transY = transY * -1;
+                                    const transXfrom = anim.transXfrom ?? 10;
+                                    const transYfrom = anim.transYfrom ?? 10;
+                                    const transXto = anim.transXto ?? 10;
+                                    const transYto = anim.transYto ?? 10;
+                                    if (transXfrom < 0)
+                                        transXfrom = transXfrom * -1;
+                                    if (transYfrom < 0)
+                                        transYfrom = transYfrom * -1;
+                                    if (transXto < 0)
+                                        transXto = transXto * -1;
+                                    if (transYto < 0)
+                                        transYto = transYto * -1;
 
                                     animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { transform: translate(-${transX}px, -${transY}px); }
-  50% { transform: translate(${transX}px, ${transY}px); }
-        100% { transform: translate(-${transX}px, -${transY}px); }
+        0% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
+  50% { transform: translate(${transXto}px, ${transYto}px); }
+        100% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
     }`;
 
                                     div.style.animationDirection = 'alternate';
@@ -1766,8 +1773,8 @@ function onPickerChange() {
 
                             }
                         });
-                    }
-
+                }
+                console.log("Fional anim: " + animStyleElem.innerHTML);
 
 
 
@@ -1998,17 +2005,23 @@ function generateCSS() {
                         break;
 
                     case 'translate':
-                        const transX = anim.transX ?? 4;
-                        const transY = anim.transY ?? 4;
-                        if (transX < 0)
-                            transX = transX * -1;
-                        if (transY < 0)
-                            transY = transY * -1;
+                        const transXfrom = anim.transXfrom ?? 10;
+                        const transYfrom = anim.transYfrom ?? 10;
+                        const transXto = anim.transXto ?? 10;
+                        const transYto = anim.transYto ?? 10;
+                        if (transXfrom < 0)
+                            transXfrom = transXfrom * -1;
+                        if (transYfrom < 0)
+                            transYfrom = transYfrom * -1;
+                        if (transXto < 0)
+                            transXto = transXto * -1;
+                        if (transYto < 0)
+                            transYto = transYto * -1;
 
                         keyframes += `@keyframes ${animName} {
-        0% { transform: translate(-${transX}px, -${transY}px); }
-  50% { transform: translate(${transX}px, ${transY}px); }
-        100% { transform: translate(-${transX}px, -${transY}px); }
+        0% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
+  50% { transform: translate(${transXto}px, ${transYto}px); }
+        100% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
     }\n\n`;
                 }
             });
@@ -2775,13 +2788,21 @@ function renderAnimationControls() {
         if (anim.type === 'translate') {
             const transLabel = document.createElement('label');
             transLabel.innerHTML = `
-             <label>Translate X: ` + createSectionedTooltip("X Translation", "Horizontal movement from -X to X") + `
-            <input type="number" step="1" value="${anim.transX ?? 0}" 
-                onchange="updateAnimation(${index}, 'transX', this.value)">px
+             <label>From X: ` + createSectionedTooltip("X Start", "Position to start horizontal movement") + `
+            <input type="number" step="1" value="${anim.transXfrom ?? 10}" 
+                onchange="updateAnimation(${index}, 'transXfrom', this.value)">px
         </label>
-             <label>Translate Y: ` + createSectionedTooltip("Y Translation", "Vertical movement from -Y to Y") + `
-            <input type="number" step="1" value="${anim.transY ?? 0.5}" 
-                onchange="updateAnimation(${index}, 'transY', this.value)">px
+             <label>To X: ` + createSectionedTooltip("X End", "Position to end horizontal movement") + `
+            <input type="number" step="1" value="${anim.transXto ?? 10}" 
+                onchange="updateAnimation(${index}, 'transXto', this.value)">px
+        </label>
+             <label>From Y: ` + createSectionedTooltip("Y Start", "Position to start vertical movement") + `
+            <input type="number" step="1" value="${anim.transY ?? 10}" 
+                onchange="updateAnimation(${index}, 'transYfrom', this.value)">px
+        </label>
+             <label>To Y: ` + createSectionedTooltip("Y End", "Position to end vertical movement") + `
+            <input type="number" step="1" value="${anim.transY ?? 10}" 
+                onchange="updateAnimation(${index}, 'transYto', this.value)">px
         </label>
 
             `;
