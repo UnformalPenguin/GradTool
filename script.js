@@ -12,11 +12,11 @@ let alpha = 1;
 let defaultDuration = 10;
 let projectName = "Gradient";
 
-const templates = [    
-        {
-        name: "Aurora Pulse",
-            preview: "linear-gradient(45deg, #00c9ff 0%, #92fe9d 20%, rgba(242, 218, 132, 1) 50%, rgba(165, 113, 223, 1) 100%)",
-        config: [
+const templates = [
+    {
+        "name": "Aurora Pulse",
+        "preview": "linear-gradient(45deg, #00c9ff 0%, #92fe9d 20%, rgba(242, 218, 132, 1) 50%, rgba(165, 113, 223, 1) 100%)",
+        "config": [
             {
                 "type": "linear",
                 "shape": "square",
@@ -137,22 +137,34 @@ const templates = [
         ]
     },
     {
-        name: "Hopeful Banner",
-        preview: "linear-gradient(rgba(223, 141, 237, 1) 15%, rgba(255, 255, 255, 0.91) 50%, rgba(109, 184, 245, 1) 100%)",
-        config: [
+        "name": "Hopeful Banner",
+        "preview": "linear-gradient(rgba(223, 141, 237, 1) 15%, rgba(255, 255, 255, 0.91) 50%, rgba(109, 184, 245, 1) 100%)",
+        "config": [
             {
                 "type": "linear",
                 "shape": "square",
                 "colorStops": [
                     {
-                        "color": "rgba(223, 141, 237, 1)",
-                        "stop": "15%",
+                        "color": "rgba(198,106,215,1.00)",
+                        "stop": "0.0%",
                         "pinned": false
                     },
                     {
+                        "color": "rgba(217,138,230,1.00)",
+                        "stop": "20.7%"
+                    },
+                    {
+                        "color": "rgba(255,255,255,1.00)",
+                        "stop": "38.6%"
+                    },
+                    {
                         "color": "rgba(255, 255, 255, 0.91)",
-                        "stop": "50%",
+                        "stop": "61.1%",
                         "pinned": false
+                    },
+                    {
+                        "color": "rgba(109, 184, 245, 1)",
+                        "stop": "79.3%"
                     },
                     {
                         "color": "rgba(109, 184, 245, 1)",
@@ -160,21 +172,35 @@ const templates = [
                         "pinned": false
                     }
                 ],
-                "animate": false,
-                "animations": [],
-                "blur": 2,
+                "animate": true,
+                "animations": [
+                    {
+                        "type": "dropglow",
+                        "duration": 10,
+                        "reverse": false,
+                        "dropglowFrom": "8",
+                        "dropglowTo": "16"
+                    }
+                ],
+                "blur": 0,
                 "opacity": 1,
                 "repeating": false,
                 "visible": true,
-                "colors": "undefined"
+                "colors": "undefined",
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                },
+                "direction": "",
+                "angle": 0
             }
         ]
     },
-    
+
     {
-        name: "Cyber Stripes",
-        preview: "repeating-linear-gradient(45deg, #ff0066, #ff0066 10%, #000 10%, #000 20%)",
-        config: [
+        "name": "Cyber Stripes",
+        "preview": "repeating-linear-gradient(45deg, #ff0066, #ff0066 10%, #000 10%, #000 20%)",
+        "config": [
             {
                 "type": "linear",
                 "direction": "45deg",
@@ -202,9 +228,9 @@ const templates = [
                 "animate": true,
                 "animations": [
                     {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: false
+                        "type": "rotate",
+                        "duration": 10,
+                        "reverse": false
                     }],
                 "visible": true,
                 "shape": "circle",
@@ -238,9 +264,9 @@ const templates = [
                 "animate": true,
                 "animations": [
                     {
-                        type: 'rotate',
-                        duration: 10,
-                        reverse: true
+                        "type": "rotate",
+                        "duration": 10,
+                        "reverse": true
                     }],
                 "visible": true,
                 "animType": "rotate",
@@ -250,15 +276,15 @@ const templates = [
         ]
     },
     {
-        name: "Planet 9 from Outer Space",
-        preview: "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(54,40,245,0.63) 25%, rgba(73,234,240,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%),linear-gradient(184deg, rgba(96,233,92,0.87) 0%, rgba(98,13,178,0.97) 22.6%, rgba(119,60,196,0.66) 48.2%, rgba(83,0,208,0.70) 88.5%, rgba(145,255,174,0.76) 100.0%)",
-        config: [
+        "name": "Planet 9 from Outer Space",
+        "preview": "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(54,40,245,0.63) 25%, rgba(73,234,240,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%),linear-gradient(184deg, rgba(96,233,92,0.87) 0%, rgba(98,13,178,0.97) 22.6%, rgba(119,60,196,0.66) 48.2%, rgba(83,0,208,0.70) 88.5%, rgba(145,255,174,0.76) 100.0%)",
+        "config": [
             {
                 "type": "radial",
                 "shape": "circle",
-                "opacity": 0.86,
+                "opacity": 0.7,
                 "blur": 26,
-                "animate": false,
+                "animate": true,
                 "duration": 2,
                 "clockwise": true,
                 "colorStops": [
@@ -267,7 +293,7 @@ const templates = [
                         "stop": "0%"
                     },
                     {
-                        "color": "rgba(54,40,245,0.63)",
+                        "color": "rgba(127,119,229,0.63)",
                         "stop": "25%"
                     },
                     {
@@ -283,16 +309,29 @@ const templates = [
                         "stop": "100%"
                     }
                 ],
-                "animations": [],
+                "animations": [
+                    {
+                        "type": "dropglow",
+                        "duration": 10,
+                        "reverse": false
+                    }
+                ],
                 "visible": true,
                 "centerX": 58,
-                "centerY": 56
+                "centerY": 56,
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                },
+                "size": "",
+                "posType": "percent",
+                "repeating": false
             },
             {
                 "type": "linear",
                 "shape": "circle",
                 "opacity": 0.65,
-                "blur": 10,
+                "blur": 12,
                 "animate": true,
                 "duration": 4,
                 "clockwise": true,
@@ -321,16 +360,20 @@ const templates = [
                 "animations": [
                     {
                         "type": "blur",
-                        "duration": 1,
+                        "duration": 8,
                         "reverse": false,
-                        "blurfrom": "3",
+                        "blurfrom": "2",
                         "blurto": "4"
                     }
                 ],
                 "visible": true,
                 "angle": 184,
                 "direction": "",
-                "repeating": false
+                "repeating": false,
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                }
             }
         ]
     },
@@ -477,9 +520,9 @@ const templates = [
         ]
     },
     {
-        name: "Deep Space Swirl",
-        preview: "linear-gradient(90deg, rgba(221,152,24,1.00) 0.0%, rgba(132,24,221,1.00) 49.3%, rgba(218, 118, 210, 1) 100%),radial-gradient(circle at 50% 50%, rgba(194,54,185,1.00) 43.8%, rgba(97,24,129,1.00) 74.2%),radial-gradient(circle at 50% 50%, rgba(220,46,209,1.00) 43.8%, rgba(136,27,183,1.00) 74.2%)",
-        config: [
+        "name": "Deep Space Swirl",
+        "preview": "linear-gradient(90deg, rgba(221,152,24,1.00) 0.0%, rgba(132,24,221,1.00) 49.3%, rgba(218, 118, 210, 1) 100%),radial-gradient(circle at 50% 50%, rgba(194,54,185,1.00) 43.8%, rgba(97,24,129,1.00) 74.2%),radial-gradient(circle at 50% 50%, rgba(220,46,209,1.00) 43.8%, rgba(136,27,183,1.00) 74.2%)",
+        "config": [
             {
                 "type": "linear",
                 "shape": "square",
@@ -583,9 +626,9 @@ const templates = [
 
     },
     {
-        name: "Targeted Glow",
-        preview: "repeating-radial-gradient(circle farthest-corner at 50% 50%, rgba(247, 0, 0, 1) 0%, #bfe9ff 15%, rgba(123, 68, 225, 1) 20%)",
-        config: [
+        "name": "Targeted Glow",
+        "preview": "repeating-radial-gradient(circle farthest-corner at 50% 50%, rgba(247, 0, 0, 1) 0%, #bfe9ff 15%, rgba(123, 68, 225, 1) 20%)",
+        "config": [
             {
                 "type": "radial",
                 "shape": "circle",
@@ -618,9 +661,9 @@ const templates = [
         ]
     },
     {
-        name: "Phase Shift",
-        preview: "linear-gradient(345deg, rgba(61,90,225,0.74) 0%, rgba(156,142,141,0.67) 100%)",
-        config: [
+        "name": "Phase Shift",
+        "preview": "linear-gradient(345deg, rgba(61,90,225,0.74) 0%, rgba(156,142,141,0.67) 100%)",
+        "config": [
             {
                 "type": "linear",
                 "shape": "circle",
@@ -694,9 +737,9 @@ const templates = [
         ]
     },
     {
-        name: "Eschatonic",
-        preview: "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(148,40,245,0.63) 25%, rgba(73,240,81,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%), linear-gradient(269deg, rgba(96,233,92,0.87) 0%, rgba(241,23,60,0.97) 25%, rgba(193,59,94,0.66) 50%, rgba(168,126,231,0.54) 75%, rgba(221,190,247,0.76) 100%)",
-        config: [
+        "name": "Eschatonic",
+        "preview": "radial-gradient( at 58px 56px, rgba(99,110,131,0.89) 0%, rgba(148,40,245,0.63) 25%, rgba(73,240,81,0.93) 50%, rgba(173,136,195,0.85) 75%, rgba(213,69,156,0.60) 100%), linear-gradient(269deg, rgba(96,233,92,0.87) 0%, rgba(241,23,60,0.97) 25%, rgba(193,59,94,0.66) 50%, rgba(168,126,231,0.54) 75%, rgba(221,190,247,0.76) 100%)",
+        "config": [
             {
                 "type": "conic",
                 "shape": "square",
@@ -812,10 +855,7 @@ const templates = [
         ]
 
     }
-    
-    // Add more templates...
 ];
-
 
         function defaultLayer() {
             return {
@@ -1513,203 +1553,222 @@ function onPickerChange() {
 }
 
 
-        function createLayers() {
-            const container = document.getElementById('spiral');
-            container.innerHTML = '';
+function createLayers() {
+    const container = document.getElementById('spiral');
+    container.innerHTML = '';
 
-            let animStyleElem = document.getElementById('layerAnimations');
-            if (!animStyleElem) {
-                animStyleElem = document.createElement('style');
-                animStyleElem.id = 'layerAnimations';
-                document.head.appendChild(animStyleElem);
+    let animStyleElem = document.getElementById('layerAnimations');
+    if (!animStyleElem) {
+        animStyleElem = document.createElement('style');
+        animStyleElem.id = 'layerAnimations';
+        document.head.appendChild(animStyleElem);
+    }
+    animStyleElem.innerHTML = '';
+
+    layers.forEach((layer, i) => {
+        if (!layer.visible) return;
+
+        const div = document.createElement('div');
+        div.className = `spiral-layer ${projectName}-layer-${i}`;
+        div.style.position = 'absolute';
+        div.style.inset = 0;
+
+        const gradient = buildGradientString(layer);
+        if (!layer.animations.some(a => a.type === 'morph')) {
+            div.style.background = gradient;
+        }
+
+        const staticFilter = `blur(${layer.blur}px)`;
+        if (!layer.animations.some(a => ['blur', 'hue', 'saturation', 'contrast', 'dropglow'].includes(a.type))) {
+            div.style.filter = staticFilter;
+        }
+
+        if (!layer.animations.some(a => a.type === 'pulse')) {
+            div.style.opacity = layer.opacity;
+        }
+
+        if (layer.clip && layer.clip.doclip && layer.clip.shape) {
+            const clipPath = fullClipPathString(layer.clip);
+            if (clipPath !== 'none') {
+                div.style.clipPath = clipPath;
+            } else {
+                div.style.borderRadius = layer.shape === 'square' ? '0%' : '50%';
             }
-            animStyleElem.innerHTML = '';
-                        
-            let animated = false;
-            layers.forEach((layer, i) => {
-                if (!layer.visible) return;
-                const div = document.createElement('div');
-                div.className = `spiral-layer ${projectName}-layer-${i}`;
+        } else {
+            div.style.borderRadius = layer.shape === 'square' ? '0%' : '50%';
+        }
 
-                let gradient = buildGradientString(layer);
+        const transformFrames = { '0%': [], '50%': [], '100%': [] };
+        const filterFrames = { '0%': [], '50%': [], '100%': [] };
+        let hasTransform = false;
+        let hasFilter = false;
+        let maxDuration = 0;
+        let maxdelay = 0;
+        let totalSteps = 4;
+        let transDuration = 5;
+        let filterDuration = 5;
 
-                //div.style.background = gradient;
-                //div.style.filter = `blur(${layer.blur}px)`;
-                //div.style.opacity = layer.opacity;
-                
+        if (layer.animate && Array.isArray(layer.animations)) {
+            layer.animations.forEach((anim, aIndex) => {
+                const animName = `${projectName}_layer${i}_preview_anim${aIndex}`;
+                const duration = anim.duration || defaultDuration;
+                maxDuration = Math.max(maxDuration, duration);
+                maxdelay = Math.max(maxdelay, anim.delay ?? 0);
 
-                if (!layer.animations.some(a => a.type === 'morph')) {
-                    div.style.background = gradient;
-                }
-                if (!layer.animations.some(a => a.type === 'pulse' || a.type === 'hue')) {
-                    div.style.filter = `blur(${layer.blur}px)`;
-                }
-                if (!layer.animations.some(a => a.type === 'pulse')) {
-                    div.style.opacity = layer.opacity;
-                }
+                switch (anim.type) {
+                    case 'rotate':
+                        hasTransform = true;
+                        transformFrames['0%'].push('rotate(0deg)');
+                        transformFrames['50%'].push(`rotate(${anim.reverse ? '-180deg' : '180deg'})`);
+                        transformFrames['100%'].push(`rotate(${anim.reverse ? '-360deg' : '360deg'})`);
+                        break;
 
-                // Shape handling — border-radius is fallback if no clip-path
-                if (layer.clip && layer.clip.doclip && layer.clip.shape) {
-                    const clipPath = fullClipPathString(layer.clip);
-                    if (clipPath !== 'none') {
-                        div.style.clipPath = clipPath;
-                    } else {
-                        div.style.borderRadius = `${layer.shape === 'square' ? '0%' : '50%'}`;
-                    }
-                } else {
-                    div.style.borderRadius = `${layer.shape === 'square' ? '0%' : '50%'}`;
-                }
+                    case 'step-rotate':
+                        hasTransform = true;
+                        const stepDeg = anim.step || 90;
+                        totalSteps = 360 / stepDeg;
+                        transformFrames['0%'].push('rotate(0deg)');
+                        transformFrames['100%'].push('rotate(360deg)');
+                        break;
 
-                const transformAnims = {};
-                let maxDuration = 0;
+                    case 'scale':
+                        hasTransform = true;
 
-                if (layer.animate && Array.isArray(layer.animations)) {
-                    let transformUsed = false;
-                    let transformAnimName = `${projectName}_layer${i}_transformCombo`;
-                    let transformFrames = {
-                        '0%': [],
-                        '50%': [],
-                        '100%': []
-                    };
+                        transformFrames['0%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
+                        transformFrames['50%'].push(`scale(${anim.scaletoX ?? 1}, ${anim.scaletoY ?? 1.1})`);
+                        transformFrames['100%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
+                        break;
 
-                    layer.animations.forEach((anim, aIndex) => {
-                        animated = true;
-                        const animName = `${projectName}_layer${i}_anim${aIndex}`;
-                        const duration = anim.duration || defaultDuration;
-                        maxDuration = Math.max(maxDuration, duration);
+                    case 'translate':
+                        hasTransform = true;
+                        const txFrom = anim.transXfrom ?? 0;
+                        const tyFrom = anim.transYfrom ?? 0;
+                        const txTo = anim.transXto ?? 10;
+                        const tyTo = anim.transYto ?? 10;
+                        transformFrames['0%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                        transformFrames['50%'].push(`translate(${txTo}px, ${tyTo}px)`);
+                        transformFrames['100%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                        break;
 
-                        switch (anim.type) {
-                            case 'rotate':
-                                transformUsed = true;
-                                transformFrames['0%'].push(`rotate(0deg)`);
-                                transformFrames['50%'].push(`rotate(${anim.reverse ? '-180deg' : '180deg'})`);
-                                transformFrames['100%'].push(`rotate(${anim.reverse ? '-360deg' : '360deg'})`);
-                                break;
+                    case 'skew':
+                        hasTransform = true;
+                        const axis = anim.direction === 'vertical' ? 'Y' : 'X';
+                        const skewVal = anim.intensity || 15;
+                        transformFrames['0%'].push(`skew${axis}(0deg)`);
+                        transformFrames['50%'].push(`skew${axis}(${skewVal}deg)`);
+                        transformFrames['100%'].push(`skew${axis}(0deg)`);
+                        break;
 
-                            case 'scale':
-                                transformUsed = true;
-                                const scaleFrom = anim.scalefrom ?? 1;
-                                const scaleTo = anim.scaleto ?? 1.1;
-                                transformFrames['0%'].push(`scale(${scaleFrom})`);
-                                transformFrames['50%'].push(`scale(${scaleTo})`);
-                                transformFrames['100%'].push(`scale(${scaleFrom})`);
-                                break;
+                    case 'blur':
+                        hasFilter = true;
+                        const blurFrom = anim.blurfrom ?? 0;
+                        const blurTo = anim.blurto ?? 10;
+                        filterFrames['0%'].push(`blur(${blurFrom}px)`);
+                        filterFrames['50%'].push(`blur(${(blurFrom + blurTo) / 2}px)`);
+                        filterFrames['100%'].push(`blur(${blurTo}px)`);
+                        break;
 
-                            case 'translate':
-                                transformUsed = true;
-                                const txFrom = anim.transXfrom ?? 0;
-                                const tyFrom = anim.transYfrom ?? 0;
-                                const txTo = anim.transXto ?? 10;
-                                const tyTo = anim.transYto ?? 10;
-                                transformFrames['0%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
-                                transformFrames['50%'].push(`translate(${txTo}px, ${tyTo}px)`);
-                                transformFrames['100%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
-                                break;
+                    case 'hue':
+                        hasFilter = true;
+                        const fromHue = anim.fromHue ?? 0;
+                        const toHue = anim.toHue ?? 360;
+                        filterFrames['0%'].push(`hue-rotate(${fromHue}deg)`);
+                        //filterFrames['50%'].push(`hue-rotate(${(fromHue + toHue) / 2}deg)`);
+                        filterFrames['100%'].push(`hue-rotate(${toHue}deg)`);
+                        break;
 
-                            case 'skew':
-                                transformUsed = true;
-                                const skewAxis = anim.direction === 'vertical' ? 'Y' : 'X';
-                                const skewVal = anim.intensity || 15;
-                                transformFrames['0%'].push(`skew${skewAxis}(0deg)`);
-                                transformFrames['50%'].push(`skew${skewAxis}(${skewVal}deg)`);
-                                transformFrames['100%'].push(`skew${skewAxis}(0deg)`);
-                                break;
-                                S
-                            
-                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
-                                break;
+                    case 'saturation':
+                        hasFilter = true;
+                        const satFrom = anim.satfrom ?? 1;
+                        const satTo = anim.satto ?? 2;
+                        filterFrames['0%'].push(`saturate(${satFrom})`);
+                        filterFrames['50%'].push(`saturate(${(satFrom + satTo) / 2})`);
+                        filterFrames['100%'].push(`saturate(${satTo})`);
+                        break;
 
-                            case 'pulse':
-                                const lowOpacity = Math.max(0, anim.pulsefrom ?? 0.3);
-                                const highOpacity = anim.pulseto ?? layer.opacity;
-                                animStyleElem.innerHTML += `@keyframes ${animName} {
+                    case 'contrast':
+                        hasFilter = true;
+                        filterFrames['0%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
+                        filterFrames['50%'].push(`contrast(${anim.contrastto ?? 150}%)`);
+                        filterFrames['100%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
+                        break;
+
+                    case 'dropglow':
+                        hasFilter = true;
+                        const fromColor = anim.dropglowcolorfrom ?? '#1c80e3';
+                        const toColor = anim.dropglowcolorto ?? '#da76d2';
+                        const glowFrom = anim.dropglowFrom ?? 5;
+                        const glowTo = anim.dropglowTo ?? 10;
+                        filterFrames['0%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
+                        filterFrames['50%'].push(`drop-shadow(0 0 ${glowTo}px ${toColor})`);
+                        filterFrames['100%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
+                        break;
+
+                    case 'pulse':
+                        const lowOpacity = Math.max(0, anim.pulsefrom ?? 0.3);
+                        const highOpacity = anim.pulseto ?? layer.opacity;
+                        const pulseAnimName = animName;
+                        animStyleElem.innerHTML += `@keyframes ${pulseAnimName} {
   0%, 100% { opacity: ${highOpacity}; }
   50% { opacity: ${lowOpacity}; }
 }`;
-                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
-                                break;
+                        div.style.animation = appendAnimation(div.style.animation, pulseAnimName, duration, 'normal', anim.delay ?? 0);
+                        break;
 
-                            case 'blur':
-                                const blurFrom = anim.blurfrom ?? 0;
-                                const blurTo = anim.blurto ?? 10;
-                                animStyleElem.innerHTML += `@keyframes ${animName} {
-  0% { filter: blur(${blurFrom}px); }
-  100% { filter: blur(${blurTo}px); }
-}`;
-                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
-                                break;
-
-                            case 'hue':
-                                const fromHue = anim.fromHue ?? 0;
-                                const toHue = anim.toHue ?? 360;
-                                animStyleElem.innerHTML += `@keyframes ${animName} {
-  0% { filter: hue-rotate(${fromHue}deg); }
-  100% { filter: hue-rotate(${toHue}deg); }
-}`;
-                                div.style.animation = appendAnimation(div.style.animation, animName, duration, 'alternate');
-                                break;
-
-                            case 'slide':
-                                const slideDir = anim.direction || 'horizontal';
-                                const slideName = animName;
-
-                                div.style.backgroundSize = '200% 200%';
-                                animStyleElem.innerHTML += `@keyframes ${slideName} {
+                    case 'slide':
+                        const slideDir = anim.direction || 'horizontal';
+                        div.style.backgroundSize = '200% 200%';
+                        const slideAnimName = animName;
+                        animStyleElem.innerHTML += `@keyframes ${slideAnimName} {
   0% { background-position: ${slideDir === 'vertical' ? '50% 0%' : '0% 50%'}; }
   100% { background-position: ${slideDir === 'vertical' ? '50% 100%' : '100% 50%'}; }
 }`;
-                                div.style.animation = appendAnimation(div.style.animation, slideName, anim.duration || 5, 'alternate');
-                                break;
-
-                            case 'saturation':
-                                const satFrom = anim.satfrom ?? 1;
-                                const satTo = anim.satto ?? 2;
-                                animStyleElem.innerHTML += `@keyframes ${animName} {
-  0% { filter: saturate(${satFrom}); }
-  100% { filter: saturate(${satTo}); }
-}`;
-                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
-                                break;
-
-                            case 'dropglow':
-                                animStyleElem.innerHTML += `@keyframes ${animName} {
-  0%, 100% { filter: drop-shadow(0 0 ${anim.dropglowFrom ?? 5}px ${anim.dropglowcolorfrom ?? '#1c80e3'}); }
-  50% { filter: drop-shadow(0 0 ${anim.dropglowTo ?? 10}px ${anim.dropglowcolorto ?? '#da76d2'}); }
-}`;
-                                div.style.animation = appendAnimation(div.style.animation, animName, anim.duration || 4, 'alternate');
-                                break;
-
-                        }
-                    });
-
-                    // Finalize combined transform animation
-                    if (transformUsed) {
-                        animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
-  0% { transform: ${transformFrames['0%'].join(' ')}; }
-  50% { transform: ${transformFrames['50%'].join(' ')}; }
-  100% { transform: ${transformFrames['100%'].join(' ')}; }
-}`;
-                        div.style.animation = appendAnimation(div.style.animation, transformAnimName, maxDuration);
-                    }
+                        div.style.animation = appendAnimation(div.style.animation, slideAnimName, duration, 'alternate', anim.delay ?? 0);
+                        break;
                 }
-
-
-
-                
-                div.style.position = 'absolute';
-                div.style.inset = 0;
-                container.appendChild(div);
             });
 
-            renderLayerList();
-            generateCSS();
-            exportConfig();
+            if (hasTransform) {
+                const transformAnimName = `${projectName}_layer${i}_preview_transformCombo`;
+                animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
+  0% { transform: ${transformFrames['0%'].join(' ')}; }`;
+                if (transformFrames['50%'].length > 0) {
+                    animStyleElem.innerHTML += ` 
+                      50% { transform: ${transformFrames['50%'].join(' ')}; }`;
+                }            
+        animStyleElem.innerHTML += ` 
+  100% { transform: ${transformFrames['100%'].join(' ')}; }
+}`;
+                div.style.animation = appendAnimation(div.style.animation, transformAnimName, maxDuration, 'normal', maxdelay);
+            }
+
+            if (hasFilter) {
+                const filterAnimName = `${projectName}_layer${i}_preview_filterCombo`;
+                animStyleElem.innerHTML += `@keyframes ${filterAnimName} {
+  0% { filter: ${filterFrames['0%'].join(' ')}; }`;
+                if (filterFrames['50%'].length > 0) {
+                    animStyleElem.innerHTML += ` 
+                    50% { filter: ${filterFrames['50%'].join(' ')}; }`;  
+  }
+                animStyleElem.innerHTML += ` 100% { filter: ${filterFrames['100%'].join(' ')}; }
+            }`;
+
+                div.style.animation = appendAnimation(div.style.animation, filterAnimName, maxDuration, 'normal', maxdelay);
+            }
         }
 
-function appendAnimation(existing, name, duration, direction = 'normal') {
-    const base = `${name} ${duration}s linear infinite ${direction}`;
-    return existing ? `${existing}, ${base}` : base;
+        if (layer.animations.some(a => a.type === "step-rotate")) {
+            div.style.animationTimingFunction = `steps(${totalSteps})`;
+            console.log("Steppin " + div.style.animationTimingFunction);
+        }
+        container.appendChild(div);
+    });
+
+    renderLayerList();
+    generateCSS();
+    exportConfig();
 }
+
 
 
 function buildGradientString(layer) {
@@ -1775,14 +1834,14 @@ function generateCSS() {
     let width = document.getElementById('previewwWidth');
     let height = document.getElementById('previewwHeight');
 
-    const containerStyles = `.spiral-container {
+    const containerStyles = `.gradient-container {
   position: relative;
   width: ${width != null ? width.value + 'px' : '300px'};
   height: ${height != null ? height.value + 'px' : '300px'};
   overflow: hidden;
 }
 
-.spiral-layer {
+.grad-layer {
   position: absolute;
   inset: 0;
 }
@@ -1790,6 +1849,7 @@ function generateCSS() {
 
     let layerStyles = '';
     let keyframes = '';
+    let totalSteps = 4;
 
     layers.forEach((layer, i) => {
         const className = `${projectName}-layer-${i}`;
@@ -1835,7 +1895,8 @@ function generateCSS() {
             filterFrames['100%'].push(f100);
         };
         let transDuration =  5;
-        let filterDuration =  5;
+        let filterDuration = 5;
+        let maxdelay = 0;
 
         if (layer.animate && layer.animations && layer.animations.length) {
             layer.animations.forEach((anim, aIndex) => {
@@ -1845,18 +1906,28 @@ function generateCSS() {
                 const infinite = 'infinite';
                 const direction = ['hue', 'blur', 'saturation', 'translate'].includes(anim.type) ? 'alternate' : 'normal';
 
+                maxdelay = Math.max(maxdelay, anim.delay ?? 0);
+
                 switch (anim.type) {
                     case 'rotate':
                         const rot = anim.reverse ? '-' : '';
                         addTransform(`rotate(0deg)`, `rotate(${rot}180deg)`, `rotate(${rot}360deg)`);
                         transDuration = anim.duration;
                         break;
+                    case 'step-rotate':
+                        hasTransform = true;
+                        const stepDeg = anim.step || 90;
+                        totalSteps = 360 / stepDeg;
+                        transformFrames['0%'].push(`rotate(0deg)`);
+                        transformFrames['100%'].push(`rotate(360deg)`);
+                        transDuration = anim.duration;
+                        break;
 
                     case 'scale':
                         addTransform(
-                            `scale(${anim.scalefrom ?? 1})`,
-                            `scale(${anim.scaleto ?? 1.1})`,
-                            `scale(${anim.scalefrom ?? 1})`
+                            `scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`,
+                            `scale(${anim.scaletoX ?? 1.1}, ${anim.scaletoY ?? 1.1})`,
+                            `scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`
                         );
                         transDuration = anim.duration;
                         break;
@@ -1897,7 +1968,7 @@ function generateCSS() {
                     case 'hue':
                         addFilter(
                             `hue-rotate(${anim.fromHue ?? 0}deg)`,
-                            `hue-rotate(${(anim.toHue ?? 360) / 2}deg)`,
+                            //`hue-rotate(${(anim.toHue ?? 360) / 2}deg)`,
                             `hue-rotate(${anim.toHue ?? 360}deg)`
                         );
                         filterDuration = anim.duration;
@@ -1914,9 +1985,9 @@ function generateCSS() {
 
                     case 'contrast':
                         addFilter(
-                            `contrast(100%)`,
-                            `contrast(140%)`,
-                            `contrast(100%)`
+                            `contrast(${anim.contrastfrom ?? 100}%)`,
+                            `contrast(${anim.contrastto ?? 150}%)`,
+                            `contrast(${anim.contrastfrom ?? 100}%)`
                         );
                         filterDuration = anim.duration;
                         break;
@@ -1968,35 +2039,44 @@ function generateCSS() {
             if (hasTransform) {
                 const tAnim = `${projectName}_layer${i}_transformCombo`;
                 keyframes += `@keyframes ${tAnim} {
-  0% { transform: ${transformFrames['0%'].join(' ')}; }
-  50% { transform: ${transformFrames['50%'].join(' ')}; }
-  100% { transform: ${transformFrames['100%'].join(' ')}; }
+  0% { transform: ${transformFrames['0%'].join(' ')}; }`;
+                if (transformFrames['50%'].length > 0) {
+                    keyframes += `
+                    50% { transform: ${transformFrames['50%'].join(' ')}; }`;
+                }
+                    keyframes += `100% { transform: ${transformFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${tAnim} ${transDuration}s 0s linear infinite`);
+                otherAnimations.push(`${tAnim} ${transDuration}s ${maxdelay}s linear infinite`);
             }
 
             if (hasFilter) {
                 const fAnim = `${projectName}_layer${i}_filterCombo`;
                 keyframes += `@keyframes ${fAnim} {
   0% { filter: ${filterFrames['0%'].join(' ')}; }
-  50% { filter: ${filterFrames['50%'].join(' ')}; }
-  100% { filter: ${filterFrames['100%'].join(' ')}; }
+  `;
+                if (filterFrames['50%'].length > 0 ) {
+                    keyframes += `
+                    50% { filter: ${filterFrames['50%'].join(' ')}; }`;
+                }
+                keyframes += `100% { filter: ${filterFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${fAnim} ${filterDuration}s 0s linear infinite`);
+                otherAnimations.push(`${fAnim} ${filterDuration}s ${maxdelay}s linear infinite`);
             }
 
             layerCSS += `  animation: ${otherAnimations.join(', ')};\n`;
         }
-
+        if (layer.animations.some((a => a.type === "step-rotate"))) {
+            layerCSS += `animation-timing-function: steps(${totalSteps});\n`;
+        }
         layerCSS += '}\n\n';
         layerStyles += layerCSS;
     });
 
 
     // Generate the HTML for the container
-    let html = `<div class="spiral-container">\n`;
+    let html = `<div class="gradient-container">\n`;
     layers.forEach((_, i) => {
-        html += `  <div class="spiral-layer ${projectName}-layer-${i}"></div>\n`;
+        html += `  <div class="grad-layer ${projectName}-layer-${i}"></div>\n`;
     });
     html += `</div>`;
 
@@ -2121,7 +2201,7 @@ function generateSVG() {
                 }
                 if (anim.type === 'scale') {
                     shapeAnimations += `<animateTransform attributeName="transform" type="scale"
-  values="${anim.scalefrom ?? 1};${anim.scaleto ?? 1.1};${anim.scalefrom ?? 1}"
+  values="${anim.scalefromX ?? 1},${anim.scalefromY ?? 1};${anim.scaletoX ?? 1.1},${anim.scaletoY >> 1};${anim.scalefromX ?? 1},${anim.scalefromY ?? 1}"
   dur="${dur}" repeatCount="indefinite" />\n`;
                 }
                 if (anim.type === 'pulse') {
@@ -2492,7 +2572,6 @@ function rgbToHex(r, g, b) {
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-
 function renderTemplateMenu() {
     const container = document.getElementById('templateList');
     container.innerHTML = '';
@@ -2562,6 +2641,7 @@ function renderAnimationControls() {
                 <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale - Grows and shrinks the layer. Used for breathing effects or floating visuals.</option>
                 <option value="translate" ${anim.type === 'translate' ? 'selected' : ''}>Translate - X/Y drift / float / parallax-like effect.</option>
                 <option value="dropglow" ${anim.type === 'dropglow' ? 'selected' : ''}>Drop Glow - Animates the layer's shadow to create a pulsing effect. Great for ambient visuals.</option>
+                <option value="contrast" ${anim.type === 'contrast' ? 'selected' : ''}>Contrast - Similar to saturate, can help produce ambient glow</option>
 
                 </select>
         `;
@@ -2651,6 +2731,18 @@ function renderAnimationControls() {
     `;
             item.appendChild(toHueLabel);
         }
+        if (anim.type === 'contrast') {
+            item.innerHTML += `
+        <label>From Contrast:
+            <input type="number" value="${anim.contrastfrom ?? 100}" 
+                onchange="updateAnimation(${index}, 'contrastfrom', this.value)">
+        </label>
+        <label>To Contrast:
+            <input type="number" value="${anim.contrastto ?? 150}" 
+                onchange="updateAnimation(${index}, 'contrastto', this.value)">
+        </label>
+    `;
+        }
 
         if (anim.type === 'stretch') {
             const dirLabel = document.createElement('label');
@@ -2676,7 +2768,7 @@ function renderAnimationControls() {
         <label>Step Degrees:
         <select onchange="updateAnimation(${index}, 'step', this.value)">
                     <option value="180" ${anim.step === '180' ? 'selected' : ''}>180</option>
-                    <option value="90" ${anim.step === '90' ? 'selected' : ''}>90</option>
+                    <option value="90" ${!anim.step || anim.step === '90' ? 'selected' : ''}>90</option>
                     <option value="60" ${anim.step === '60' ? 'selected' : ''}>60</option>
                     <option value="45" ${anim.step === '45' ? 'selected' : ''}>45</option>
                     <option value="30" ${anim.step === '30' ? 'selected' : ''}>30</option>
@@ -2741,13 +2833,21 @@ function renderAnimationControls() {
         }
         if (anim.type === 'scale') {
             item.innerHTML += `
-        <label>From Scale:
-            <input type="number" step="0.01" value="${anim.scalefrom ?? 1}" 
-                onchange="updateAnimation(${index}, 'scalefrom', this.value)">
+        <label>From Scale X:
+            <input type="number" step="0.01" value="${anim.scalefromX ?? 1}" 
+                onchange="updateAnimation(${index}, 'scalefromX', this.value)">
         </label>
-        <label>To Scale:
-            <input type="number" step="0.01" value="${anim.scaleto ?? 1.1}" 
-                onchange="updateAnimation(${index}, 'scaleto', this.value)">
+        <label>To Scale X:
+            <input type="number" step="0.01" value="${anim.scaletoX ?? 1.1}" 
+                onchange="updateAnimation(${index}, 'scaletoX', this.value)">
+        </label>
+        <label>From Scale Y:
+            <input type="number" step="0.01" value="${anim.scalefromY ?? 1}" 
+                onchange="updateAnimation(${index}, 'scalefromY', this.value)">
+        </label>
+        <label>To Scale Y:
+            <input type="number" step="0.01" value="${anim.scaletoY ?? 1.1}" 
+                onchange="updateAnimation(${index}, 'scaletoY', this.value)">
         </label>
     `;
         }
@@ -3012,13 +3112,6 @@ document.getElementById('alphaSlider').addEventListener('input', (e) => {
     updateColorFromUI();
     onPickerChange();
 });
-
-
-        // Initialize with one default layer
-        //addLayer();
-renderTemplateMenu();
-//console.log("aaa" + templates[0].config);
-loadTemplate(templates[0].config);
 
 
 
@@ -3541,3 +3634,23 @@ function createSectionedTooltip(header, text) {
 </div>
 </span>`;
 }
+
+
+function testHtml() {
+    document.getElementById("htmlPreview").innerHTML = document.getElementById("cssOutput").value;
+    document.getElementById("clear-preview").classList.remove("hidden");
+}
+function clearHtmlPreview() {
+    document.getElementById("htmlPreview").innerHTML = "";
+    document.getElementById("clear-preview").classList.add("hidden");
+}
+
+
+
+
+
+// Initialize with one default layer
+//addLayer();
+renderTemplateMenu();
+//console.log("aaa" + templates[0].config);
+loadTemplate(templates[0] ? templates[0].config : { name: "Issues", config: defaultLayer() });
