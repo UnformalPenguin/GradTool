@@ -295,10 +295,11 @@ body {
              }
 
     .layer-item.selected {
-        background: linear-gradient(135deg, rgba(58, 0, 74, 0.9), rgba(0, 72, 97, 0.8));
+        background: linear-gradient(135deg, rgba(78, 5, 95, 0.90), rgba(0, 72, 97, 0.8));
         border: #43009b solid;
         font-weight: bold;
         box-shadow: 0 0 6px rgba(160, 60, 255, 0.5);
+        animation: animatedshadow 10s linear infinite;
     }
 
      .layer-editor label {
@@ -325,6 +326,15 @@ body {
     cursor: pointer;
 }
 
+.html-preview-btn {
+    background: #121222;
+    color: white;
+    border: none;
+    padding: 0.1rem 0.2rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
 
 /*.layer-editor select {
     width: 100%;
@@ -386,6 +396,7 @@ input:focus {
     border-radius: 4px;
     padding: 1rem;
 }
+
 /*#layer-details-block {
     background: linear-gradient(180deg, rgba(1, 61, 78, 1.00) 0%, rgba(25,0,57,1.00) 50%, rgba(51, 0, 87, 1.00) 100%);
 }*/
@@ -1159,3 +1170,13 @@ body.tooltips-disabled .tooltip-text {
         line-height: 1;
         width: 20px;
     }
+
+@keyframes animatedshadow {
+    0% {
+        filter: drop-shadow(0 0 4px #2e1867);
+    }
+
+    100% {
+        filter: drop-shadow(0 0 5px #631b5e);
+    }
+}
