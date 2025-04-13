@@ -382,14 +382,15 @@ input:focus {
 }
 
 .section-header {
-    background: linear-gradient(60deg, #4f034c 0%, #300057 15%, rgba(25,0,57,1.00) 30%, rgb(0, 46, 87) 100%);
+    background: linear-gradient(22deg, #4f034c 0%, rgba(25,0,57,1.00) 20%, rgba(2, 34, 67, .10) 50%, rgba(2, 34, 67, 0) 100%);
+    border-radius: 4px;
     padding: 1rem;
 }
 /*#layer-details-block {
     background: linear-gradient(180deg, rgba(1, 61, 78, 1.00) 0%, rgba(25,0,57,1.00) 50%, rgba(51, 0, 87, 1.00) 100%);
 }*/
 .editor-section {
-    background: linear-gradient(202deg, rgb(0, 46, 87) 0%, rgba(25,0,57,1.00) 50%, #300057 75%, rgba(51, 0, 87, 1.00) 100%);
+    background: linear-gradient(202deg, rgba(2, 34, 67, 1.00) 0%, rgba(25,0,57,1.00) 50%, rgba(40, 1, 84, 1.00) 75%, rgba(51, 0, 87, 1.00) 100%);
     margin-top: 1rem;
 }
 /*.layer-editor input[type="number"]

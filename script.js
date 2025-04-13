@@ -4,6 +4,7 @@ var layers = [];
 var currentLayerIndex = -1;
 let selectedStopIndex = -1;
 let isDraggingStop = false;
+let isDraggingColorField = false;
 let hue = 120;
 let saturation = 1;
 let brightness = 1;
@@ -1492,11 +1493,9 @@ function onPickerChange() {
             let animated = false;
             layers.forEach((layer, i) => {
                 if (!layer.visible) return;
-
                 const div = document.createElement('div');
                 div.className = `spiral-layer ${projectName}-layer-${i}`;
 
-                const colorStr = layer.colorStops.map(cs => `${cs.color} ${cs.stop}`).join(', ');
                 let gradient = buildGradientString(layer);
 
                 //div.style.background = gradient;
@@ -1526,273 +1525,142 @@ function onPickerChange() {
                     div.style.borderRadius = `${layer.shape === 'square' ? '0%' : '50%'}`;
                 }
 
-            //    if (layer.animate) {
-            //        animated = true;
-            //            const animName = `${layer.animType}${i}`;
-            //            div.style.animation = `${animName} ${layer.duration}s linear infinite`;
-
-            //            switch (layer.animType) {
-            //                case 'rotate':
-            //                    animStyleElem.innerHTML += `@keyframes ${animName} {
-            //    to { transform: rotate(${layer.clockwise ? '' : '-'}360deg); }
-            //}`;
-            //                    break;
-
-            //                case 'pulse':
-            //                    animStyleElem.innerHTML += `@keyframes ${animName} {
-            //    0%, 100% { filter: blur(${layer.blur}px); opacity: ${layer.opacity}; }
-            //    50% { filter: blur(${layer.blur + 2}px); opacity: ${Math.max(0, layer.opacity - 0.2)}; }
-            //}`;
-            //                    break;
-
-            //                case 'hue':
-            //                    animStyleElem.innerHTML += `@keyframes ${animName} {
-            //    0% { filter: hue-rotate(0deg); }
-            //    100% { filter: hue-rotate(360deg); }
-            //}`;
-            //                    break;
-
-            //                case 'slide':
-            //                    div.style.backgroundSize = '200% 200%';
-            //                    animStyleElem.innerHTML += `@keyframes ${animName} {
-            //    0% { background-position: 0% 50%; }
-            //    100% { background-position: 100% 50%; }
-            //}`;
-            //                    break;
-
-            //                case 'morph':
-            //                    animStyleElem.innerHTML += `@keyframes ${animName} {
-            //    0% { background: ${buildGradientString(layer)}; }
-            //    50% { background: ${buildGradientString({ ...layer, angle: (layer.angle || 0) + 180 })}; }
-            //    100% { background: ${buildGradientString(layer)}; }
-            //}`;
-            //                    break;
-            //        }
+                const transformAnims = {};
+                let maxDuration = 0;
 
                 if (layer.animate && Array.isArray(layer.animations)) {
-                    animated = true;
-                        layer.animations.forEach((anim, aIndex) => {
-                            const animName = `${projectName}_layer${i}_anim${aIndex}`;
-                            const duration = anim.duration || defaultDuration;
-                            const delay = anim.delay || 0;
+                    let transformUsed = false;
+                    let transformAnimName = `${projectName}_layer${i}_transformCombo`;
+                    let transformFrames = {
+                        '0%': [],
+                        '50%': [],
+                        '100%': []
+                    };
 
-                            div.style.animation = div.style.animation
-                                ? `${div.style.animation}, ${animName} ${duration}s linear infinite`
-                                : `${animName} ${duration}s ${delay}s linear infinite`;
-                            switch (anim.type) {
-                                case 'rotate':
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-                    to { transform: rotate(${anim.reverse ? '-' : ''}360deg); }
-                }`;
-                                    break;
-                                case 'pulse':
-                                    const lowOpacity = Math.max(0, anim.pulsefrom);
-                                    const highOpacity = layer.pulseto;
-                                    const lowBlur = layer.blur;
-                                    const highBlur = layer.blur + 2;
+                    layer.animations.forEach((anim, aIndex) => {
+                        animated = true;
+                        const animName = `${projectName}_layer${i}_anim${aIndex}`;
+                        const duration = anim.duration || defaultDuration;
+                        maxDuration = Math.max(maxDuration, duration);
 
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0%, 100% { filter: blur(${lowBlur}px); opacity: ${highOpacity}; }
-        50% { filter: blur(${highBlur}px); opacity: ${lowOpacity}; }
-    }`;
-                                    break;
-                                case 'pulse2':
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-                    0%, 100% { filter: blur(${layer.blur}px); opacity: ${layer.opacity}; }
-                    50% { filter: blur(${layer.blur + 2}px); opacity: ${Math.max(0.1, layer.opacity - 0.2)}; }
-                }`;
-                                    break;
-                                case 'hue':
-                                    const fromHue = anim.fromHue ?? 0;
-                                    const toHue = anim.toHue ?? 360;
-                                    div.style.animationDirection = "alternate";
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { filter: hue-rotate(${fromHue}deg); }
-        100% { filter: hue-rotate(${toHue}deg); }
-    }`;
-                                    break;
-                                case 'hue2':
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-                    0% { filter: hue-rotate(0deg); }
-                    100% { filter: hue-rotate(360deg); }
-                }`;
-                                    break;
+                        switch (anim.type) {
+                            case 'rotate':
+                                transformUsed = true;
+                                transformFrames['0%'].push(`rotate(0deg)`);
+                                transformFrames['50%'].push(`rotate(${anim.reverse ? '-180deg' : '180deg'})`);
+                                transformFrames['100%'].push(`rotate(${anim.reverse ? '-360deg' : '360deg'})`);
+                                break;
 
-                                case 'slide':
-                                    div.style.backgroundSize = '200% 200%';
-                                    if (anim.direction === 'vertical') {
-                                        animStyleElem.innerHTML += `@keyframes ${animName} {
-                        0% { background-position: 50% 0%; }
-                        100% { background-position: 50% 100%; }
-                    }`;
-                                    } else {
-                                        animStyleElem.innerHTML += `@keyframes ${animName} {
-                        0% { background-position: 0% 50%; }
-                        100% { background-position: 100% 50%; }
-                    }`;
-                                    }
-                                    break;
-                                case 'step-rotate':
-                                    const stepDeg = anim.step || 90;
-                                    const totalSteps = 360 / stepDeg;
-                                    const finalDeg = stepDeg * totalSteps;
+                            case 'scale':
+                                transformUsed = true;
+                                const scaleFrom = anim.scalefrom ?? 1;
+                                const scaleTo = anim.scaleto ?? 1.1;
+                                transformFrames['0%'].push(`scale(${scaleFrom})`);
+                                transformFrames['50%'].push(`scale(${scaleTo})`);
+                                transformFrames['100%'].push(`scale(${scaleFrom})`);
+                                break;
 
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }`;
-                                    div.style.animationTimingFunction = 'steps(' + totalSteps + ')';
-                                    break;
-                                case 'blur':
-                                    const blurFrom = anim.blurfrom ?? 0;
-                                    const blurTo = anim.blurto ?? 10;
+                            case 'translate':
+                                transformUsed = true;
+                                const txFrom = anim.transXfrom ?? 0;
+                                const tyFrom = anim.transYfrom ?? 0;
+                                const txTo = anim.transXto ?? 10;
+                                const tyTo = anim.transYto ?? 10;
+                                transformFrames['0%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                                transformFrames['50%'].push(`translate(${txTo}px, ${tyTo}px)`);
+                                transformFrames['100%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                                break;
 
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { filter: blur(${blurFrom}px); }
-        100% { filter: blur(${blurTo}px); }
-    }`;
+                            case 'skew':
+                                transformUsed = true;
+                                const skewAxis = anim.direction === 'vertical' ? 'Y' : 'X';
+                                const skewVal = anim.intensity || 15;
+                                transformFrames['0%'].push(`skew${skewAxis}(0deg)`);
+                                transformFrames['50%'].push(`skew${skewAxis}(${skewVal}deg)`);
+                                transformFrames['100%'].push(`skew${skewAxis}(0deg)`);
+                                break;
+                                S
+                            
+                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
+                                break;
 
-                                    div.style.animationDirection = 'alternate';
-                                    break;
+                            case 'pulse':
+                                const lowOpacity = Math.max(0, anim.pulsefrom ?? 0.3);
+                                const highOpacity = anim.pulseto ?? layer.opacity;
+                                animStyleElem.innerHTML += `@keyframes ${animName} {
+  0%, 100% { opacity: ${highOpacity}; }
+  50% { opacity: ${lowOpacity}; }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
+                                break;
 
-                                case 'stretch':
-                                    const flipAxis = anim.direction === 'vertical' ? 'scaleY' : 'scaleX';
-                                    const direction = anim.direction === 'vertical' ? '-1' : '-1';
-                                    const flipMode = anim.alternate ? 'alternate' : 'normal';
-                                    div.style.animationTimingFunction = 'ease-in-out';
-                                    div.style.animationDirection = flipMode;
-                                    let stretchLimit = anim.intensity * 100;
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { transform: ${flipAxis}(1); }
-        ${stretchLimit}% { transform: ${flipAxis}(${direction}); }
-        0% { transform: ${flipAxis}(1); }
-    }`;
-                                    break;
-                                case 'morph2':
-                                    const angleA = (layer.angle || 0);
-                                    const angleB = angleA + 180;
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-                    0% { background: ${buildGradientString(layer)}; }
-                    50% { background: ${buildGradientString({ ...layer, angle: angleB })}; }
-                    100% { background: ${buildGradientString(layer)}; }
-                }`;
-                                    break;
+                            case 'blur':
+                                const blurFrom = anim.blurfrom ?? 0;
+                                const blurTo = anim.blurto ?? 10;
+                                animStyleElem.innerHTML += `@keyframes ${animName} {
+  0% { filter: blur(${blurFrom}px); }
+  100% { filter: blur(${blurTo}px); }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
+                                break;
 
-                                case 'skew':
-                                    const skewAxis = anim.direction === 'vertical' ? 'Y' : 'X';
-                                    const skewVal = anim.intensity || 15;
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0%, 100% { transform: skew${skewAxis}(0deg); }
-        50% { transform: skew${skewAxis}(${skewVal}deg); }
-    }`;
-                                    break;
+                            case 'hue':
+                                const fromHue = anim.fromHue ?? 0;
+                                const toHue = anim.toHue ?? 360;
+                                animStyleElem.innerHTML += `@keyframes ${animName} {
+  0% { filter: hue-rotate(${fromHue}deg); }
+  100% { filter: hue-rotate(${toHue}deg); }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, animName, duration, 'alternate');
+                                break;
 
-                                case 'saturation':
-                                    const satFrom = anim.satfrom ?? 1;
-                                    const satTo = anim.satto ?? 2;
+                            case 'slide':
+                                const slideDir = anim.direction || 'horizontal';
+                                const slideName = animName;
 
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { filter: saturate(${satFrom}); }
-        100% { filter: saturate(${satTo}); }
-    }`;
-                                    break;
+                                div.style.backgroundSize = '200% 200%';
+                                animStyleElem.innerHTML += `@keyframes ${slideName} {
+  0% { background-position: ${slideDir === 'vertical' ? '50% 0%' : '0% 50%'}; }
+  100% { background-position: ${slideDir === 'vertical' ? '50% 100%' : '100% 50%'}; }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, slideName, anim.duration || 5, 'alternate');
+                                break;
 
+                            case 'saturation':
+                                const satFrom = anim.satfrom ?? 1;
+                                const satTo = anim.satto ?? 2;
+                                animStyleElem.innerHTML += `@keyframes ${animName} {
+  0% { filter: saturate(${satFrom}); }
+  100% { filter: saturate(${satTo}); }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, animName, duration);
+                                break;
 
-                                case 'glowpulse':
-                                    //const satFrom = anim.satfrom ?? 1;
-                                    //const satTo = anim.satto ?? 2;
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
-    50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
-    }`;
-                                    break;
+                            case 'dropglow':
+                                animStyleElem.innerHTML += `@keyframes ${animName} {
+  0%, 100% { filter: drop-shadow(0 0 ${anim.dropglowFrom ?? 5}px ${anim.dropglowcolorfrom ?? '#1c80e3'}); }
+  50% { filter: drop-shadow(0 0 ${anim.dropglowTo ?? 10}px ${anim.dropglowcolorto ?? '#da76d2'}); }
+}`;
+                                div.style.animation = appendAnimation(div.style.animation, animName, anim.duration || 4, 'alternate');
+                                break;
 
+                        }
+                    });
 
-                                case 'wobble':
-                                    //const satFrom = anim.satfrom ?? 1;
-                                    //const satTo = anim.satto ?? 2;
-
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-    0% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(1deg) scale(1.1); }
-    50% { transform: rotate(0deg) scale(1); }
-    75% { transform: rotate(-1deg) scale(0.9); }
-    100% { transform: rotate(0deg) scale(1); }
-    }`;
-                                    break;
-
-
-                                case 'contrast':
-                                    //const satFrom = anim.satfrom ?? 1;
-                                    //const satTo = anim.satto ?? 2;
-
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0%, 200% { filter: contrast(100 %); }
-    200%, 0% { filter: contrast(140%); }
-    }`;
-
-                                    div.style.animationDirection = 'alternate';
-                                    break;
-
-                                case 'translate':
-                                    const transXfrom = anim.transXfrom ?? 10;
-                                    const transYfrom = anim.transYfrom ?? 10;
-                                    const transXto = anim.transXto ?? 10;
-                                    const transYto = anim.transYto ?? 10;
-                                    if (transXfrom < 0)
-                                        transXfrom = transXfrom * -1;
-                                    if (transYfrom < 0)
-                                        transYfrom = transYfrom * -1;
-                                    if (transXto < 0)
-                                        transXto = transXto * -1;
-                                    if (transYto < 0)
-                                        transYto = transYto * -1;
-
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
-  50% { transform: translate(${transXto}px, ${transYto}px); }
-        100% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
-    }`;
-
-                                    div.style.animationDirection = 'alternate';
-                                    break;
-
-
-                                case 'scale':
-                                    const zoomFrom = anim.scalefrom ?? 1;
-                                    const zoomTo = anim.scaleto ?? 1.1;
-
-                                    animStyleElem.innerHTML += `@keyframes ${animName} {
-        0% { transform: scale(${zoomFrom}); }
-        50% { transform: scale(${zoomTo}); }
-        100% { transform: scale(${zoomFrom}); }
-    }`;
-
-                                    div.style.animationDirection = 'normal'; // loop cleanly
-                                    break;
-
-                            }
-                        });
+                    // Finalize combined transform animation
+                    if (transformUsed) {
+                        animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
+  0% { transform: ${transformFrames['0%'].join(' ')}; }
+  50% { transform: ${transformFrames['50%'].join(' ')}; }
+  100% { transform: ${transformFrames['100%'].join(' ')}; }
+}`;
+                        div.style.animation = appendAnimation(div.style.animation, transformAnimName, maxDuration);
+                    }
                 }
-                console.log("Fional anim: " + animStyleElem.innerHTML);
 
 
 
-                //    const animName = `spin${i}`;
-                //    div.style.animation = `${animName} ${layer.duration}s linear infinite`;
-                //    animStyleElem.innerHTML += `
-                //    @keyframes ${animName} {
-                //        to { transform: rotate(${layer.clockwise ? '' : '-'}360deg); }
-                //    }
-                //`;
                 
-
-                if (animated) {
-                    document.getElementById("animate-block").classList.remove("hidden");
-                }
-                else {
-                    document.getElementById("animate-block").classList.add("hidden");
-                }
                 div.style.position = 'absolute';
                 div.style.inset = 0;
                 container.appendChild(div);
@@ -1802,6 +1670,12 @@ function onPickerChange() {
             generateCSS();
             exportConfig();
         }
+
+function appendAnimation(existing, name, duration, direction = 'normal') {
+    const base = `${name} ${duration}s linear infinite ${direction}`;
+    return existing ? `${existing}, ${base}` : base;
+}
+
 
 function buildGradientString(layer) {
     const stops = layer.colorStops.map(cs => `${cs.color} ${cs.stop}`.trim()).join(', ');
@@ -1885,14 +1759,14 @@ function generateCSS() {
     layers.forEach((layer, i) => {
         const className = `${projectName}-layer-${i}`;
         const gradient = buildGradientString(layer);
-        let animationNames = [];
+        const animationNames = [];
 
         let layerCSS = `.${className} {\n`;
         layerCSS += `  background: ${gradient};\n`;
         layerCSS += `  filter: ${buildFilterString(layer)};\n`;
         layerCSS += `  opacity: ${layer.opacity};\n`;
 
-        // Shape handling — border-radius is fallback if no clip-path
+        // Shape / Clip
         if (layer.clip && layer.clip.doclip && layer.clip.shape) {
             const clipPath = fullClipPathString(layer.clip);
             if (clipPath !== 'none') {
@@ -1904,47 +1778,129 @@ function generateCSS() {
             layerCSS += `  border-radius: ${layer.shape === 'square' ? '0%' : '50%'};\n`;
         }
 
-        if (layer.animate && layer.animations && layer.animations.length) {
-            let animationParts = [];
+        // === Animation processing ===
+        const transformFrames = { '0%': [], '50%': [], '100%': [] };
+        const filterFrames = { '0%': [], '50%': [], '100%': [] };
+        const otherAnimations = [];
 
+        let hasTransform = false;
+        let hasFilter = false;
+
+        const addTransform = (t0, t50, t100) => {
+            hasTransform = true;
+            transformFrames['0%'].push(t0);
+            transformFrames['50%'].push(t50);
+            transformFrames['100%'].push(t100);
+        };
+
+        const addFilter = (f0, f50, f100) => {
+            hasFilter = true;
+            filterFrames['0%'].push(f0);
+            filterFrames['50%'].push(f50);
+            filterFrames['100%'].push(f100);
+        };
+
+        if (layer.animate && layer.animations && layer.animations.length) {
             layer.animations.forEach((anim, aIndex) => {
                 const animName = `${projectName}_layer${i}_anim${aIndex}`;
-                animationNames.push(animName);
                 const duration = anim.duration || 5;
                 const delay = anim.delay || 0;
+                const infinite = 'infinite';
+                const direction = ['hue', 'blur', 'saturation', 'translate'].includes(anim.type) ? 'alternate' : 'normal';
 
-                // Add CSS animation line
-                animationParts.push(`${animName} ${duration}s ${delay}s linear infinite ${anim.type === 'hue' || anim.type === 'blur' || anim.type === 'saturation' ? 'alternate' : ''}`.trim());
-
-                // Generate @keyframes for each animation type
                 switch (anim.type) {
                     case 'rotate':
-                        keyframes += `@keyframes ${animName} {
-  to { transform: rotate(${anim.reverse ? '-' : ''}360deg); }
-}\n\n`;
+                        const rot = anim.reverse ? '-' : '';
+                        addTransform(`rotate(0deg)`, `rotate(${rot}180deg)`, `rotate(${rot}360deg)`);
+                        break;
+
+                    case 'scale':
+                        addTransform(
+                            `scale(${anim.scalefrom ?? 1})`,
+                            `scale(${anim.scaleto ?? 1.1})`,
+                            `scale(${anim.scalefrom ?? 1})`
+                        );
+                        break;
+
+                    case 'translate':
+                        const txf = anim.transXfrom ?? 0;
+                        const tyf = anim.transYfrom ?? 0;
+                        const txt = anim.transXto ?? 10;
+                        const tyt = anim.transYto ?? 10;
+                        addTransform(
+                            `translate(${txf}px, ${tyf}px)`,
+                            `translate(${txt}px, ${tyt}px)`,
+                            `translate(${txf}px, ${tyf}px)`
+                        );
+                        break;
+
+                    case 'skew':
+                        const axis = anim.direction === 'vertical' ? 'Y' : 'X';
+                        const skewVal = anim.intensity || 15;
+                        addTransform(
+                            `skew${axis}(0deg)`,
+                            `skew${axis}(${skewVal}deg)`,
+                            `skew${axis}(0deg)`
+                        );
+                        break;
+
+                    case 'blur':
+                        addFilter(
+                            `blur(${anim.blurfrom ?? 0}px)`,
+                            `blur(${anim.blurto ?? 5}px)`,
+                            `blur(${anim.blurfrom ?? 0}px)`
+                        );
+                        break;
+
+                    case 'hue':
+                        addFilter(
+                            `hue-rotate(${anim.fromHue ?? 0}deg)`,
+                            `hue-rotate(${(anim.toHue ?? 360) / 2}deg)`,
+                            `hue-rotate(${anim.toHue ?? 360}deg)`
+                        );
+                        break;
+
+                    case 'saturation':
+                        addFilter(
+                            `saturate(${anim.satfrom ?? 1})`,
+                            `saturate(${anim.satto ?? 2})`,
+                            `saturate(${anim.satfrom ?? 1})`
+                        );
+                        break;
+
+                    case 'contrast':
+                        addFilter(
+                            `contrast(100%)`,
+                            `contrast(140%)`,
+                            `contrast(100%)`
+                        );
+                        break;
+
+                    case 'glowpulse':
+                    case 'dropglow':
+                        addFilter(
+                            `drop-shadow(0 0 5px rgba(255,255,255,0.2))`,
+                            `drop-shadow(0 0 20px rgba(255,255,255,0.5))`,
+                            `drop-shadow(0 0 5px rgba(255,255,255,0.2))`
+                        );
                         break;
 
                     case 'pulse':
                         keyframes += `@keyframes ${animName} {
-  0%, 100% { filter: blur(${layer.blur}px); opacity: ${layer.opacity}; }
-  50% { filter: blur(${layer.blur + 2}px); opacity: ${Math.max(0.1, layer.opacity - 0.2)}; }
+  0%, 100% { opacity: ${layer.opacity}; }
+  50% { opacity: ${Math.max(0.1, layer.opacity - 0.2)}; }
 }\n\n`;
-                        break;
-
-                    case 'hue':
-                        keyframes += `@keyframes ${animName} {
-  0% { filter: hue-rotate(${anim.fromHue ?? 0}deg); }
-  100% { filter: hue-rotate(${anim.toHue ?? 360}deg); }
-}\n\n`;
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
                         break;
 
                     case 'slide':
+                        const vertical = anim.direction === 'vertical';
                         layerCSS += `  background-size: 200% 200%;\n`;
-                        const isVertical = anim.direction === 'vertical';
                         keyframes += `@keyframes ${animName} {
-  0% { background-position: ${isVertical ? '50% 0%' : '0% 50%'}; }
-  100% { background-position: ${isVertical ? '50% 100%' : '100% 50%'}; }
+  0% { background-position: ${vertical ? '50% 0%' : '0% 50%'}; }
+  100% { background-position: ${vertical ? '50% 100%' : '100% 50%'}; }
 }\n\n`;
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
                         break;
 
                     case 'morph':
@@ -1957,81 +1913,39 @@ function generateCSS() {
   50% { background: ${gradB}; }
   100% { background: ${gradA}; }
 }\n\n`;
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
                         break;
-
-                    case 'blur':
-                        keyframes += `@keyframes ${animName} {
-  0% { filter: blur(${anim.blurfrom ?? 0}px); }
-  100% { filter: blur(${anim.blurto ?? 5}px); }
-}\n\n`;
-                        break;
-
-                    case 'saturation':
-                        keyframes += `@keyframes ${animName} {
-  0% { filter: saturate(${anim.satfrom ?? 1}); }
-  100% { filter: saturate(${anim.satto ?? 2}); }
-}\n\n`;
-                        break;
-
-                    case 'scale':
-                        keyframes += `@keyframes ${animName} {
-  0% { transform: scale(${anim.scalefrom ?? 1}); }
-  50% { transform: scale(${anim.scaleto ?? 1.1}); }
-  100% { transform: scale(${anim.scalefrom ?? 1}); }
-}\n\n`;
-                        break;
-
-                    case 'wobble':
-                        keyframes += `@keyframes ${animName} {
-    0% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(1deg) scale(1.1); }
-    50% { transform: rotate(0deg) scale(1); }
-    75% { transform: rotate(-1deg) scale(0.9); }
-    100% { transform: rotate(0deg) scale(1); }
-  }\n\n`;
-                        break;
-
-                    case 'glowpulse':
-                        keyframes += `@keyframes ${animName} {
-    0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
-    50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
-  }\n\n`;
-                        break;
-                    case 'contrast':
-                        keyframes += `@keyframes ${animName} {
-    0%, 100% { filter: contrast(100 %); }
-    50% { filter: contrast(140%); }
-  }\n\n`;
-                        break;
-
-                    case 'translate':
-                        const transXfrom = anim.transXfrom ?? 10;
-                        const transYfrom = anim.transYfrom ?? 10;
-                        const transXto = anim.transXto ?? 10;
-                        const transYto = anim.transYto ?? 10;
-                        if (transXfrom < 0)
-                            transXfrom = transXfrom * -1;
-                        if (transYfrom < 0)
-                            transYfrom = transYfrom * -1;
-                        if (transXto < 0)
-                            transXto = transXto * -1;
-                        if (transYto < 0)
-                            transYto = transYto * -1;
-
-                        keyframes += `@keyframes ${animName} {
-        0% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
-  50% { transform: translate(${transXto}px, ${transYto}px); }
-        100% { transform: translate(-${transXfrom}px, -${transYfrom}px); }
-    }\n\n`;
                 }
             });
 
-            layerCSS += `  animation: ${animationParts.join(', ')};\n`;
+            // Add unified transform keyframes
+            if (hasTransform) {
+                const tAnim = `${projectName}_layer${i}_transformCombo`;
+                keyframes += `@keyframes ${tAnim} {
+  0% { transform: ${transformFrames['0%'].join(' ')}; }
+  50% { transform: ${transformFrames['50%'].join(' ')}; }
+  100% { transform: ${transformFrames['100%'].join(' ')}; }
+}\n\n`;
+                otherAnimations.push(`${tAnim} 5s 0s linear infinite`);
+            }
+
+            if (hasFilter) {
+                const fAnim = `${projectName}_layer${i}_filterCombo`;
+                keyframes += `@keyframes ${fAnim} {
+  0% { filter: ${filterFrames['0%'].join(' ')}; }
+  50% { filter: ${filterFrames['50%'].join(' ')}; }
+  100% { filter: ${filterFrames['100%'].join(' ')}; }
+}\n\n`;
+                otherAnimations.push(`${fAnim} 5s 0s linear infinite`);
+            }
+
+            layerCSS += `  animation: ${otherAnimations.join(', ')};\n`;
         }
 
         layerCSS += '}\n\n';
         layerStyles += layerCSS;
     });
+
 
     // Generate the HTML for the container
     let html = `<div class="spiral-container">\n`;
@@ -2043,6 +1957,8 @@ function generateCSS() {
     const fullExport = `<!-- HTML -->\n${html}\n\n<!-- CSS -->\n<style>\n${containerStyles}\n${layerStyles}${keyframes}</style>`;
     document.getElementById('cssOutput').value = fullExport;
 }
+
+
 
 function generateSVG() {
     let width = document.getElementById('previewwWidth');
@@ -2596,7 +2512,9 @@ function renderAnimationControls() {
                 <option value="saturation" ${anim.type === 'saturation' ? 'selected' : ''}>Saturation - Increases and decreases color intensity. Dramatic washes or faded looks.</option>
                 <option value="scale" ${anim.type === 'scale' ? 'selected' : ''}>Scale - Grows and shrinks the layer. Used for breathing effects or floating visuals.</option>
                 <option value="translate" ${anim.type === 'translate' ? 'selected' : ''}>Translate - X/Y drift / float / parallax-like effect.</option>
-            </select>
+                <option value="dropglow" ${anim.type === 'dropglow' ? 'selected' : ''}>Drop Glow - Animates the layer's shadow to create a pulsing effect. Great for ambient visuals.</option>
+
+                </select>
         `;
 
 
@@ -2784,6 +2702,24 @@ function renderAnimationControls() {
         </label>
     `;
         }
+        if (anim.type === 'dropglow') {
+            item.innerHTML += `
+        <label>Drop From:
+            <input type="number" step="1" value="${anim.dropglowFrom ?? 4}" style="margin-right:10px;" 
+                onchange="updateAnimation(${index}, 'dropglowFrom', this.value)">
+                Drop To:
+            <input type="number" step="1" value="${anim.dropglowTo ?? 15}" 
+                onchange="updateAnimation(${index}, 'dropglowTo', this.value)">
+        </label>
+        <label>Color From:
+            <input type="color" value="${anim.dropglowcolorfrom ?? '#1c80e3'}"  style="margin-right:10px;" 
+                onchange="updateAnimation(${index}, 'dropglowcolorfrom', this.value)">
+                Color  To:
+            <input type="color" value="${anim.dropglowcolorto ?? '#da76d2'}" 
+                onchange="updateAnimation(${index}, 'dropglowcolorto', this.value)">
+        </label>
+    `;
+        }
 
         if (anim.type === 'translate') {
             const transLabel = document.createElement('label');
@@ -2797,11 +2733,11 @@ function renderAnimationControls() {
                 onchange="updateAnimation(${index}, 'transXto', this.value)">px
         </label>
              <label>From Y: ` + createSectionedTooltip("Y Start", "Position to start vertical movement") + `
-            <input type="number" step="1" value="${anim.transY ?? 10}" 
+            <input type="number" step="1" value="${anim.transYfrom ?? 10}" 
                 onchange="updateAnimation(${index}, 'transYfrom', this.value)">px
         </label>
              <label>To Y: ` + createSectionedTooltip("Y End", "Position to end vertical movement") + `
-            <input type="number" step="1" value="${anim.transY ?? 10}" 
+            <input type="number" step="1" value="${anim.transYto ?? 10}" 
                 onchange="updateAnimation(${index}, 'transYto', this.value)">px
         </label>
 
@@ -3051,8 +2987,10 @@ function setSBFromPosition(x, y) {
     brightness = b;
 
     updateColorFromUI();
-    onPickerChange(); // sync color stop
-    updateCursorPosition();
+
+    //if (!isDraggingColorField) {
+        onPickerChange(); // sync color stop once finished dragging
+    //}
 }
 
 function updateCursorPosition() {
@@ -3194,6 +3132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     colorField.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        isDraggingColorField = true;
         setSBFromPosition(e.clientX, e.clientY);
 
         const onMove = (ev) => {
@@ -3201,6 +3140,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const onUp = () => {
+            isDraggingColorField = false;
+            //onPickerChange();
             window.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointerup', onUp);
         };
