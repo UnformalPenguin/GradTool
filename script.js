@@ -336,111 +336,143 @@ const templates = [
     },
     {
         name: "Bubble Burst",
-        preview: "repeating-linear-gradient(90deg, rgba(28, 128, 227, 1) 0%, rgba(218, 118, 210, 1) 4.6%, rgba(76,117,214,1.00) 9.2%)",
+        preview: "linear-gradient(90deg, rgba(47,73,203,1.00) 0%, rgba(91,190,129,1.00) 22.9%, rgba(153,140.5,129, 1.0) 74.4%, rgba(96,23,90,1.00) 100%)",
         config: [
             {
                 "type": "linear",
                 "shape": "square",
-                "animate": true,
-                "colorStops": [
-                    {
-                        "color": "rgba(28, 128, 227, 1)",
-                        "stop": "0%"
-                    },
-                    {
-                        "color": "rgba(218, 118, 210, 1)",
-                        "stop": "4.6%"
-                    },
-                    {
-                        "color": "rgba(76,117,214,1.00)",
-                        "stop": "9.2%"
-                    }
-                ],
-                "duration": 10,
-                "clockwise": true,
-                "animations": [
-                    {
-                        "type": "slide",
-                        "duration": 10,
-                        "reverse": false
-                    }
-                ],
-                "blur": 2,
-                "opacity": 1,
-                "visible": true,
-                "angle": 90,
-                "startAngle": 0,
-                "posType": "percent",
-                "centerX": 50,
-                "centerY": 50,
-                "size": "farthest-corner",
-                "direction": "",
-                "repeating": true
-            },
-            {
-                "type": "radial",
-                "shape": "circle",
                 "animate": false,
                 "colorStops": [
                     {
-                        "color": "rgba(82,161,125,1.00)",
+                        "color": "rgba(47,73,203,1.00)",
                         "stop": "0%"
                     },
                     {
-                        "color": "rgba(218,175,118,1.00)",
+                        "color": "rgba(91,190,129,1.00)",
+                        "stop": "22.9%"
+                    },
+                    {
+                        "color": "rgba(153,140.5,129, 1.0)",
+                        "stop": "74.4%"
+                    },
+                    {
+                        "color": "rgba(96,23,90,1.00)",
                         "stop": "100%"
                     }
                 ],
                 "duration": 10,
                 "clockwise": true,
                 "animations": [],
-                "blur": 2,
-                "opacity": 0.65,
+                "blur": 0,
+                "opacity": 1,
                 "visible": true,
                 "angle": 90,
                 "startAngle": 0,
                 "centerX": 50,
                 "centerY": 50,
-                "size": "",
+                "posType": "percent",
+                "size": "farthest-corner",
                 "direction": "",
-                "repeating": false,
-                "posType": "percent"
+                "repeating": false
             },
             {
-                "type": "radial",
+                "type": "conic",
                 "shape": "circle",
-                "animate": true,
+                "animate": false,
                 "colorStops": [
                     {
-                        "color": "rgba(28, 128, 227, 1)",
+                        "color": "rgba(157,28,227,1.00)",
                         "stop": "0%"
                     },
                     {
-                        "color": "rgba(218, 118, 210, 1)",
+                        "color": "rgba(118,218,211,1.00)",
                         "stop": "100%"
                     }
                 ],
                 "duration": 10,
                 "clockwise": true,
-                "animations": [
-                    {
-                        "type": "hue",
-                        "duration": 10,
-                        "reverse": false,
-                        "toHue": "120"
-                    }
-                ],
-                "blur": 2,
-                "opacity": 0.55,
+                "animations": [],
+                "blur": 0,
+                "opacity": 1,
                 "visible": true,
                 "angle": 90,
-                "startAngle": 0,
+                "startAngle": 315,
                 "centerX": 50,
                 "centerY": 50,
-                "size": "",
+                "posType": "percent",
+                "size": "farthest-corner",
                 "direction": "",
                 "repeating": false,
-                "posType": "percent"
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                }
+            },
+            {
+                "type": "conic",
+                "shape": "circle",
+                "animate": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(157,28,227,1.00)",
+                        "stop": "0.0%"
+                    },
+                    {
+                        "color": "rgba(110,194,177,1.00)",
+                        "stop": "100%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [],
+                "blur": 0,
+                "opacity": 0.4,
+                "visible": true,
+                "angle": 90,
+                "startAngle": 180,
+                "centerX": 50,
+                "centerY": 50,
+                "posType": "percent",
+                "size": "farthest-corner",
+                "direction": "",
+                "repeating": false,
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                }
+            },
+            {
+                "type": "conic",
+                "shape": "circle",
+                "animate": false,
+                "colorStops": [
+                    {
+                        "color": "rgba(157,28,227,1.00)",
+                        "stop": "0.0%"
+                    },
+                    {
+                        "color": "rgba(110,194,177,1.00)",
+                        "stop": "100%"
+                    }
+                ],
+                "duration": 10,
+                "clockwise": true,
+                "animations": [],
+                "blur": 0,
+                "opacity": 0.4,
+                "visible": true,
+                "angle": 90,
+                "startAngle": 45,
+                "centerX": 50,
+                "centerY": 50,
+                "posType": "percent",
+                "size": "farthest-corner",
+                "direction": "",
+                "repeating": false,
+                "clip": {
+                    "doclip": false,
+                    "shape": "triangle"
+                }
             }
         ]
     },
@@ -764,9 +796,12 @@ const templates = [
                 ],
                 "animations": [
                     {
-                        "type": "blur",
-                        "duration": 10,
-                        "reverse": false
+                        "type": "dropglow",
+                        "duration": 20,
+                        "reverse": false,
+                        "dropglowTo": "8",
+                        "dropglowcolorto": "#9373dd",
+                        "dropglowFrom": "12"
                     }
                 ],
                 "visible": true,
