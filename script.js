@@ -1799,6 +1799,8 @@ function generateCSS() {
             filterFrames['50%'].push(f50);
             filterFrames['100%'].push(f100);
         };
+        let transDuration =  5;
+        let filterDuration =  5;
 
         if (layer.animate && layer.animations && layer.animations.length) {
             layer.animations.forEach((anim, aIndex) => {
@@ -1812,6 +1814,7 @@ function generateCSS() {
                     case 'rotate':
                         const rot = anim.reverse ? '-' : '';
                         addTransform(`rotate(0deg)`, `rotate(${rot}180deg)`, `rotate(${rot}360deg)`);
+                        transDuration = anim.duration;
                         break;
 
                     case 'scale':
@@ -1820,6 +1823,7 @@ function generateCSS() {
                             `scale(${anim.scaleto ?? 1.1})`,
                             `scale(${anim.scalefrom ?? 1})`
                         );
+                        transDuration = anim.duration;
                         break;
 
                     case 'translate':
@@ -1832,6 +1836,7 @@ function generateCSS() {
                             `translate(${txt}px, ${tyt}px)`,
                             `translate(${txf}px, ${tyf}px)`
                         );
+                        transDuration = anim.duration;
                         break;
 
                     case 'skew':
@@ -1842,6 +1847,7 @@ function generateCSS() {
                             `skew${axis}(${skewVal}deg)`,
                             `skew${axis}(0deg)`
                         );
+                        transDuration = anim.duration;
                         break;
 
                     case 'blur':
@@ -1850,6 +1856,7 @@ function generateCSS() {
                             `blur(${anim.blurto ?? 5}px)`,
                             `blur(${anim.blurfrom ?? 0}px)`
                         );
+                        filterDuration = anim.duration;
                         break;
 
                     case 'hue':
@@ -1858,6 +1865,7 @@ function generateCSS() {
                             `hue-rotate(${(anim.toHue ?? 360) / 2}deg)`,
                             `hue-rotate(${anim.toHue ?? 360}deg)`
                         );
+                        filterDuration = anim.duration;
                         break;
 
                     case 'saturation':
@@ -1866,6 +1874,7 @@ function generateCSS() {
                             `saturate(${anim.satto ?? 2})`,
                             `saturate(${anim.satfrom ?? 1})`
                         );
+                        filterDuration = anim.duration;
                         break;
 
                     case 'contrast':
@@ -1874,15 +1883,17 @@ function generateCSS() {
                             `contrast(140%)`,
                             `contrast(100%)`
                         );
+                        filterDuration = anim.duration;
                         break;
 
                     case 'glowpulse':
                     case 'dropglow':
                         addFilter(
-                            `drop-shadow(0 0 5px rgba(255,255,255,0.2))`,
-                            `drop-shadow(0 0 20px rgba(255,255,255,0.5))`,
-                            `drop-shadow(0 0 5px rgba(255,255,255,0.2))`
+                            `drop-shadow(0 0 ${anim.dropglowFrom ?? 5}px ${anim.dropglowcolorfrom ?? '#1c80e3'})`,
+                            `drop-shadow(0 0 ${anim.dropglowTo ?? 20}px ${anim.dropglowcolorto ?? '#da76d2'})`,
+                            `drop-shadow(0 0 ${anim.dropglowFrom ?? 5}px ${anim.dropglowcolorfrom ?? '#1c80e3'})`
                         );
+                        filterDuration = anim.duration;
                         break;
 
                     case 'pulse':
@@ -1926,7 +1937,7 @@ function generateCSS() {
   50% { transform: ${transformFrames['50%'].join(' ')}; }
   100% { transform: ${transformFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${tAnim} 5s 0s linear infinite`);
+                otherAnimations.push(`${tAnim} ${transDuration}s 0s linear infinite`);
             }
 
             if (hasFilter) {
@@ -1936,7 +1947,7 @@ function generateCSS() {
   50% { filter: ${filterFrames['50%'].join(' ')}; }
   100% { filter: ${filterFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${fAnim} 5s 0s linear infinite`);
+                otherAnimations.push(`${fAnim} ${filterDuration}s 0s linear infinite`);
             }
 
             layerCSS += `  animation: ${otherAnimations.join(', ')};\n`;
@@ -2119,6 +2130,9 @@ function generateSVG() {
 
 function buildFilterString(layer) {
     if (!layer.animate || !Array.isArray(layer.animations)) {
+        if (!layer.blur || layer.blur === 0) {
+            return '';
+        }
         return `blur(${layer.blur}px)`; // fallback static
     }
 
@@ -2127,12 +2141,12 @@ function buildFilterString(layer) {
     if (!layer.animations.some(a => a.type === 'blur')) {
         filters.push(`blur(${layer.blur}px)`);
     }
-    if (!layer.animations.some(a => a.type === 'hue')) {
-        filters.push('hue-rotate(0deg)');
-    }
-    if (!layer.animations.some(a => a.type === 'saturation')) {
-        filters.push('saturate(1)');
-    }
+    //if (!layer.animations.some(a => a.type === 'hue')) {
+    //    filters.push('hue-rotate(0deg)');
+    //}
+    //if (!layer.animations.some(a => a.type === 'saturation')) {
+    //    filters.push('saturate(1)');
+    //}
 
     return filters.join(' ');
 }
