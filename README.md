@@ -1,64 +1,77 @@
-# Gradient Forge (Name under dev too)
-Try it out here: <a href=https://spiral.nodeflow.net>spiral.nodeflow.net</a>
+# Another Gradient Tool
 
-Firefox likely will provide the best experience.
+Experience a free, browser-based tool designed with care — perfect for creating, layering, animating, and exporting elegant CSS gradients.
 
-A powerful, browser-based visual tool for creating, layering, animating, and exporting CSS & SVG gradients.
+![Try it out now!](https://spiral.nodeflow.net)
 
-Under active developemt still, seeking to greatly improve the mobil experience as well
+For the best experience, we recommend using desktop Firefox. 
 
----
-
-## Features
-
--  Custom **linear**, **radial**, and **conic** gradients
-- Support for **multiple layers** with blend effects
--  Real-time **animation editor** for:
-  - rotation, blur, hue shift, pulse, zoom, saturation, sliding, flipping, and more
--  Fully visual **color picker** with HSB, alpha, HEX/RGB sync
--  **Customizable color stops** with draggable handles and percent control
--  Export:
-  -  Pure CSS & HTML markup
-  -  SVG layers with filters & animation
--  Templates to showcase capabilities and inspire
--  Nameable projects easily allows for multiple gradients on a single page
+This is your go-to creative workspace for crafting stunning gradients that breathe life into your digital projects. Thoughtfully built with art and functionality in mind, this tool is continually evolving, with upcoming enhancements designed to improve mobile use.
 
 ---
 
-## Usage
+# Features
 
-2. Add gradient layers, adjust colors, blur, shapes, etc.
-3. Tweak animation settings and filters
-4. Export CSS or SVG to use in your own projects
+    Custom Gradient Styles: Create unique linear, radial, and conic gradients tailored to your vision.
 
+    Multi-Layer Support: Enjoy the freedom of stacking multiple layers with a variety of blend effects.
 
+    Dynamic Animation Editor: Easily experiment with real-time animations, including rotation, blur, hue shift, pulse, zoom, saturation, sliding, flipping, and more.
+
+    Intuitive Color Picker: Work seamlessly with a fully visual picker that synchronizes HSB, Alpha, and HEX/RGB.
+
+    Draggable Color Stops: Adjust colors with precision using customizable, draggable handles and percentage control.
+
+    Export Flexibility: Export your creations as pure CSS/HTML markup or as animated SVG layers complete with filters.
+
+    Inspiring Templates: Get started quickly with a selection of templates that spark creativity and showcase possibilities.
+
+    Project Management: Easily name and manage multiple gradients on a single page for a smooth workflow.
+    
 ---
 
-##  Tech Stack
+# How to Use
 
-- Vanilla JavaScript
-- HTML5 + CSS3
-- SVG Filters
+    Design Your Layers: Add gradient layers and adjust colors, blurs, shapes, and more to suit your style.
 
+    Animate with Ease: Tweak animation settings and filters to bring your designs to life.
+
+    Export & Share: Choose from CSS, SVG, JSON, or sharable URL formats to export and integrate your work into your projects.
+    
 ---
 
-##  Export Formats
+# Tech Stack
 
--  **CSS/HTML**: Copy/paste ready for web use
--  **SVG**: Filtered and animated with `<animate>`, `<feGaussianBlur>`, etc.
-- **JSON** import/export 
-- **URL** Sharable Links (these load the shared gradient)
-- Example:
+   - Vanilla JavaScript
+
+   - HTML5 & CSS3
+
+   - SVG Filters
+    
+---
+
+# Export Formats
+
+   - **CSS/HTML:** Copy-and-paste ready code for direct web use.
+
+   - **SVG:** Animated and filter-ready SVG code (using <animate>, <feGaussianBlur>, etc.).
+
+   - **JSON:** Import/export your full design data effortlessly.
+
+   - **Sharable URLs:** Instantly load and share your gradients via custom links.
+
+   - **Example:**
 - <a href="https://spiral.nodeflow.net/view?config=IltcbiAge1xuICAgIFwidHlwZVwiOiBcInJhZGlhbFwiLFxuICAgIFwic2hhcGVcIjogXCJjaXJjbGVcIixcbiAgICBcImNvbG9yU3RvcHNcIjogW1xuICAgICAge1xuICAgICAgICBcImNvbG9yXCI6IFwicmdiYSgyNDcsIDAsIDAsIDEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjAlXCJcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCIjYmZlOWZmXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjE1JVwiXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBcImNvbG9yXCI6IFwicmdiYSgxMjMsIDY4LCAyMjUsIDEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjIwJVwiXG4gICAgICB9XG4gICAgXSxcbiAgICBcImFuaW1hdGVcIjogZmFsc2UsXG4gICAgXCJhbmltYXRpb25zXCI6IFtcbiAgICAgIHtcbiAgICAgICAgXCJ0eXBlXCI6IFwiaHVlXCIsXG4gICAgICAgIFwiZHVyYXRpb25cIjogMTAsXG4gICAgICAgIFwicmV2ZXJzZVwiOiBmYWxzZSxcbiAgICAgICAgXCJpbnRlbnNpdHlcIjogXCIwLjQ1XCIsXG4gICAgICAgIFwidG9IdWVcIjogXCIxMDBcIlxuICAgICAgfVxuICAgIF0sXG4gICAgXCJibHVyXCI6IDIsXG4gICAgXCJvcGFjaXR5XCI6IDEsXG4gICAgXCJwb3NUeXBlXCI6IFwicGVyY2VudFwiLFxuICAgIFwicmVwZWF0aW5nXCI6IHRydWUsXG4gICAgXCJ2aXNpYmxlXCI6IHRydWUsXG4gICAgXCJzaXplXCI6IFwiZmFydGhlc3QtY29ybmVyXCIsXG4gICAgXCJjb2xvcnNcIjogXCJ1bmRlZmluZWRcIixcbiAgICBcImNlbnRlclhcIjogNTAsXG4gICAgXCJjZW50ZXJZXCI6IDUwXG4gIH0sXG4gIHtcbiAgICBcInR5cGVcIjogXCJjb25pY1wiLFxuICAgIFwic2hhcGVcIjogXCJjaXJjbGVcIixcbiAgICBcImFuaW1hdGVcIjogdHJ1ZSxcbiAgICBcImNvbG9yU3RvcHNcIjogW1xuICAgICAge1xuICAgICAgICBcImNvbG9yXCI6IFwicmdiYSgyOCwgMTI4LCAyMjcsIDEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjAlXCJcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCJyZ2JhKDE2Myw0OSwxNTQsMS4wMClcIixcbiAgICAgICAgXCJzdG9wXCI6IFwiNDUuNCVcIlxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgXCJjb2xvclwiOiBcInJnYmEoMjE4LCAxMTgsIDIxMCwgMSlcIixcbiAgICAgICAgXCJzdG9wXCI6IFwiMTAwLjAlXCJcbiAgICAgIH1cbiAgICBdLFxuICAgIFwiZHVyYXRpb25cIjogMTAsXG4gICAgXCJjbG9ja3dpc2VcIjogdHJ1ZSxcbiAgICBcImFuaW1hdGlvbnNcIjogW1xuICAgICAge1xuICAgICAgICBcInR5cGVcIjogXCJyb3RhdGVcIixcbiAgICAgICAgXCJkdXJhdGlvblwiOiAxMCxcbiAgICAgICAgXCJyZXZlcnNlXCI6IGZhbHNlXG4gICAgICB9XG4gICAgXSxcbiAgICBcImJsdXJcIjogMixcbiAgICBcIm9wYWNpdHlcIjogMC41LFxuICAgIFwidmlzaWJsZVwiOiB0cnVlLFxuICAgIFwiYW5nbGVcIjogOTAsXG4gICAgXCJzdGFydEFuZ2xlXCI6IDAsXG4gICAgXCJjZW50ZXJYXCI6IDUwLFxuICAgIFwiY2VudGVyWVwiOiA1MCxcbiAgICBcInBvc1R5cGVcIjogXCJwZXJjZW50XCIsXG4gICAgXCJzaXplXCI6IFwiZmFydGhlc3QtY29ybmVyXCIsXG4gICAgXCJkaXJlY3Rpb25cIjogXCJcIixcbiAgICBcInJlcGVhdGluZ1wiOiBmYWxzZVxuICB9LFxuICB7XG4gICAgXCJ0eXBlXCI6IFwiY29uaWNcIixcbiAgICBcInNoYXBlXCI6IFwiY2lyY2xlXCIsXG4gICAgXCJhbmltYXRlXCI6IHRydWUsXG4gICAgXCJjb2xvclN0b3BzXCI6IFtcbiAgICAgIHtcbiAgICAgICAgXCJjb2xvclwiOiBcInJnYmEoMjgsIDEyOCwgMjI3LCAxKVwiLFxuICAgICAgICBcInN0b3BcIjogXCIwJVwiXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBcImNvbG9yXCI6IFwicmdiYSgxNjMsNDksMTU0LDEuMDApXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjQ1LjQlXCJcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCJyZ2JhKDIxOCwgMTE4LCAyMTAsIDEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjEwMC4wJVwiXG4gICAgICB9XG4gICAgXSxcbiAgICBcImR1cmF0aW9uXCI6IDEwLFxuICAgIFwiY2xvY2t3aXNlXCI6IHRydWUsXG4gICAgXCJhbmltYXRpb25zXCI6IFtcbiAgICAgIHtcbiAgICAgICAgXCJ0eXBlXCI6IFwicm90YXRlXCIsXG4gICAgICAgIFwiZHVyYXRpb25cIjogMTAsXG4gICAgICAgIFwicmV2ZXJzZVwiOiBmYWxzZVxuICAgICAgfVxuICAgIF0sXG4gICAgXCJibHVyXCI6IDIsXG4gICAgXCJvcGFjaXR5XCI6IDAuNSxcbiAgICBcInZpc2libGVcIjogdHJ1ZSxcbiAgICBcImFuZ2xlXCI6IDkwLFxuICAgIFwic3RhcnRBbmdsZVwiOiAxODAsXG4gICAgXCJjZW50ZXJYXCI6IDUwLFxuICAgIFwiY2VudGVyWVwiOiA1MCxcbiAgICBcInBvc1R5cGVcIjogXCJwZXJjZW50XCIsXG4gICAgXCJzaXplXCI6IFwiZmFydGhlc3QtY29ybmVyXCIsXG4gICAgXCJkaXJlY3Rpb25cIjogXCJcIixcbiAgICBcInJlcGVhdGluZ1wiOiBmYWxzZVxuICB9XG5dIg">
 	 Gradient Custom Link</a>
 - <a href="https://spiral.nodeflow.net/view?config=IltcbiAge1xuICAgIFwidHlwZVwiOiBcImxpbmVhclwiLFxuICAgIFwic2hhcGVcIjogXCJzcXVhcmVcIixcbiAgICBcImNvbG9yU3RvcHNcIjogW1xuICAgICAge1xuICAgICAgICBcImNvbG9yXCI6IFwicmdiYSgyNTUsMCwwLDEuMDApXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjAuMCVcIixcbiAgICAgICAgXCJwaW5uZWRcIjogZmFsc2VcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCJyZ2JhKDI1NSwxMzYsMCwwLjkxKVwiLFxuICAgICAgICBcInN0b3BcIjogXCIxMi4zJVwiLFxuICAgICAgICBcInBpbm5lZFwiOiBmYWxzZVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgXCJjb2xvclwiOiBcInJnYmEoMjM0LDI1NSwwLDAuOTEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjI3LjQlXCJcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCJyZ2JhKDAsMjU1LDg5LDAuOTEpXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjQyLjElXCJcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIFwiY29sb3JcIjogXCJyZ2JhKDY2LDEzNSwyNTUsMC45MSlcIixcbiAgICAgICAgXCJzdG9wXCI6IFwiNjMuMCVcIlxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgXCJjb2xvclwiOiBcInJnYmEoMjEsMCwyNTUsMC45MSlcIixcbiAgICAgICAgXCJzdG9wXCI6IFwiODAuOSVcIlxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgXCJjb2xvclwiOiBcInJnYmEoMTE5LDAsMjU1LDEuMDApXCIsXG4gICAgICAgIFwic3RvcFwiOiBcIjEwMCVcIixcbiAgICAgICAgXCJwaW5uZWRcIjogZmFsc2VcbiAgICAgIH1cbiAgICBdLFxuICAgIFwiYW5pbWF0ZVwiOiBmYWxzZSxcbiAgICBcImFuaW1hdGlvbnNcIjogW10sXG4gICAgXCJibHVyXCI6IDIsXG4gICAgXCJvcGFjaXR5XCI6IDEsXG4gICAgXCJyZXBlYXRpbmdcIjogZmFsc2UsXG4gICAgXCJ2aXNpYmxlXCI6IHRydWUsXG4gICAgXCJjb2xvcnNcIjogXCJ1bmRlZmluZWRcIixcbiAgICBcImRpcmVjdGlvblwiOiBcInRvIHJpZ2h0XCIsXG4gICAgXCJhbmdsZVwiOiAwXG4gIH1cbl0i">
 	 Another Linked Gradient</a>
-
+        
 ---
 
-Send me your favorite gradients with the Copy Share URL : ![My Email](mailto:spira@nodeflow.net)
+# Connect
 
-![Make your beautiful creations here!](https://spiral.nodeflow.net)
+Do you have a favorite gradient or some feedback? I’d love to see what you create! Send your designs or thoughts to: spira@nodeflow.net
+
+Showcase your beautiful gradients
 
 Built with love by Keeley
-

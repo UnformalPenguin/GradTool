@@ -1569,7 +1569,7 @@ function createLayers() {
         if (!layer.visible) return;
 
         const div = document.createElement('div');
-        div.className = `spiral-layer ${projectName}-layer-${i}`;
+        div.className = `spiral-layer ${projectName}-preview-layer-${i}`;
         div.style.position = 'absolute';
         div.style.inset = 0;
 
@@ -1610,7 +1610,7 @@ function createLayers() {
 
         if (layer.animate && Array.isArray(layer.animations)) {
             layer.animations.forEach((anim, aIndex) => {
-                const animName = `${projectName}_layer${i}_preview_anim${aIndex}`;
+                const animName = `${projectName}_preview_layer${i}_preview_anim${aIndex}`;
                 const duration = anim.duration || defaultDuration;
                 maxDuration = Math.max(maxDuration, duration);
                 maxdelay = Math.max(maxdelay, anim.delay ?? 0);
@@ -1729,7 +1729,7 @@ function createLayers() {
             });
 
             if (hasTransform) {
-                const transformAnimName = `${projectName}_layer${i}_preview_transformCombo`;
+                const transformAnimName = `${projectName}_preview_layer${i}_preview_transformCombo`;
                 animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
   0% { transform: ${transformFrames['0%'].join(' ')}; }`;
                 if (transformFrames['50%'].length > 0) {
@@ -1743,7 +1743,7 @@ function createLayers() {
             }
 
             if (hasFilter) {
-                const filterAnimName = `${projectName}_layer${i}_preview_filterCombo`;
+                const filterAnimName = `${projectName}_preview_layer${i}_preview_filterCombo`;
                 animStyleElem.innerHTML += `@keyframes ${filterAnimName} {
   0% { filter: ${filterFrames['0%'].join(' ')}; }`;
                 if (filterFrames['50%'].length > 0) {
