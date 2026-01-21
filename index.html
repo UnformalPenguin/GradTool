@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +20,20 @@
     <div class="main">
         <!-- LEFT PANEL -->
         <div class="left-panel">
-            <div class="template-menu" id="templateMenu">
+            
+            <div id="previewWindow" class="pinned">
+                <div id="previewHeader" class="">
+                    <span class="" tabindex="0">
+                        <button onmousedown="togglePin()" class="pin-toggle">📌</button>
+                        <span class="tooltip-icon tooltip-text">
+                            Unpinning the window allows it to become a draggable and resizable window.
+                        </span>
+                    </span>
+                </div>
+                <div class="spiral-container" id="spiral"></div>
+            </div>
+
+<div class="template-menu" id="templateMenu">
                 <h4 id="templateHeader">
                     Templates
                     <button id="toggleTemplateMenu">Toggle</button>
@@ -95,18 +112,6 @@
                 </details>
             </div>
 
-
-            <div id="previewWindow" class="pinned">
-                <div id="previewHeader" class="">
-                    <span class="" tabindex="0">
-                        <button onmousedown="togglePin()" class="pin-toggle">📌</button>
-                        <span class="tooltip-icon tooltip-text">
-                            Unpinning the window allows it to become a draggable and resizable window.
-                        </span>
-                    </span>
-                </div>
-                <div class="spiral-container" id="spiral"></div>
-            </div>
 
             <div class="textarea-wrapper">
                 <textarea id="cssOutput" placeholder="Generated CSS will appear here..."></textarea>

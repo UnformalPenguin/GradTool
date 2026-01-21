@@ -1034,9 +1034,6 @@ body.tooltips-disabled .tooltip-text {
     bottom: auto !important;
 }
 
-.pinned #spiral {
-    max-width:600px !important;
-}
 
 @media (max-width: 768px) {
     .layer-editor label,

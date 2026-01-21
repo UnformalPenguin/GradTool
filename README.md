@@ -2,41 +2,35 @@
 
 Experience a free, browser-based tool designed with care — perfect for creating, layering, animating, and exporting elegant CSS gradients.
 
-![Try it out now!](https://spiral.nodeflow.net)
+<a href="https://spiral.nodeflow.net">https://spiral.nodeflow.net</a>
 
 For the best experience, we recommend using desktop Firefox. 
 
-This is your go-to creative workspace for crafting stunning gradients that breathe life into your digital projects. Thoughtfully built with art and functionality in mind, this tool is continually evolving, with upcoming enhancements designed to improve mobile use.
+This is your go-to creative workspace for crafting gradients and animations to enhance you websites, or just play around to create artful pieces.
+
+Live style previewing to help build out the perfect color palette, loading symbol, or progress bar.
 
 ---
 
 # Features
 
-    Custom Gradient Styles: Create unique linear, radial, and conic gradients tailored to your vision.
+    Custom Gradient Styles: Choose between Linear, Radial, and Conic gradients to form the base of a layer.
 
-    Multi-Layer Support: Enjoy the freedom of stacking multiple layers with a variety of blend effects.
+    Multi-Layer Support: A variety of blend effects and color choices can be applied to each layer.
 
-    Dynamic Animation Editor: Easily experiment with real-time animations, including rotation, blur, hue shift, pulse, zoom, saturation, sliding, flipping, and more.
+    Dynamic Animation Editor: Easily experiment with real-time animations, including rotation, blur, hue shift, pulse, zoom, saturation, and more.
 
-    Intuitive Color Picker: Work seamlessly with a fully visual picker that synchronizes HSB, Alpha, and HEX/RGB.
+    Intuitive Color Picker: Pick the perfect hue using the color field, or bringing in a known favoring into the hex field.
 
-    Draggable Color Stops: Adjust colors with precision using customizable, draggable handles and percentage control.
+    Draggable Color Stops: Adjust colors using draggable handles and percentage control.
 
     Export Flexibility: Export your creations as pure CSS/HTML markup or as animated SVG layers complete with filters.
 
-    Inspiring Templates: Get started quickly with a selection of templates that spark creativity and showcase possibilities.
+    Example Templates: Check out templates to get a basic view into some differing gradient results.
 
-    Project Management: Easily name and manage multiple gradients on a single page for a smooth workflow.
-    
----
+    Randomizer: Explore the limits of the tool with the randomizer, with a large amount of control in the settings.
 
-# How to Use
-
-    Design Your Layers: Add gradient layers and adjust colors, blurs, shapes, and more to suit your style.
-
-    Animate with Ease: Tweak animation settings and filters to bring your designs to life.
-
-    Export & Share: Choose from CSS, SVG, JSON, or sharable URL formats to export and integrate your work into your projects.
+    Project Management: Easily name and differentiate multiple gradients stylings to export to a single page.
     
 ---
 
@@ -54,7 +48,7 @@ This is your go-to creative workspace for crafting stunning gradients that breat
 
    - **CSS/HTML:** Copy-and-paste ready code for direct web use.
 
-   - **SVG:** Animated and filter-ready SVG code (using <animate>, <feGaussianBlur>, etc.).
+   - **SVG:**  (still in development) Animated and filter-ready SVG code (using <animate>, <feGaussianBlur>, etc.).
 
    - **JSON:** Import/export your full design data effortlessly.
 

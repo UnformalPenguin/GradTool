@@ -1852,13 +1852,17 @@ function generateCSS() {
     let totalSteps = 4;
 
     layers.forEach((layer, i) => {
-        const className = `${projectName}-layer-${i}`;
+        const className = `${projectName}-layer-${i+1}`;
         const gradient = buildGradientString(layer);
         const animationNames = [];
 
         let layerCSS = `.${className} {\n`;
         layerCSS += `  background: ${gradient};\n`;
-        layerCSS += `  filter: ${buildFilterString(layer)};\n`;
+        const filterString = buildFilterString(layer);
+        if (filterString != '') {
+            layerCSS += `  filter: ${filterString};\n`;
+        }
+        
         layerCSS += `  opacity: ${layer.opacity};\n`;
 
         // Shape / Clip
@@ -1900,7 +1904,7 @@ function generateCSS() {
 
         if (layer.animate && layer.animations && layer.animations.length) {
             layer.animations.forEach((anim, aIndex) => {
-                const animName = `${projectName}_layer${i}_anim${aIndex}`;
+                const animName = `${projectName}_layer${i+1}_anim${aIndex}`;
                 const duration = anim.duration || 5;
                 const delay = anim.delay || 0;
                 const infinite = 'infinite';
@@ -2037,7 +2041,7 @@ function generateCSS() {
 
             // Add unified transform keyframes
             if (hasTransform) {
-                const tAnim = `${projectName}_layer${i}_transformCombo`;
+                const tAnim = `${projectName}_layer${i+1}_transformCombo`;
                 keyframes += `@keyframes ${tAnim} {
   0% { transform: ${transformFrames['0%'].join(' ')}; }`;
                 if (transformFrames['50%'].length > 0) {
@@ -2050,7 +2054,7 @@ function generateCSS() {
             }
 
             if (hasFilter) {
-                const fAnim = `${projectName}_layer${i}_filterCombo`;
+                const fAnim = `${projectName}_layer${i+1}_filterCombo`;
                 keyframes += `@keyframes ${fAnim} {
   0% { filter: ${filterFrames['0%'].join(' ')}; }
   `;
@@ -2076,7 +2080,7 @@ function generateCSS() {
     // Generate the HTML for the container
     let html = `<div class="gradient-container">\n`;
     layers.forEach((_, i) => {
-        html += `  <div class="grad-layer ${projectName}-layer-${i}"></div>\n`;
+        html += `  <div class="grad-layer ${projectName}-layer-${i+1}"></div>\n`;
     });
     html += `</div>`;
 
@@ -3355,9 +3359,6 @@ function togglePin() {
         preview.style.right = '20px';
         preview.style.left = 'auto';
         preview.style.bottom = 'auto';
-        //reset back to original size
-        preview.style.width = "500px";
-        preview.style.height = "500px";
         //localStorage.setItem('previewPinned', 'true');
     }
 }
