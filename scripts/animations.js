@@ -123,7 +123,9 @@ function generateMergedKeyframes(name, type, frames) {
 }\n\n`;
 }
 
-function appendAnimation(existing, name, duration, direction = 'normal', delay = 0) {
-    const def = `${name} ${duration}s ${delay}s linear infinite ${direction}`;
-    return existing ? `${existing}, ${def}` : def;
+function appendAnimation(existing, name, duration, direction, delay, timingFn = 'linear', iterations = 'infinite', fillMode = 'none') {
+    const animPart = `${name} ${duration}s ${timingFn} ${delay}s ${iterations} ${direction} ${fillMode}`;
+
+    if (!existing || existing === 'none') return animPart;
+    return `${existing}, ${animPart}`;
 }

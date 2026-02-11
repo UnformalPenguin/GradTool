@@ -16,113 +16,150 @@ let projectName = "Gradient";
 // App state + history (Undo/Redo)
 // =========================
 const appState = {
-    project: {
-        name: projectName,
-        selectedLayer: currentLayerIndex,
-        selectedStop: selectedStopIndex
-    },
-    ui: {
-        activeRightPanel: null,
-        toasts: []
-    },
-    history: {
-        undo: [],
-        redo: [],
-        max: 50
-    }
+  project: {
+    name: projectName,
+    selectedLayer: currentLayerIndex,
+    selectedStop: selectedStopIndex
+  },
+  ui: {
+    activeRightPanel: null,
+    toasts: []
+  },
+  history: {
+    undo: [],
+    redo: [],
+    max: 50
+  }
 };
 
 function snapshotState() {
-    return JSON.stringify({
-        layers,
-        currentLayerIndex,
-        selectedStopIndex,
-        projectName
-    });
+  return JSON.stringify({
+    layers,
+    currentLayerIndex,
+    selectedStopIndex,
+    projectName
+  });
 }
 
 function restoreState(snapshot) {
-    try {
-        const s = JSON.parse(snapshot);
-        layers = s.layers || [];
-        currentLayerIndex = typeof s.currentLayerIndex === 'number' ? s.currentLayerIndex : -1;
-        selectedStopIndex = typeof s.selectedStopIndex === 'number' ? s.selectedStopIndex : -1;
-        projectName = s.projectName || projectName;
-        const pn = document.getElementById('projectName');
-        if (pn) pn.value = projectName;
-        createLayers();
-        if (layers.length > 0 && currentLayerIndex >= 0) {
-            selectLayer(Math.min(currentLayerIndex, layers.length - 1));
-        } else if (layers.length > 0) {
-            selectLayer(0);
-        }
-        renderAnimationControls();
-    } catch (e) {
-        console.warn("Failed to restore state:", e);
+  try {
+    const s = JSON.parse(snapshot);
+    layers = s.layers || [];
+    currentLayerIndex = typeof s.currentLayerIndex === 'number' ? s.currentLayerIndex : -1;
+    selectedStopIndex = typeof s.selectedStopIndex === 'number' ? s.selectedStopIndex : -1;
+    projectName = s.projectName || projectName;
+    const pn = document.getElementById('projectName');
+    if (pn) pn.value = projectName;
+    createLayers();
+    if (layers.length > 0 && currentLayerIndex >= 0) {
+      selectLayer(Math.min(currentLayerIndex, layers.length - 1));
+    } else if (layers.length > 0) {
+      selectLayer(0);
     }
+    renderAnimationControls();
+  } catch (e) {
+    console.warn("Failed to restore state:", e);
+  }
 }
 
 function pushHistory(reason = "") {
-    // Avoid pushing identical snapshots
-    const snap = snapshotState();
-    const last = appState.history.undo.length ? appState.history.undo[appState.history.undo.length - 1] : null;
-    if (snap === last) return;
-    appState.history.undo.push(snap);
-    if (appState.history.undo.length > appState.history.max) appState.history.undo.shift();
-    appState.history.redo = [];
+  // Avoid pushing identical snapshots
+  const snap = snapshotState();
+  const last = appState.history.undo.length ? appState.history.undo[appState.history.undo.length - 1] : null;
+  if (snap === last) return;
+  appState.history.undo.push(snap);
+  if (appState.history.undo.length > appState.history.max) appState.history.undo.shift();
+  appState.history.redo = [];
 }
 
 function undo() {
-    if (!appState.history.undo.length) return;
-    const current = snapshotState();
-    const prev = appState.history.undo.pop();
-    appState.history.redo.push(current);
-    restoreState(prev);
-    toast("Undid change");
+  if (!appState.history.undo.length) return;
+  const current = snapshotState();
+  const prev = appState.history.undo.pop();
+  appState.history.redo.push(current);
+  restoreState(prev);
+  toast("Undid change");
 }
 
 function redo() {
-    if (!appState.history.redo.length) return;
-    const current = snapshotState();
-    const next = appState.history.redo.pop();
-    appState.history.undo.push(current);
-    restoreState(next);
-    toast("Redid change");
+  if (!appState.history.redo.length) return;
+  const current = snapshotState();
+  const next = appState.history.redo.pop();
+  appState.history.undo.push(current);
+  restoreState(next);
+  toast("Redid change");
 }
 
 // Keyboard shortcuts: Ctrl/Cmd+Z (undo), Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y (redo)
 document.addEventListener('keydown', (e) => {
-    const key = e.key.toLowerCase();
-    const isMac = navigator.platform.toLowerCase().includes('mac');
-    const mod = isMac ? e.metaKey : e.ctrlKey;
-    if (!mod) return;
+  const key = e.key.toLowerCase();
+  const isMac = navigator.platform.toLowerCase().includes('mac');
+  const mod = isMac ? e.metaKey : e.ctrlKey;
+  if (!mod) return;
 
-    if (key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        undo();
-    } else if ((key === 'z' && e.shiftKey) || key === 'y') {
-        e.preventDefault();
-        redo();
-    }
+  if (key === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    undo();
+  } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+    e.preventDefault();
+    redo();
+  }
 });
 
+// =========================
+// Tiny UI helpers
+// =========================
 function animateIn(el, { dx = 10, ms = 180 } = {}) {
-    if (!el || !el.animate) return;
-    el.animate(
-        [
-            { opacity: 0, transform: `translateX(${dx}px)` },
-            { opacity: 1, transform: 'translateX(0px)' }
-        ],
-        { duration: ms, easing: 'ease-out', fill: 'both' }
-    );
+  if (!el || !el.animate) return;
+  el.animate(
+    [
+      { opacity: 0, transform: `translateX(${dx}px)` },
+      { opacity: 1, transform: 'translateX(0px)' }
+    ],
+    { duration: ms, easing: 'ease-out', fill: 'both' }
+  );
 }
 
 function pulse(el, ms = 140) {
-    if (!el || !el.animate) return;
-    el.animate(
-        [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.99)', opacity: 0.95 }, { transform: 'scale(1)', opacity: 1 }],
-        { duration: ms, easing: 'ease-out' }
-    );
+  if (!el || !el.animate) return;
+  el.animate(
+    [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.99)', opacity: 0.95 }, { transform: 'scale(1)', opacity: 1 }],
+    { duration: ms, easing: 'ease-out' }
+  );
+}
+
+// Lightweight toast without extra HTML requirements.
+function toast(message) {
+  try {
+    const host = document.body;
+    if (!host) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = message;
+    t.style.position = 'fixed';
+    t.style.right = '16px';
+    t.style.bottom = '16px';
+    t.style.zIndex = '9999';
+    t.style.padding = '10px 12px';
+    t.style.borderRadius = '10px';
+    t.style.background = 'rgba(20,20,22,0.92)';
+    t.style.color = '#fff';
+    t.style.fontSize = '13px';
+    t.style.backdropFilter = 'blur(8px)';
+    t.style.boxShadow = '0 10px 30px rgba(0,0,0,0.25)';
+    host.appendChild(t);
+    if (t.animate) {
+      t.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0px)' }], { duration: 160, easing: 'ease-out', fill: 'both' });
+    }
+    setTimeout(() => {
+      if (t.animate) {
+        const a = t.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'both' });
+        a.onfinish = () => t.remove();
+      } else {
+        t.remove();
+      }
+    }, 1400);
+  } catch {}
 }
 
 const templates = [
@@ -160,9 +197,10 @@ const templates = [
                 "animations": [
                     {
                         "type": "hue",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false,
-                        "fromHue": "180"
+                        "fromHue": "0"
                     }
                 ],
                 "blur": 2,
@@ -202,6 +240,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "hue",
+                        "enabled": true,
                         "duration": 11,
                         "reverse": false,
                         "fromHue": "0"
@@ -289,6 +328,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "dropglow",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false,
                         "dropglowFrom": "8",
@@ -342,6 +382,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "rotate",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false
                     }],
@@ -378,6 +419,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "rotate",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": true
                     }],
@@ -425,6 +467,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "dropglow",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false
                     }
@@ -473,6 +516,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "blur",
+                        "enabled": true,
                         "duration": 8,
                         "reverse": false,
                         "blurfrom": "2",
@@ -688,6 +732,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "hue",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false,
                         "toHue": "20"
@@ -721,6 +766,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "slide",
+                        "enabled": true,
                         "duration": 10,
                         "reverse": false,
                         "fromHue": "300",
@@ -798,6 +844,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "saturation",
+                        "enabled": true,
                         "duration": 8,
                         "satfrom": 0.5,
                         "satto": 2
@@ -839,6 +886,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "hue",
+                        "enabled": true,
                         "duration": 6,
                         "fromHue": 0,
                         "toHue": "60"
@@ -953,6 +1001,7 @@ const templates = [
                 "animations": [
                     {
                         "type": "dropglow",
+                        "enabled": true,
                         "duration": 20,
                         "reverse": false,
                         "dropglowTo": "8",
@@ -974,7 +1023,7 @@ const templates = [
             return {
                 type: "linear",
                 shape: "square",
-                animate: false,
+                animate: true,
                 colorStops: [
                     {
                         "color": "rgba(28, 128, 227, 1)",
@@ -991,6 +1040,8 @@ const templates = [
                 blur: 0,
                 opacity: 1.0,
                 visible: true,
+                blendMode: "normal",
+                scale: 1,
                 angle: 90,         // for linear
                 startAngle: 0,     // for conic
                 centerX: 50,       // for radial/conic
@@ -1002,6 +1053,131 @@ const templates = [
             };
             
         }
+
+function fullClipPathString(clip) {
+    if (!clip || !clip.doclip) return 'none';
+
+    // Custom mode: user supplies raw clip-path function
+    if (clip.mode === 'custom') {
+        const raw = (clip.custom?.value || '').trim();
+        const normalized = normalizeClipPathInput(raw);
+        setClipErrorVisibility(!normalized && raw.length > 0);
+        return normalized || 'none';
+    }
+
+    // Preset mode
+    setClipErrorVisibility(false);
+    const shape = clip.shape;
+    const p = clip.params || {};
+    const rot = Number(p.rotate ?? 0);
+
+    // You can either:
+    // A) return clip-path only (recommended)
+    // B) bake rotate into polygon generation (simpler)
+    // I’m doing B here so output stays pure clip-path (no extra transforms needed).
+
+    switch (shape) {
+        case 'circle': {
+            // "round" acts like radius here (0-50)
+            const r = clamp(25 + (p.round ?? 0) * 0.5, 5, 50);
+            return `circle(${r}% at 50% 50%)`;
+        }
+        case 'ellipse': {
+            const rx = clamp(40 + (p.round ?? 0) * 0.3, 5, 50);
+            const ry = clamp(28 + (p.round ?? 0) * 0.2, 5, 50);
+            return `ellipse(${rx}% ${ry}% at 50% 50%)`;
+        }
+        case 'inset': {
+            // round = corner rounding
+            const pad = 10; // you can later make this a slider too
+            const round = clamp(p.round ?? 0, 0, 50);
+            return `inset(${pad}% ${pad}% ${pad}% ${pad}% round ${round}%)`;
+        }
+        case 'triangle':
+            return polygonFromPoints(rotatePoints([[50, 0], [100, 100], [0, 100]], rot));
+        case 'diamond':
+            return polygonFromPoints(rotatePoints([[50, 0], [100, 50], [50, 100], [0, 50]], rot));
+        case 'hexagon':
+            return polygonFromPoints(rotatePoints([[50, 0], [93, 25], [93, 75], [50, 100], [7, 75], [7, 25]], rot));
+        case 'octagon':
+            return polygonFromPoints(rotatePoints([[30, 0], [70, 0], [100, 30], [100, 70], [70, 100], [30, 100], [0, 70], [0, 30]], rot));
+        case 'star': {
+            // round can affect inner radius a bit
+            const inner = clamp(18 + (p.round ?? 0) * 0.2, 5, 45);
+            const outer = 48;
+            const pts = generateStarPoints(5, inner, outer, -90 + rot);
+            return polygonFromPoints(pts);
+        }
+        default:
+            return 'none';
+    }
+}
+
+function normalizeClipPathInput(raw) {
+    if (!raw) return null;
+    raw = raw.replace(/^clip-path\s*:\s*/i, '').replace(/;$/, '').trim();
+    // Allow polygon, inset, circle, ellipse, path
+    const ok = /^(polygon|inset|circle|ellipse|path)\(/i.test(raw);
+    return ok ? raw : null;
+}
+
+function setClipErrorVisibility(show) {
+    const el = document.getElementById('clipError');
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+}
+
+function polygonFromPoints(points) {
+    return `polygon(${points.map(([x, y]) => `${x}% ${y}%`).join(', ')})`;
+}
+
+function rotatePoints(points, deg) {
+    const rad = (deg * Math.PI) / 180;
+    const cx = 50, cy = 50;
+    return points.map(([x, y]) => {
+        const dx = x - cx;
+        const dy = y - cy;
+        const rx = cx + dx * Math.cos(rad) - dy * Math.sin(rad);
+        const ry = cy + dx * Math.sin(rad) + dy * Math.cos(rad);
+        return [round3(rx), round3(ry)];
+    });
+}
+
+function generateStarPoints(n, innerR, outerR, rotateDeg) {
+    const cx = 50, cy = 50;
+    const out = [];
+    const total = n * 2;
+    const rot = (rotateDeg * Math.PI) / 180;
+    for (let i = 0; i < total; i++) {
+        const r = (i % 2 === 0) ? outerR : innerR;
+        const a = rot + (i * Math.PI) / n;
+        const x = cx + r * Math.cos(a);
+        const y = cy + r * Math.sin(a);
+        out.push([round3(x), round3(y)]);
+    }
+    return out;
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function round3(v) { return Math.round(v * 1000) / 1000; }
+
+function applyClipExample(kind) {
+    const modeEl = document.getElementById('clipshape');
+    const customEl = document.getElementById('clipcustom');
+    if (!modeEl || !customEl) return;
+
+    modeEl.value = 'custom';
+
+    if (kind === 'polygon') {
+        customEl.value = `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)`;
+    } else if (kind === 'circle') {
+        customEl.value = `circle(45% at 50% 50%)`;
+    } else if (kind === 'inset') {
+        customEl.value = `inset(10% 10% 10% 10% round 12%)`;
+    }
+    updateCurrentLayer();
+}
+
 
         function renderLayerList() {
             const layerList = document.getElementById('layerList');
@@ -1214,15 +1390,48 @@ function updateCurrentLayer() {
     layer.type = document.getElementById('layerType').value;
     layer.shape = document.getElementById('layerShape').value;
 
-    if (!layer.clip) {
-        layer.clip = {};
-    }
-    layer.clip.doclip = document.getElementById('doclip').checked;
-    layer.clip.shape = document.getElementById('clipshape').value;
+    // Ensure clip object exists
+    layer.clip = layer.clip || {};
+
+    // Keep your existing flag name for compatibility
+    layer.clip.doclip = !!document.getElementById('doclip')?.checked;
+
+    // New: mode (preset/custom)
+    const modeEl = document.getElementById('clipshape');
+    layer.clip.mode = modeEl ? modeEl.value : 'preset';
+
+    // Preset choice
+    const shapeEl = document.getElementById('clipshape');
+    layer.clip.shape = shapeEl ? shapeEl.value : (layer.clip.shape || 'triangle');
+
+    // Fine-tune params (safe even if you don’t use them for all shapes)
+    layer.clip.params = layer.clip.params || {};
+    const roundEl = document.getElementById('clipRound');
+    const rotEl = document.getElementById('clipRotate');
+    layer.clip.params.round = roundEl ? Number(roundEl.value) : (layer.clip.params.round ?? 0);
+    layer.clip.params.rotate = rotEl ? Number(rotEl.value) : (layer.clip.params.rotate ?? 0);
+
+    // Advanced raw clip-path input
+    const customEl = document.getElementById('customClipPathInput');
+    layer.clip.custom = layer.clip.custom || {};
+    layer.clip.custom.value = customEl ? customEl.value : (layer.clip.custom.value || "");
+
+    // UI: show/hide preset/custom controls
+    //const presetBox = document.getElementById('clipPresetControls');
+    //const customBox = document.getElementById('clipCustomControls');
+    //if (presetBox && customBox) {
+    //    const isCustom = layer.clip.mode === 'custom';
+    //    presetBox.style.display = isCustom ? 'none' : '';
+    //    customBox.style.display = isCustom ? '' : 'none';
+    //}
+
+
     //layer.clip.unit = document.getElementById('clipunit').value;
 
     layer.opacity = parseFloat(document.getElementById('layerOpacity-' + currentLayerIndex).value);
     layer.blur = parseFloat(document.getElementById('layerBlur').value);
+
+    
     layer.animate = document.getElementById('layerAnimate').checked;
     //layer.duration = parseFloat(document.getElementById('layerDuration').value);
     //layer.clockwise = document.getElementById('layerClockwise').checked;
@@ -1272,7 +1481,7 @@ function renderDynamicInputs() {
     if (layer.type === 'linear') {
         html += `
                     <label>
-                        Shape:
+                        Select Gradient Shape:
                         <select id="layerShape" onchange="updateCurrentLayer()">
                             <option value="circle">Circle</option>
                             <option value="square">Square</option>
@@ -1303,7 +1512,7 @@ function renderDynamicInputs() {
     if (layer.type === 'conic') {
         html += `
                     <label>
-                        Shape:
+                        Select Gradient Shape:
                         <select id="layerShape" onchange="updateCurrentLayer()">
                             <option value="circle">Circle</option>
                             <option value="square">Square</option>
@@ -1334,7 +1543,7 @@ function renderDynamicInputs() {
     if (layer.type === 'radial') {
         html += `
                     <label>
-                        Shape:
+                        Select Gradient Shape:
                         <select id="layerShape" onchange="updateCurrentLayer()">
                             <option value="circle">Circle</option>
                             <option value="ellipse">Ellipse</option>
@@ -1374,6 +1583,8 @@ function renderDynamicInputs() {
     if (layer.type === 'radial') {
         document.getElementById('radialSize').value = layer.size || '';
     }
+    enhanceCyberSelects(document.getElementById("dynamicInputs"));
+
 }
 
 function interpolateColorStops(stops, percent) {
@@ -1541,6 +1752,7 @@ function updateColorEditor() {
 }
 
 function changeColorStopColor() {
+    pushHistory('changeColorStopColor');
     const hex = document.getElementById('colorPicker').value;
     const layer = layers[currentLayerIndex];
     const stop = layer.colorStops[selectedStopIndex];
@@ -1551,6 +1763,7 @@ function changeColorStopColor() {
 }
 
 function changeColorStopAlpha() {
+    pushHistory('changeColorStopAlpha');
     const alpha = parseFloat(document.getElementById('alphaSlider').value);
     const hex = document.getElementById('colorPicker').value;
     const layer = layers[currentLayerIndex];
@@ -1561,6 +1774,7 @@ function changeColorStopAlpha() {
 }
 
 function changeColorStopHex() {
+    pushHistory('changeColorStopHex');
     const hex = document.getElementById('hexInput').value;
     const layer = layers[currentLayerIndex];
     const a = rgbaFromCss(hex).a || 1;
@@ -1571,6 +1785,7 @@ function changeColorStopHex() {
 }
 
 function changeColorStopRgba() {
+    pushHistory('changeColorStopRgba');
     const rgba = document.getElementById('rgbaInput').value;
     const layer = layers[currentLayerIndex];
     layer.colorStops[selectedStopIndex].color = rgba;
@@ -1580,16 +1795,24 @@ function changeColorStopRgba() {
 }
 
 function changeColorStopPosition() {
+    pushHistory('changeColorStopPosition');
     const newStop = document.getElementById('stopInput').value + '%';
     const layer = layers[currentLayerIndex];
     layer.colorStops[selectedStopIndex].stop = newStop;
     renderColorStops();
     createLayers();
 }
+
+function openPopup() {
+    const p = Popup.create({ id: "myPopup", title: "My Title", content: "<p>Hello</p>", draggable: true});
+    p.open();
+   //Popup.toast({ content: "Saved!", toast: { duration: 2800 } });
+}
        
 
 function addColorStop() {
     pushHistory('addColorStop');
+    openPopup();
     if (currentLayerIndex < 0) return;
 
     const stops = layers[currentLayerIndex].colorStops;
@@ -1999,7 +2222,7 @@ function buildGradientString(layer) {
             createLayers();
         }
 
-function addLayer() {
+        function addLayer() {
     pushHistory('addLayer');
             layers.push(defaultLayer());
             createLayers();
@@ -2046,6 +2269,9 @@ function generateCSS() {
         }
         
         layerCSS += `  opacity: ${layer.opacity};\n`;
+        if (layer.blendMode && layer.blendMode !== "normal") {
+            layerCSS += `  mix-blend-mode: ${layer.blendMode};\n`;
+        }
 
         // Shape / Clip
         if (layer.clip && layer.clip.doclip && layer.clip.shape) {
@@ -2193,7 +2419,7 @@ function generateCSS() {
   0%, 100% { opacity: ${layer.opacity}; }
   50% { opacity: ${Math.max(0.1, layer.opacity - 0.2)}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
 
                     case 'slide':
@@ -2203,7 +2429,7 @@ function generateCSS() {
   0% { background-position: ${vertical ? '50% 0%' : '0% 50%'}; }
   100% { background-position: ${vertical ? '50% 100%' : '100% 50%'}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
 
                     case 'morph':
@@ -2216,7 +2442,7 @@ function generateCSS() {
   50% { background: ${gradB}; }
   100% { background: ${gradA}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
                 }
             });
@@ -2232,7 +2458,7 @@ function generateCSS() {
                 }
                     keyframes += `100% { transform: ${transformFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${tAnim} ${transDuration}s ${maxdelay}s linear infinite`);
+                otherAnimations.push(`${tAnim} ${transDuration}s ${maxdelay}s ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.easing || "linear"} ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.iterations ?? "infinite"} ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.direction || (layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.reverse ? "reverse" : "normal")}`);
             }
 
             if (hasFilter) {
@@ -2246,7 +2472,7 @@ function generateCSS() {
                 }
                 keyframes += `100% { filter: ${filterFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${fAnim} ${filterDuration}s ${maxdelay}s linear infinite`);
+                otherAnimations.push(`${fAnim} ${filterDuration}s ${maxdelay}s ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.easing || "linear"} ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.iterations ?? "infinite"} ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.direction || (layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.reverse ? "reverse" : "normal")}`);
             }
 
             layerCSS += `  animation: ${otherAnimations.join(', ')};\n`;
@@ -2821,8 +3047,8 @@ function renderAnimationControls() {
     container.appendChild(help);
 
     const easingOptions = [
-        'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
-        'cubic-bezier(0.4, 0, 0.2, 1)', 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        'linear','ease','ease-in','ease-out','ease-in-out',
+        'cubic-bezier(0.4, 0, 0.2, 1)','cubic-bezier(0.2, 0.8, 0.2, 1)',
         'steps(8, end)'
     ];
 
@@ -2836,8 +3062,8 @@ function renderAnimationControls() {
         wrap.style.margin = '0.35rem 0';
         const lab = document.createElement('div');
         lab.textContent = labelText;
-        lab.style.fontSize = '12px';
-        lab.style.opacity = '0.9';
+        lab.style.fontSize = '0.92rem';
+        lab.style.color = "var(--text-dim)";
         wrap.appendChild(lab);
         wrap.appendChild(inputEl);
         return wrap;
@@ -2887,7 +3113,7 @@ function renderAnimationControls() {
 
         const details = document.createElement('details');
         details.className = 'animation-item';
-        details.open = index === 0; // open first by default
+        details.open = true; // open first by default
 
         const summary = document.createElement('summary');
         summary.style.display = 'flex';
@@ -3083,8 +3309,8 @@ function renderAnimationControls() {
         if (type === 'dropglow') {
             body.appendChild(row('Glow from (px)', numberInput(anim.dropglowFrom ?? 5, { step: 1, onChange: (v) => { pushHistory(); updateAnimation(index, 'dropglowFrom', v); } })));
             body.appendChild(row('Glow to (px)', numberInput(anim.dropglowTo ?? 20, { step: 1, onChange: (v) => { pushHistory(); updateAnimation(index, 'dropglowTo', v); } })));
-            body.appendChild(row('Color from', textInput(anim.dropglowcolorfrom ?? '#1c80e3', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorfrom', v); })));
-            body.appendChild(row('Color to', textInput(anim.dropglowcolorto ?? '#da76d2', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorto', v); })));
+            body.appendChild(row('Color from', textInput(anim.dropglowcolorfrom ?? '#1c80e3', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorfrom', v); } )));
+            body.appendChild(row('Color to', textInput(anim.dropglowcolorto ?? '#da76d2', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorto', v); } )));
         }
 
         if (type === 'slide') {
@@ -3105,6 +3331,8 @@ function renderAnimationControls() {
 
         details.appendChild(body);
         container.appendChild(details);
+
+        enhanceCyberSelects(container);
         animateIn(details, { dx: 8, ms: 160 });
     });
 }
@@ -3114,12 +3342,19 @@ function addAnimation() {
     pushHistory('add animation');
     layers[currentLayerIndex].animations.push({
         type: 'rotate',
-        duration: 10,
+        duration: defaultDuration,
+        delay: 0,
+        easing: 'linear',
+        direction: 'normal',
+        iterations: 'infinite',
+        enabled: true,
         reverse: false
     });
     renderAnimationControls();
-    document.getElementById('animationList').classList.remove('hidden');
+    const list = document.getElementById('animationList');
+    if (list) list.classList.remove('hidden');
     createLayers();
+    toast("Animation added");
 }
 
 function updateAnimation(index, key, value) {
@@ -3129,15 +3364,15 @@ function updateAnimation(index, key, value) {
 
     // Type coercion
     const numericKeys = new Set([
-        'duration', 'delay',
-        'fromHue', 'toHue',
-        'blurfrom', 'blurto',
-        'satfrom', 'satto',
-        'contrastfrom', 'contrastto',
-        'dropglowFrom', 'dropglowTo',
-        'scalefromX', 'scalefromY', 'scaletoX', 'scaletoY',
-        'transXfrom', 'transYfrom', 'transXto', 'transYto',
-        'intensity', 'step', 'angleA', 'angleB'
+      'duration','delay',
+      'fromHue','toHue',
+      'blurfrom','blurto',
+      'satfrom','satto',
+      'contrastfrom','contrastto',
+      'dropglowFrom','dropglowTo',
+      'scalefromX','scalefromY','scaletoX','scaletoY',
+      'transXfrom','transYfrom','transXto','transYto',
+      'intensity','step','angleA','angleB'
     ]);
 
     if (numericKeys.has(key)) value = parseFloat(value);
@@ -3147,13 +3382,12 @@ function updateAnimation(index, key, value) {
 
     // Keep backward-compat fields aligned
     if (key === 'direction') {
-        layer.animations[index].reverse = (value === 'reverse' || value === 'alternate-reverse');
+      layer.animations[index].reverse = (value === 'reverse' || value === 'alternate-reverse');
     }
 
     renderAnimationControls();
     createLayers();
 }
-
 function syncDuration(animIndex) {
     if (!layers || currentLayerIndex < 0) return;
     const layer = layers[currentLayerIndex];
@@ -3191,7 +3425,7 @@ function copyToClipboard(elementId) {
     if (btn) {
         btn.innerHTML = '✔'; // ✅ visual feedback
         btn.style.color = "green";
-        setTimeout(() => btn.innerHTML = '&#12222;', 1500);
+        setTimeout(() => btn.innerHTML = 'Cop', 1500);
         setTimeout(() => btn.style.color = '#888', 1500);
     }
 }
@@ -3282,18 +3516,22 @@ function startDragStop(e, index) {
 
 
 
-// Toggle template visibility
+// Toggle right-side menus (templates / animations / details)
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('templateHeader').onclick = () => {
-        const list = document.getElementById('templateList');
-        list.classList.toggle('hidden');
-    }; document.getElementById('animationHeader').onclick = () => {
-        const list = document.getElementById('animationList');
-        list.classList.toggle('hidden');
-    }; document.getElementById('detailsHeader').onclick = () => {
-        const list = document.getElementById('layer-details-block');
-        list.classList.toggle('hidden');
+    const toggle = (headerId, listId) => {
+        const header = document.getElementById(headerId);
+        const list = document.getElementById(listId);
+        if (!header || !list) return;
+        header.onclick = () => {
+            list.classList.toggle('hidden');
+            if (!list.classList.contains('hidden')) animateIn(list, { dx: 6, ms: 160 });
+            pulse(header, 120);
+        };
     };
+    toggle('templateHeader', 'templateList');
+    toggle('animationHeader', 'animationList');
+    toggle('clippingnHeader', 'clip-controls');
+    toggle('detailsHeader', 'layer-details-block');
 });
 
 
@@ -3574,6 +3812,7 @@ function togglePin() {
         preview.style.right = '20px';
         preview.style.left = 'auto';
         preview.style.bottom = 'auto';
+        //reset back to original size
         //localStorage.setItem('previewPinned', 'true');
     }
 }
@@ -3884,3 +4123,467 @@ initPreviewSize();
 renderTemplateMenu();
 //console.log("aaa" + templates[0].config);
 loadTemplate(templates[0] ? templates[0].config : { name: "Issues", config: defaultLayer() });
+
+
+
+
+/* ============================================================
+Custom Clip Polygon Editor Integration (Drag + Add Points)
+Requires: clip_polygon_editor.js loaded before this script OR after, but before use.
+Adds a "Custom (Polygon)" option workflow to existing clip controls.
+============================================================ */
+
+(function () {
+    // ---- Monkey-patch fullClipPathString to support custom polygons (without breaking existing) ----
+    const _origFullClipPathString = window.fullClipPathString;
+
+    function _basicFullClipPathString(clip) {
+        // Fallback only if original doesn't exist.
+        // Keep simple + standards-based; adjust to match your existing shapes if needed.
+        if (!clip || !clip.shape) return "none";
+        switch (clip.shape) {
+            case "triangle":
+                return "polygon(50% 0%, 100% 100%, 0% 100%)";
+            case "hexagon":
+                return "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
+            case "star":
+                return "polygon(50% 2%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+            case "custom":
+                return (clip.customPath && String(clip.customPath).trim()) ? String(clip.customPath).trim() : "none";
+            default:
+                return "none";
+        }
+    }
+
+    // Patch: if shape === "custom", prefer stored polygon/path, otherwise defer to original builder.
+    window.fullClipPathString = function fullClipPathStringPatched(clip) {
+        if (clip && clip.shape === "custom") {
+            const v = clip.customPath && String(clip.customPath).trim();
+            return v ? v : "none";
+        }
+        if (typeof _origFullClipPathString === "function") return _origFullClipPathString(clip);
+        return _basicFullClipPathString(clip);
+    };
+
+    // ---- Editor instance state ----
+    let activeClipEditor = null;
+    let activeClipEditorLayerIndex = null;
+
+    // Debounced export/update so dragging doesn't spam heavy operations
+    let _clipExportTimer = null;
+    function scheduleClipExportUpdate() {
+        clearTimeout(_clipExportTimer);
+        _clipExportTimer = setTimeout(() => {
+            try { generateCSS(); } catch (_) { }
+            try { exportConfig(); } catch (_) { }
+        }, 120);
+    }
+
+    function getCurrentLayer() {
+        if (typeof layers === "undefined") return null;
+        if (typeof currentLayerIndex !== "number") return null;
+        if (currentLayerIndex < 0 || currentLayerIndex >= layers.length) return null;
+        return layers[currentLayerIndex];
+    }
+
+    function getCurrentLayerPreviewEl() {
+        // createLayers uses: `spiral-layer ${projectName}-preview-layer-${i}`
+        if (typeof projectName !== "string") return null;
+        return document.querySelector(`.${projectName}-preview-layer-${currentLayerIndex}`);
+    }
+
+    function ensureCustomClipPanelExists() {
+        const clipSelect = document.getElementById("clipshape");
+        if (!clipSelect) return;
+
+        if (document.getElementById("customClipPanel")) return;
+
+        const panel = document.createElement("div");
+        panel.id = "customClipPanel";
+        panel.style.marginTop = "10px";
+        panel.style.padding = "10px";
+        panel.style.borderRadius = "12px";
+        panel.style.border = "1px solid rgba(170,140,255,.18)";
+        panel.style.background = "rgba(255,255,255,.04)";
+        panel.style.display = "none";
+
+        panel.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="font-weight:700; opacity:.95;">Custom Clip (polygon/path)</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="clipEditorToggleBtn" class="btnSmall">Edit Points</button>
+          <button type="button" id="clipEditorAddPointBtn" class="btnSmall">Add Points</button>
+        </div>
+      </div>
+
+      <textarea id="customClipPathInput" rows="4"
+        style="width:100%; resize:vertical; padding:10px; border-radius:10px; border:1px solid rgba(170,140,255,.18);
+               background: rgba(0,0,0,.18); color: rgba(238,240,255,.95); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"
+        placeholder="polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)"></textarea>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px;">
+        <div id="customClipStatus" style="font-size:12px; opacity:.9;"></div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="clipApplyCustomBtn" class="btnSmall">Apply</button>
+          <button type="button" id="clipCopyCustomBtn" class="btnSmall">Copy</button>
+        </div>
+      </div>
+
+      <div style="margin-top:8px; font-size:12px; opacity:.88; line-height:1.35;">
+        Tip: Use <code>polygon(...)</code> for point editing. Use <code>path('...')</code> for curves.
+        Percent coordinates export cleanly and stay responsive.
+      </div>
+    `;
+
+        // Insert panel right after the clipshape select (or its label container)
+        clipSelect.parentNode.insertBefore(panel, clipSelect.nextSibling);
+
+        // Small button class fallback if you don't have one
+        const styleId = "customClipPanelStyle";
+        if (!document.getElementById(styleId)) {
+            const st = document.createElement("style");
+            st.id = styleId;
+            st.textContent = `
+        .btnSmall{
+          height:30px; padding:0 10px; border-radius:10px;
+          border:1px solid rgba(170,140,255,.22);
+          background: rgba(255,255,255,.06);
+          color: rgba(238,240,255,.95);
+          cursor:pointer;
+          font-size:12px;
+        }
+        .btnSmall:hover{ background: rgba(255,255,255,.10); }
+      `;
+            document.head.appendChild(st);
+        }
+
+        // Wire buttons
+        document.getElementById("clipEditorToggleBtn").addEventListener("click", () => toggleClipPolygonEditor());
+        document.getElementById("clipEditorAddPointBtn").addEventListener("click", () => toggleAddPointMode());
+        document.getElementById("clipApplyCustomBtn").addEventListener("click", () => applyCustomClipFromTextarea());
+        document.getElementById("clipCopyCustomBtn").addEventListener("click", () => copyCustomClipTextarea());
+        document.getElementById("customClipPathInput").addEventListener("input", () => {
+            // soft-apply as user types (but don't force re-render)
+            softApplyCustomClipToPreview();
+        });
+    }
+
+    function setCustomClipPanelVisible(visible) {
+        const panel = document.getElementById("customClipPanel");
+        if (!panel) return;
+        panel.style.display = visible ? "block" : "none";
+    }
+
+    function setCustomClipStatus(msg) {
+        const el = document.getElementById("customClipStatus");
+        if (!el) return;
+        el.textContent = msg || "";
+    }
+
+    function isCustomSelected() {
+        const sel = document.getElementById("clipshape");
+        return sel && sel.value === "custom";
+    }
+
+    function getOrInitLayerClip(layer) {
+        if (!layer.clip) layer.clip = {};
+        if (typeof layer.clip.doclip !== "boolean") layer.clip.doclip = true;
+        return layer.clip;
+    }
+
+    function updateCustomClipUIFromLayer() {
+        ensureCustomClipPanelExists();
+
+        const layer = getCurrentLayer();
+        const panel = document.getElementById("customClipPanel");
+        const input = document.getElementById("customClipPathInput");
+        if (!panel || !input || !layer) return;
+
+        const isCustom = layer.clip && layer.clip.shape === "custom";
+        setCustomClipPanelVisible(isCustom);
+
+        if (isCustom) {
+            input.value = layer.clip.customPath || input.value || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+            setCustomClipStatus(activeClipEditor ? "Point editor active." : "");
+        } else {
+            setCustomClipStatus("");
+        }
+
+        // If user switched layers, ensure editor points at the current layer if still active
+        if (activeClipEditor && activeClipEditorLayerIndex !== currentLayerIndex) {
+            destroyClipPolygonEditor();
+            // auto-restart only if new layer is custom
+            if (isCustom) startClipPolygonEditor();
+        }
+    }
+
+    function applyCustomClipToLayerAndPreview(clipPath, points) {
+        const layer = getCurrentLayer();
+        const previewEl = getCurrentLayerPreviewEl();
+        if (!layer || !previewEl) return;
+
+        const clip = getOrInitLayerClip(layer);
+
+        // Ensure clipping is enabled + custom selected
+        clip.doclip = true;
+        clip.shape = "custom";
+        clip.customPath = clipPath;
+        if (Array.isArray(points)) clip.customPoints = points;
+
+        // Apply immediately to preview element without full rebuild
+        previewEl.style.clipPath = clipPath;
+
+        // Update inputs (if present)
+        const sel = document.getElementById("clipshape");
+        const doclip = document.getElementById("doclip");
+        if (sel) sel.value = "custom";
+        if (doclip) doclip.checked = true;
+
+        // trigger your normal data pipeline
+        try { generateCSS(); } catch (_) { }
+        try { exportConfig(); } catch (_) { }
+    }
+
+    function normalizeCustomClipValue(raw) {
+        if (!raw) return null;
+        let s = String(raw).trim();
+        s = s.replace(/^clip-path\s*:\s*/i, "").replace(/;$/, "").trim();
+        const ok = /^(polygon|inset|circle|ellipse|path)\(/i.test(s);
+        return ok ? s : null;
+    }
+
+    function softApplyCustomClipToPreview() {
+        const input = document.getElementById("customClipPathInput");
+        const previewEl = getCurrentLayerPreviewEl();
+        if (!input || !previewEl) return;
+
+        const val = normalizeCustomClipValue(input.value);
+        if (!val) {
+            setCustomClipStatus("Invalid syntax (use polygon/circle/ellipse/inset/path).");
+            return;
+        }
+
+        // Apply to preview only (do not commit points unless user clicks Apply)
+        previewEl.style.clipPath = val;
+        setCustomClipStatus("Preview updated.");
+    }
+
+    function applyCustomClipFromTextarea() {
+        const input = document.getElementById("customClipPathInput");
+        if (!input) return;
+
+        const val = normalizeCustomClipValue(input.value);
+        if (!val) {
+            setCustomClipStatus("Invalid syntax (use polygon/circle/ellipse/inset/path).");
+            return;
+        }
+
+        // If polygon editor exists, prefer its points so we keep editability
+        let points = null;
+        if (activeClipEditor) {
+            points = activeClipEditor.getPoints?.() || null;
+        }
+
+        applyCustomClipToLayerAndPreview(val, points);
+        setCustomClipStatus("Applied to layer.");
+        scheduleClipExportUpdate();
+    }
+
+    async function copyCustomClipTextarea() {
+        const input = document.getElementById("customClipPathInput");
+        if (!input) return;
+        const txt = input.value.trim();
+        if (!txt) return;
+
+        try {
+            if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(txt);
+            else {
+                const ta = document.createElement("textarea");
+                ta.value = txt;
+                ta.style.position = "fixed";
+                ta.style.left = "-9999px";
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+            }
+            setCustomClipStatus("Copied.");
+        } catch {
+            setCustomClipStatus("Copy failed.");
+        }
+    }
+
+    function startClipPolygonEditor() {
+        const layer = getCurrentLayer();
+        const previewEl = getCurrentLayerPreviewEl();
+        if (!layer || !previewEl) return;
+
+        if (!window.ClipPolygonEditor) {
+            console.warn("ClipPolygonEditor not found. Ensure clip_polygon_editor.js is loaded.");
+            setCustomClipStatus("Editor not loaded (missing clip_polygon_editor.js).");
+            return;
+        }
+
+        const clip = getOrInitLayerClip(layer);
+        const initial = clip.customPath || window.getComputedStyle(previewEl).clipPath || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+
+        // Ensure layer is in custom mode
+        clip.doclip = true;
+        clip.shape = "custom";
+        clip.customPath = normalizeCustomClipValue(initial) || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+
+        activeClipEditor?.destroy?.();
+        activeClipEditor = window.ClipPolygonEditor.attach({
+            previewEl,
+            initialClipPath: clip.customPath,
+            // Snapping makes it feel more "professional" for geometry work; turn off if you prefer
+            snap: false,
+            snapToEdges: true,
+            showLabels: false,
+            onChange: ({ clipPath, points }) => {
+                // keep UI synced
+                const input = document.getElementById("customClipPathInput");
+                if (input && input.value !== clipPath) input.value = clipPath;
+
+                // Commit continuously so export and layer state are always correct
+                clip.customPath = clipPath;
+                clip.customPoints = points;
+
+                // Preview is already applied by the editor; just keep pipeline updated lightly
+                scheduleClipExportUpdate();
+            }
+        });
+
+        activeClipEditorLayerIndex = currentLayerIndex;
+        setCustomClipStatus("Point editor active.");
+    }
+
+    function destroyClipPolygonEditor() {
+        try { activeClipEditor?.destroy?.(); } catch (_) { }
+        activeClipEditor = null;
+        activeClipEditorLayerIndex = null;
+
+        const addBtn = document.getElementById("clipEditorAddPointBtn");
+        if (addBtn) addBtn.textContent = "Add Points";
+        setCustomClipStatus("");
+    }
+
+    function toggleClipPolygonEditor() {
+        if (!isCustomSelected()) {
+            // Force custom selection if user clicks "Edit Points"
+            const sel = document.getElementById("clipshape");
+            if (sel) sel.value = "custom";
+            const layer = getCurrentLayer();
+            if (layer) {
+                const clip = getOrInitLayerClip(layer);
+                clip.doclip = true;
+                clip.shape = "custom";
+            }
+            setCustomClipPanelVisible(true);
+        }
+
+        if (activeClipEditor) {
+            destroyClipPolygonEditor();
+            setCustomClipStatus("Point editor closed.");
+        } else {
+            startClipPolygonEditor();
+        }
+    }
+
+    function toggleAddPointMode() {
+        if (!activeClipEditor) {
+            // auto-start editor, then arm add mode
+            startClipPolygonEditor();
+            if (!activeClipEditor) return;
+        }
+
+        const btn = document.getElementById("clipEditorAddPointBtn");
+        const enabled = !!activeClipEditor.isAddMode?.() ? false : true;
+
+        activeClipEditor.setAddMode?.(enabled);
+
+        if (btn) btn.textContent = enabled ? "Add Points: ON" : "Add Points";
+        setCustomClipStatus(enabled ? "Click on the preview to add points." : "Add-point mode off.");
+    }
+
+    // ---- Hook custom mode into existing controls ----
+    function handleClipShapeChange() {
+        ensureCustomClipPanelExists();
+        const layer = getCurrentLayer();
+        if (!layer) return;
+
+        const clip = getOrInitLayerClip(layer);
+        const sel = document.getElementById("clipshape");
+        if (!sel) return;
+
+        clip.shape = sel.value;
+
+        if (clip.shape === "custom") {
+            // ensure panel visible + seed value if absent
+            setCustomClipPanelVisible(true);
+            const input = document.getElementById("customClipPathInput");
+            if (input && !input.value.trim()) {
+                input.value = clip.customPath || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+            }
+            // If they switch into custom, we do NOT force-open the editor; user can click Edit Points.
+            applyCustomClipFromTextarea();
+        } else {
+            setCustomClipPanelVisible(false);
+            destroyClipPolygonEditor();
+        }
+    }
+
+    // Patch selectLayer to keep custom UI + editor aligned with layer selection
+    const _origSelectLayer = window.selectLayer;
+    if (typeof _origSelectLayer === "function") {
+        window.selectLayer = function patchedSelectLayer(index) {
+            _origSelectLayer(index);
+            updateCustomClipUIFromLayer();
+        };
+    }
+
+    // Patch updateCurrentLayer to persist custom clip textarea into the model when in custom mode
+    const _origUpdateCurrentLayer = window.updateCurrentLayer;
+    if (typeof _origUpdateCurrentLayer === "function") {
+        window.updateCurrentLayer = function patchedUpdateCurrentLayer() {
+            _origUpdateCurrentLayer();
+
+            const layer = getCurrentLayer();
+            if (!layer) return;
+
+            // If the user is in custom mode, persist the textarea value
+            const sel = document.getElementById("clipshape");
+            const input = document.getElementById("customClipPathInput");
+            if (sel && sel.value === "custom" && input) {
+                const clip = getOrInitLayerClip(layer);
+                clip.shape = "custom";
+                clip.customPath = normalizeCustomClipValue(input.value) || clip.customPath || "";
+                scheduleClipExportUpdate();
+            }
+
+            updateCustomClipUIFromLayer();
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ensureCustomClipPanelExists();
+
+        // Add "custom" option if missing
+        const sel = document.getElementById("clipshape");
+        if (sel && !Array.from(sel.options).some(o => o.value === "custom")) {
+            const opt = document.createElement("option");
+            opt.value = "custom";
+            opt.textContent = "Custom (Polygon)";
+            sel.appendChild(opt);
+        }
+
+        // Wire shape change
+        if (sel) {
+            sel.addEventListener("change", () => handleClipShapeChange());
+        }
+
+        // Initial sync after templates load
+        setTimeout(() => updateCustomClipUIFromLayer(), 0);
+    });
+
+})();

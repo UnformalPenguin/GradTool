@@ -1,0 +1,546 @@
+/*!
+ * styles.cyber-retro.css — PopupEngine add-on theme
+ * "The future we were promised" vibe: neon scanlines, CRT bloom, chrome edges,
+ * grid-glow backdrop, and glitch accents.
+ *
+ * How to enable:
+ *   1) Include AFTER your base styles.css
+ *   2) Set one of:
+ *        <html data-popup-template="cyber-retro">
+ *      or <body data-popup-template="cyber-retro">
+ *      or add class "popup-template--cyber-retro" to a wrapper
+ *
+ * Optional:
+ *   - Add [data-popup-header] to your header area to become the drag handle.
+ *   - Add class "popup__btn--primary" for neon CTA.
+ */
+
+/* -----------------------------
+   Theme activation selectors
+----------------------------- */
+
+html[data-popup-template="cyber-retro"],
+body[data-popup-template="cyber-retro"],
+.popup-template--cyber-retro {
+    /* Neon token overrides */
+    --popup-font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --popup-radius: 18px;
+    --popup-radius-sm: 14px;
+    --cyber-ink: #071018;
+    --cyber-ink-2: #0b1521;
+    --cyber-glow: #00f5ff;
+    --cyber-glow-2: #ff2bd6;
+    --cyber-glow-3: #b6ff3b;
+    --cyber-amber: #ffcc00;
+    --cyber-red: #ff2d55;
+    --popup-bg: var(--cyber-ink);
+    --popup-surface: color-mix(in srgb, var(--cyber-ink-2) 86%, transparent);
+    --popup-text: #eaffff;
+    --popup-muted: rgba(234, 255, 255, 0.68);
+    --popup-border: rgba(0, 245, 255, 0.26);
+    --popup-accent: var(--cyber-glow);
+    --popup-accent-contrast: #021018;
+    --popup-ring: rgba(0, 245, 255, 0.30);
+    /* Backdrop gets punchier */
+    --popup-backdrop-opacity: 0.72;
+    --popup-backdrop-blur: 14px;
+    --popup-backdrop: rgba(0, 0, 0, var(--popup-backdrop-opacity));
+    /* Chrome-y shadow + glow stack */
+    --popup-shadow: 0 26px 100px rgba(0, 0, 0, 0.65), 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 245, 255, 0.18), 0 0 40px rgba(0, 245, 255, 0.12), 0 0 70px rgba(255, 43, 214, 0.08);
+}
+
+    /* Helper to scope everything under the selected theme */
+    html[data-popup-template="cyber-retro"] .popup-root,
+    body[data-popup-template="cyber-retro"] .popup-root,
+    .popup-template--cyber-retro .popup-root {
+        /* slight color cast like CRT */
+        filter: saturate(1.08) contrast(1.03);
+    }
+
+    /* -----------------------------
+   Backdrop: synth grid + scanlines
+----------------------------- */
+
+    html[data-popup-template="cyber-retro"] .popup-backdrop,
+    body[data-popup-template="cyber-retro"] .popup-backdrop,
+    .popup-template--cyber-retro .popup-backdrop {
+        background:
+        /* distant radial glow */
+        radial-gradient(1000px 700px at 20% 20%, rgba(0, 245, 255, 0.12), transparent 60%), radial-gradient(900px 600px at 80% 70%, rgba(255, 43, 214, 0.10), transparent 55%),
+        /* grid */
+        linear-gradient(rgba(0, 245, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 43, 214, 0.05) 1px, transparent 1px),
+        /* vignette */
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.88) 70%);
+        background-size: auto, auto, 54px 54px, 54px 54px, auto;
+        background-position: center, center, center, center, center;
+        backdrop-filter: blur(var(--popup-backdrop-blur));
+        -webkit-backdrop-filter: blur(var(--popup-backdrop-blur));
+    }
+
+        /* moving scanlines overlay */
+        html[data-popup-template="cyber-retro"] .popup-backdrop::before,
+        body[data-popup-template="cyber-retro"] .popup-backdrop::before,
+        .popup-template--cyber-retro .popup-backdrop::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.18;
+            background: repeating-linear-gradient( to bottom, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.07) 1px, transparent 2px, transparent 6px );
+            mix-blend-mode: overlay;
+            animation: popup-crt-scan 7.5s linear infinite;
+        }
+
+@keyframes popup-crt-scan {
+    from {
+        transform: translateY(-10%);
+    }
+
+    to {
+        transform: translateY(10%);
+    }
+}
+
+/* subtle noise */
+html[data-popup-template="cyber-retro"] .popup-backdrop::after,
+body[data-popup-template="cyber-retro"] .popup-backdrop::after,
+.popup-template--cyber-retro .popup-backdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.10;
+    background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.10), transparent 30%), radial-gradient(circle at 60% 70%, rgba(255,255,255,0.06), transparent 32%), radial-gradient(circle at 90% 40%, rgba(255,255,255,0.08), transparent 28%);
+    mix-blend-mode: soft-light;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    html[data-popup-template="cyber-retro"] .popup-backdrop::before,
+    body[data-popup-template="cyber-retro"] .popup-backdrop::before,
+    .popup-template--cyber-retro .popup-backdrop::before {
+        animation: none;
+    }
+}
+
+/* -----------------------------
+   Dialog: chrome frame + neon edges
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-dialog,
+body[data-popup-template="cyber-retro"] .popup-dialog,
+.popup-template--cyber-retro .popup-dialog {
+    border-radius: var(--popup-radius);
+    border: 1px solid rgba(0, 245, 255, 0.30);
+    background:
+    /* glossy highlight */
+    linear-gradient(135deg, rgba(255,255,255,0.10), transparent 35%),
+    /* inner panel */
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01)), var(--popup-surface);
+    box-shadow: var(--popup-shadow);
+    position: absolute;
+    /* crisp edges */
+    outline: 1px solid rgba(255, 43, 214, 0.12);
+    outline-offset: -2px;
+}
+
+    /* neon corner accents */
+    html[data-popup-template="cyber-retro"] .popup-dialog::before,
+    body[data-popup-template="cyber-retro"] .popup-dialog::before,
+    .popup-template--cyber-retro .popup-dialog::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(0,245,255,0.75), transparent 35%) top left / 42px 2px no-repeat, linear-gradient(180deg, rgba(0,245,255,0.75), transparent 35%) top left / 2px 42px no-repeat, linear-gradient(90deg, rgba(255,43,214,0.70), transparent 35%) bottom right / 42px 2px no-repeat, linear-gradient(180deg, rgba(255,43,214,0.70), transparent 35%) bottom right / 2px 42px no-repeat;
+        opacity: 0.9;
+        filter: drop-shadow(0 0 10px rgba(0,245,255,0.25)) drop-shadow(0 0 12px rgba(255,43,214,0.16));
+    }
+
+    /* inner CRT glow + scanline hint */
+    html[data-popup-template="cyber-retro"] .popup-dialog::after,
+    body[data-popup-template="cyber-retro"] .popup-dialog::after,
+    .popup-template--cyber-retro .popup-dialog::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        opacity: 0.22;
+        background: radial-gradient(800px 240px at 50% 0%, rgba(0,245,255,0.18), transparent 55%), radial-gradient(700px 240px at 50% 100%, rgba(255,43,214,0.14), transparent 55%), repeating-linear-gradient( to bottom, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 2px, transparent 6px );
+        mix-blend-mode: overlay;
+    }
+
+/* -----------------------------
+   Header: neon strip + drag affordance
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup__header,
+html[data-popup-template="cyber-retro"] [data-popup-header],
+body[data-popup-template="cyber-retro"] .popup__header,
+body[data-popup-template="cyber-retro"] [data-popup-header],
+.popup-template--cyber-retro .popup__header,
+.popup-template--cyber-retro [data-popup-header] {
+    border-bottom: 1px solid rgba(0, 245, 255, 0.22);
+    background: linear-gradient(90deg, rgba(0,245,255,0.14), rgba(255,43,214,0.10), rgba(182,255,59,0.10)), color-mix(in srgb, var(--popup-surface) 86%, transparent);
+    position: relative;
+    user-select: none;
+    cursor: grab;
+}
+
+    html[data-popup-template="cyber-retro"] .popup__header:active,
+    html[data-popup-template="cyber-retro"] [data-popup-header]:active,
+    body[data-popup-template="cyber-retro"] .popup__header:active,
+    body[data-popup-template="cyber-retro"] [data-popup-header]:active,
+    .popup-template--cyber-retro .popup__header:active,
+    .popup-template--cyber-retro [data-popup-header]:active {
+        cursor: grabbing;
+    }
+
+    /* tiny "status LEDs" */
+    html[data-popup-template="cyber-retro"] .popup__header::before,
+    html[data-popup-template="cyber-retro"] [data-popup-header]::before,
+    body[data-popup-template="cyber-retro"] .popup__header::before,
+    body[data-popup-template="cyber-retro"] [data-popup-header]::before,
+    .popup-template--cyber-retro .popup__header::before,
+    .popup-template--cyber-retro [data-popup-header]::before {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        width: 46px;
+        height: 10px;
+        transform: translateY(-50%);
+        border-radius: 999px;
+        background: radial-gradient(circle at 12% 50%, rgba(0,245,255,0.95) 0 3px, transparent 4px), radial-gradient(circle at 50% 50%, rgba(255,43,214,0.95) 0 3px, transparent 4px), radial-gradient(circle at 88% 50%, rgba(182,255,59,0.95) 0 3px, transparent 4px);
+        filter: drop-shadow(0 0 8px rgba(0,245,255,0.25));
+        opacity: 0.85;
+        pointer-events: none;
+    }
+
+/* Title gets a neon glow */
+html[data-popup-template="cyber-retro"] .popup__title,
+body[data-popup-template="cyber-retro"] .popup__title,
+.popup-template--cyber-retro .popup__title {
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0,245,255,0.18), 0 0 18px rgba(255,43,214,0.12);
+}
+
+/* -----------------------------
+   Content: retro terminal polish
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-content,
+body[data-popup-template="cyber-retro"] .popup-content,
+.popup-template--cyber-retro .popup-content {
+    color: var(--popup-text);
+    background: radial-gradient(800px 400px at 50% 0%, rgba(0,245,255,0.06), transparent 65%), radial-gradient(800px 400px at 50% 100%, rgba(255,43,214,0.05), transparent 60%);
+}
+
+    /* Links get that synthwave pop */
+    html[data-popup-template="cyber-retro"] .popup-content a,
+    body[data-popup-template="cyber-retro"] .popup-content a,
+    .popup-template--cyber-retro .popup-content a {
+        color: var(--cyber-glow);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(0,245,255,0.45);
+    }
+
+        html[data-popup-template="cyber-retro"] .popup-content a:hover,
+        body[data-popup-template="cyber-retro"] .popup-content a:hover,
+        .popup-template--cyber-retro .popup-content a:hover {
+            color: var(--cyber-glow-2);
+            border-bottom-color: rgba(255,43,214,0.55);
+        }
+
+/* -----------------------------
+   Buttons: neon + chrome
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup__btn,
+body[data-popup-template="cyber-retro"] .popup__btn,
+.popup-template--cyber-retro .popup__btn {
+    border-radius: 14px;
+    border: 1px solid rgba(0,245,255,0.30);
+    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)), rgba(0,245,255,0.07);
+    color: var(--popup-text);
+    box-shadow: 0 0 0 1px rgba(255,43,214,0.12) inset, 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+    html[data-popup-template="cyber-retro"] .popup__btn:hover,
+    body[data-popup-template="cyber-retro"] .popup__btn:hover,
+    .popup-template--cyber-retro .popup__btn:hover {
+        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03)), rgba(255,43,214,0.10);
+        border-color: rgba(255,43,214,0.38);
+        transform: translateY(-1px);
+    }
+
+    html[data-popup-template="cyber-retro"] .popup__btn:active,
+    body[data-popup-template="cyber-retro"] .popup__btn:active,
+    .popup-template--cyber-retro .popup__btn:active {
+        transform: translateY(1px);
+    }
+
+/* Primary = neon beam */
+html[data-popup-template="cyber-retro"] .popup__btn--primary,
+body[data-popup-template="cyber-retro"] .popup__btn--primary,
+.popup-template--cyber-retro .popup__btn--primary {
+    border-color: rgba(0,245,255,0.62);
+    color: #021018;
+    background: linear-gradient(90deg, rgba(0,245,255,0.95), rgba(255,43,214,0.90), rgba(182,255,59,0.88));
+    text-shadow: none;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.16) inset, 0 0 22px rgba(0,245,255,0.22), 0 0 34px rgba(255,43,214,0.18);
+}
+
+    html[data-popup-template="cyber-retro"] .popup__btn--primary:hover,
+    body[data-popup-template="cyber-retro"] .popup__btn--primary:hover,
+    .popup-template--cyber-retro .popup__btn--primary:hover {
+        filter: brightness(1.06) saturate(1.1);
+        transform: translateY(-1px);
+    }
+
+/* Ghost button = terminal outline */
+html[data-popup-template="cyber-retro"] .popup__btn--ghost,
+body[data-popup-template="cyber-retro"] .popup__btn--ghost,
+.popup-template--cyber-retro .popup__btn--ghost {
+    background: transparent;
+    border-color: rgba(0,245,255,0.28);
+    box-shadow: none;
+}
+
+    html[data-popup-template="cyber-retro"] .popup__btn--ghost:hover,
+    body[data-popup-template="cyber-retro"] .popup__btn--ghost:hover,
+    .popup-template--cyber-retro .popup__btn--ghost:hover {
+        background: rgba(0,245,255,0.08);
+        box-shadow: 0 0 0 1px rgba(0,245,255,0.20) inset;
+    }
+
+/* Danger = hot pink/red */
+html[data-popup-template="cyber-retro"] .popup__btn--danger,
+body[data-popup-template="cyber-retro"] .popup__btn--danger,
+.popup-template--cyber-retro .popup__btn--danger {
+    background: linear-gradient(90deg, rgba(255,45,85,0.95), rgba(255,43,214,0.80));
+    border-color: rgba(255,45,85,0.55);
+    color: #0b0b12;
+}
+
+/* Close button = glitch chip */
+html[data-popup-template="cyber-retro"] [data-popup-close],
+body[data-popup-template="cyber-retro"] [data-popup-close],
+.popup-template--cyber-retro [data-popup-close] {
+    border-radius: 12px;
+    color: rgba(234,255,255,0.78);
+    background: rgba(0,245,255,0.06);
+    border: 1px solid rgba(0,245,255,0.18);
+    box-shadow: 0 0 18px rgba(0,245,255,0.08);
+}
+
+    html[data-popup-template="cyber-retro"] [data-popup-close]:hover,
+    body[data-popup-template="cyber-retro"] [data-popup-close]:hover,
+    .popup-template--cyber-retro [data-popup-close]:hover {
+        color: #ffffff;
+        border-color: rgba(255,43,214,0.40);
+        background: rgba(255,43,214,0.10);
+    }
+
+/* -----------------------------
+   Inputs: terminal fields
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-content input,
+html[data-popup-template="cyber-retro"] .popup-content select,
+html[data-popup-template="cyber-retro"] .popup-content textarea,
+body[data-popup-template="cyber-retro"] .popup-content input,
+body[data-popup-template="cyber-retro"] .popup-content select,
+body[data-popup-template="cyber-retro"] .popup-content textarea,
+.popup-template--cyber-retro .popup-content input,
+.popup-template--cyber-retro .popup-content select,
+.popup-template--cyber-retro .popup-content textarea {
+    border-radius: 14px;
+    border: 1px solid rgba(0,245,255,0.26);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), rgba(0, 0, 0, 0.25);
+    color: var(--popup-text);
+    box-shadow: 0 0 0 1px rgba(255,43,214,0.10) inset;
+}
+
+    html[data-popup-template="cyber-retro"] .popup-content input:focus-visible,
+    html[data-popup-template="cyber-retro"] .popup-content select:focus-visible,
+    html[data-popup-template="cyber-retro"] .popup-content textarea:focus-visible,
+    body[data-popup-template="cyber-retro"] .popup-content input:focus-visible,
+    body[data-popup-template="cyber-retro"] .popup-content select:focus-visible,
+    body[data-popup-template="cyber-retro"] .popup-content textarea:focus-visible,
+    .popup-template--cyber-retro .popup-content input:focus-visible,
+    .popup-template--cyber-retro .popup-content select:focus-visible,
+    .popup-template--cyber-retro .popup-content textarea:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 1px rgba(0,245,255,0.25) inset, 0 0 0 4px rgba(0,245,255,0.16), 0 0 24px rgba(0,245,255,0.14);
+        border-color: rgba(0,245,255,0.55);
+    }
+
+/* -----------------------------
+   Focus ring: neon bloom
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-root :focus-visible,
+body[data-popup-template="cyber-retro"] .popup-root :focus-visible,
+.popup-template--cyber-retro .popup-root :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0,245,255,0.22), 0 0 24px rgba(0,245,255,0.14);
+}
+
+/* -----------------------------
+   Open animation: slight glitch + bloom
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-root[data-popup-open="true"] .popup-dialog,
+body[data-popup-template="cyber-retro"] .popup-root[data-popup-open="true"] .popup-dialog,
+.popup-template--cyber-retro .popup-root[data-popup-open="true"] .popup-dialog {
+    animation: popup-cyber-in var(--popup-duration) var(--popup-ease) both;
+}
+
+@keyframes popup-cyber-in {
+    0% {
+        opacity: 0;
+        filter: blur(0.6px) saturate(1.15);
+        transform: translate3d(-50%, -46%, 0) scale(0.98);
+    }
+
+    55% {
+        opacity: 1;
+        filter: blur(0) saturate(1.08);
+        transform: translate3d(-50%, -50%, 0) scale(1.01);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0) saturate(1.05);
+        transform: translate3d(-50%, -50%, 0) scale(1);
+    }
+}
+
+/* subtle glitch tick (optional class you can add to dialog) */
+html[data-popup-template="cyber-retro"] .popup-dialog.popup--glitch,
+body[data-popup-template="cyber-retro"] .popup-dialog.popup--glitch,
+.popup-template--cyber-retro .popup-dialog.popup--glitch {
+    animation: popup-cyber-in var(--popup-duration) var(--popup-ease) both, popup-glitch 3.8s steps(2, end) infinite;
+}
+
+@keyframes popup-glitch {
+    0%, 92%, 100% {
+        clip-path: inset(0 0 0 0);
+    }
+
+    93% {
+        clip-path: inset(10% 0 65% 0);
+        transform: translate3d(-50%, -50%, 0) translateX(-2px);
+    }
+
+    94% {
+        clip-path: inset(40% 0 35% 0);
+        transform: translate3d(-50%, -50%, 0) translateX(2px);
+    }
+
+    95% {
+        clip-path: inset(0 0 0 0);
+        transform: translate3d(-50%, -50%, 0);
+    }
+}
+
+/* Reduced motion: avoid glitch */
+@media (prefers-reduced-motion: reduce) {
+    html[data-popup-template="cyber-retro"] .popup-dialog.popup--glitch,
+    body[data-popup-template="cyber-retro"] .popup-dialog.popup--glitch,
+    .popup-template--cyber-retro .popup-dialog.popup--glitch {
+        animation: none;
+    }
+}
+
+/* -----------------------------
+   Toasts: neon chips with status stripe
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-toast-dock .popup-dialog,
+body[data-popup-template="cyber-retro"] .popup-toast-dock .popup-dialog,
+.popup-template--cyber-retro .popup-toast-dock .popup-dialog {
+    border-radius: 16px;
+    border: 1px solid rgba(0,245,255,0.28);
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)), rgba(10, 15, 24, 0.78);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,43,214,0.10), 0 0 30px rgba(0,245,255,0.10);
+    overflow: hidden;
+}
+
+/* status stripe */
+html[data-popup-template="cyber-retro"] .popup-root[data-popup-surface="toast"] .popup-dialog::before,
+body[data-popup-template="cyber-retro"] .popup-root[data-popup-surface="toast"] .popup-dialog::before,
+.popup-template--cyber-retro .popup-root[data-popup-surface="toast"] .popup-dialog::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(0,245,255,0.90), rgba(255,43,214,0.85), rgba(182,255,59,0.80)) top left / 100% 3px no-repeat, linear-gradient(180deg, rgba(255,255,255,0.05), transparent 40%);
+    opacity: 0.95;
+}
+
+/* toast entrance: slide + bloom */
+html[data-popup-template="cyber-retro"] .popup-root[data-popup-surface="toast"][data-popup-open="true"] .popup-dialog,
+body[data-popup-template="cyber-retro"] .popup-root[data-popup-surface="toast"][data-popup-open="true"] .popup-dialog,
+.popup-template--cyber-retro .popup-root[data-popup-surface="toast"][data-popup-open="true"] .popup-dialog {
+    animation: popup-toast-cyber-in 220ms var(--popup-ease) both;
+}
+
+@keyframes popup-toast-cyber-in {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -10px, 0) scale(0.985);
+        filter: blur(0.6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* -----------------------------
+   Small polish: selection + hr + subtle separators
+----------------------------- */
+
+html[data-popup-template="cyber-retro"] .popup-content ::selection,
+body[data-popup-template="cyber-retro"] .popup-content ::selection,
+.popup-template--cyber-retro .popup-content ::selection {
+    background: rgba(255,43,214,0.35);
+    color: #ffffff;
+}
+
+html[data-popup-template="cyber-retro"] .popup__divider,
+body[data-popup-template="cyber-retro"] .popup__divider,
+.popup-template--cyber-retro .popup__divider {
+    background: linear-gradient(90deg, rgba(0,245,255,0.0), rgba(0,245,255,0.35), rgba(255,43,214,0.28), rgba(0,245,255,0.0));
+    height: 2px;
+    opacity: 0.75;
+}
+
+/* -----------------------------
+   Mobile tweaks: keep the vibe without overload
+----------------------------- */
+
+@media (max-width: 480px) {
+    html[data-popup-template="cyber-retro"],
+    body[data-popup-template="cyber-retro"],
+    .popup-template--cyber-retro {
+        --popup-padding: 16px;
+        --popup-radius: 16px;
+        --popup-backdrop-blur: 10px;
+    }
+
+        html[data-popup-template="cyber-retro"] .popup__header::before,
+        body[data-popup-template="cyber-retro"] .popup__header::before,
+        .popup-template--cyber-retro .popup__header::before {
+            display: none; /* reduce clutter on small screens */
+        }
+}

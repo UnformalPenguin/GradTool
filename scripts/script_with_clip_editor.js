@@ -16,113 +16,150 @@ let projectName = "Gradient";
 // App state + history (Undo/Redo)
 // =========================
 const appState = {
-    project: {
-        name: projectName,
-        selectedLayer: currentLayerIndex,
-        selectedStop: selectedStopIndex
-    },
-    ui: {
-        activeRightPanel: null,
-        toasts: []
-    },
-    history: {
-        undo: [],
-        redo: [],
-        max: 50
-    }
+  project: {
+    name: projectName,
+    selectedLayer: currentLayerIndex,
+    selectedStop: selectedStopIndex
+  },
+  ui: {
+    activeRightPanel: null,
+    toasts: []
+  },
+  history: {
+    undo: [],
+    redo: [],
+    max: 50
+  }
 };
 
 function snapshotState() {
-    return JSON.stringify({
-        layers,
-        currentLayerIndex,
-        selectedStopIndex,
-        projectName
-    });
+  return JSON.stringify({
+    layers,
+    currentLayerIndex,
+    selectedStopIndex,
+    projectName
+  });
 }
 
 function restoreState(snapshot) {
-    try {
-        const s = JSON.parse(snapshot);
-        layers = s.layers || [];
-        currentLayerIndex = typeof s.currentLayerIndex === 'number' ? s.currentLayerIndex : -1;
-        selectedStopIndex = typeof s.selectedStopIndex === 'number' ? s.selectedStopIndex : -1;
-        projectName = s.projectName || projectName;
-        const pn = document.getElementById('projectName');
-        if (pn) pn.value = projectName;
-        createLayers();
-        if (layers.length > 0 && currentLayerIndex >= 0) {
-            selectLayer(Math.min(currentLayerIndex, layers.length - 1));
-        } else if (layers.length > 0) {
-            selectLayer(0);
-        }
-        renderAnimationControls();
-    } catch (e) {
-        console.warn("Failed to restore state:", e);
+  try {
+    const s = JSON.parse(snapshot);
+    layers = s.layers || [];
+    currentLayerIndex = typeof s.currentLayerIndex === 'number' ? s.currentLayerIndex : -1;
+    selectedStopIndex = typeof s.selectedStopIndex === 'number' ? s.selectedStopIndex : -1;
+    projectName = s.projectName || projectName;
+    const pn = document.getElementById('projectName');
+    if (pn) pn.value = projectName;
+    createLayers();
+    if (layers.length > 0 && currentLayerIndex >= 0) {
+      selectLayer(Math.min(currentLayerIndex, layers.length - 1));
+    } else if (layers.length > 0) {
+      selectLayer(0);
     }
+    renderAnimationControls();
+  } catch (e) {
+    console.warn("Failed to restore state:", e);
+  }
 }
 
 function pushHistory(reason = "") {
-    // Avoid pushing identical snapshots
-    const snap = snapshotState();
-    const last = appState.history.undo.length ? appState.history.undo[appState.history.undo.length - 1] : null;
-    if (snap === last) return;
-    appState.history.undo.push(snap);
-    if (appState.history.undo.length > appState.history.max) appState.history.undo.shift();
-    appState.history.redo = [];
+  // Avoid pushing identical snapshots
+  const snap = snapshotState();
+  const last = appState.history.undo.length ? appState.history.undo[appState.history.undo.length - 1] : null;
+  if (snap === last) return;
+  appState.history.undo.push(snap);
+  if (appState.history.undo.length > appState.history.max) appState.history.undo.shift();
+  appState.history.redo = [];
 }
 
 function undo() {
-    if (!appState.history.undo.length) return;
-    const current = snapshotState();
-    const prev = appState.history.undo.pop();
-    appState.history.redo.push(current);
-    restoreState(prev);
-    toast("Undid change");
+  if (!appState.history.undo.length) return;
+  const current = snapshotState();
+  const prev = appState.history.undo.pop();
+  appState.history.redo.push(current);
+  restoreState(prev);
+  toast("Undid change");
 }
 
 function redo() {
-    if (!appState.history.redo.length) return;
-    const current = snapshotState();
-    const next = appState.history.redo.pop();
-    appState.history.undo.push(current);
-    restoreState(next);
-    toast("Redid change");
+  if (!appState.history.redo.length) return;
+  const current = snapshotState();
+  const next = appState.history.redo.pop();
+  appState.history.undo.push(current);
+  restoreState(next);
+  toast("Redid change");
 }
 
 // Keyboard shortcuts: Ctrl/Cmd+Z (undo), Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y (redo)
 document.addEventListener('keydown', (e) => {
-    const key = e.key.toLowerCase();
-    const isMac = navigator.platform.toLowerCase().includes('mac');
-    const mod = isMac ? e.metaKey : e.ctrlKey;
-    if (!mod) return;
+  const key = e.key.toLowerCase();
+  const isMac = navigator.platform.toLowerCase().includes('mac');
+  const mod = isMac ? e.metaKey : e.ctrlKey;
+  if (!mod) return;
 
-    if (key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        undo();
-    } else if ((key === 'z' && e.shiftKey) || key === 'y') {
-        e.preventDefault();
-        redo();
-    }
+  if (key === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    undo();
+  } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+    e.preventDefault();
+    redo();
+  }
 });
 
+// =========================
+// Tiny UI helpers
+// =========================
 function animateIn(el, { dx = 10, ms = 180 } = {}) {
-    if (!el || !el.animate) return;
-    el.animate(
-        [
-            { opacity: 0, transform: `translateX(${dx}px)` },
-            { opacity: 1, transform: 'translateX(0px)' }
-        ],
-        { duration: ms, easing: 'ease-out', fill: 'both' }
-    );
+  if (!el || !el.animate) return;
+  el.animate(
+    [
+      { opacity: 0, transform: `translateX(${dx}px)` },
+      { opacity: 1, transform: 'translateX(0px)' }
+    ],
+    { duration: ms, easing: 'ease-out', fill: 'both' }
+  );
 }
 
 function pulse(el, ms = 140) {
-    if (!el || !el.animate) return;
-    el.animate(
-        [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.99)', opacity: 0.95 }, { transform: 'scale(1)', opacity: 1 }],
-        { duration: ms, easing: 'ease-out' }
-    );
+  if (!el || !el.animate) return;
+  el.animate(
+    [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.99)', opacity: 0.95 }, { transform: 'scale(1)', opacity: 1 }],
+    { duration: ms, easing: 'ease-out' }
+  );
+}
+
+// Lightweight toast without extra HTML requirements.
+function toast(message) {
+  try {
+    const host = document.body;
+    if (!host) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = message;
+    t.style.position = 'fixed';
+    t.style.right = '16px';
+    t.style.bottom = '16px';
+    t.style.zIndex = '9999';
+    t.style.padding = '10px 12px';
+    t.style.borderRadius = '10px';
+    t.style.background = 'rgba(20,20,22,0.92)';
+    t.style.color = '#fff';
+    t.style.fontSize = '13px';
+    t.style.backdropFilter = 'blur(8px)';
+    t.style.boxShadow = '0 10px 30px rgba(0,0,0,0.25)';
+    host.appendChild(t);
+    if (t.animate) {
+      t.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0px)' }], { duration: 160, easing: 'ease-out', fill: 'both' });
+    }
+    setTimeout(() => {
+      if (t.animate) {
+        const a = t.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'both' });
+        a.onfinish = () => t.remove();
+      } else {
+        t.remove();
+      }
+    }, 1400);
+  } catch {}
 }
 
 const templates = [
@@ -991,6 +1028,8 @@ const templates = [
                 blur: 0,
                 opacity: 1.0,
                 visible: true,
+                blendMode: "normal",
+                scale: 1,
                 angle: 90,         // for linear
                 startAngle: 0,     // for conic
                 centerX: 50,       // for radial/conic
@@ -1689,259 +1728,194 @@ function createLayers() {
         div.style.position = 'absolute';
         div.style.inset = 0;
 
-        // Always reset animations explicitly so old DOM state can't "stick"
-        div.style.animation = 'none';
-        div.style.animationTimingFunction = ''; // clear any leftovers
-
         const gradient = buildGradientString(layer);
-        if (!layer.animations?.some(a => a.type === 'morph' && a.enabled)) {
+        if (!layer.animations.some(a => a.type === 'morph')) {
             div.style.background = gradient;
         }
 
-        // ---- Base filter stack (static parts that should always be present)
-        // If you later add more static filters to layer, include them here too.
-        const baseFilterParts = [`blur(${layer.blur}px)`];
-
-        // If there are NO enabled filter animations, apply static filter directly:
-        const hasEnabledFilterAnim =
-            layer.animate &&
-            Array.isArray(layer.animations) &&
-            layer.animations.some(a => a.enabled && ['blur', 'hue', 'saturation', 'contrast', 'dropglow'].includes(a.type));
-
-        if (!hasEnabledFilterAnim) {
-            div.style.filter = baseFilterParts.join(' ');
+        const staticFilter = `blur(${layer.blur}px)`;
+        if (!layer.animations.some(a => ['blur', 'hue', 'saturation', 'contrast', 'dropglow'].includes(a.type))) {
+            div.style.filter = staticFilter;
         }
 
-        // Opacity: only static if no enabled pulse
-        const hasEnabledPulse =
-            layer.animate &&
-            Array.isArray(layer.animations) &&
-            layer.animations.some(a => a.enabled && a.type === 'pulse');
-
-        if (!hasEnabledPulse) {
+        if (!layer.animations.some(a => a.type === 'pulse')) {
             div.style.opacity = layer.opacity;
         }
 
-        // Clip / shape
         if (layer.clip && layer.clip.doclip && layer.clip.shape) {
             const clipPath = fullClipPathString(layer.clip);
-            if (clipPath !== 'none') div.style.clipPath = clipPath;
-            else div.style.borderRadius = layer.shape === 'square' ? '0%' : '50%';
+            if (clipPath !== 'none') {
+                div.style.clipPath = clipPath;
+            } else {
+                div.style.borderRadius = layer.shape === 'square' ? '0%' : '50%';
+            }
         } else {
             div.style.borderRadius = layer.shape === 'square' ? '0%' : '50%';
         }
 
-        // Combo frames
         const transformFrames = { '0%': [], '50%': [], '100%': [] };
-        // IMPORTANT: include baseFilterParts in every keyframe so filter stack is stable
-        const filterFrames = {
-            '0%': [...baseFilterParts],
-            '50%': [...baseFilterParts],
-            '100%': [...baseFilterParts],
-        };
-
+        const filterFrames = { '0%': [], '50%': [], '100%': [] };
         let hasTransform = false;
         let hasFilter = false;
-
         let maxDuration = 0;
-        let maxDelay = 0;
+        let maxdelay = 0;
         let totalSteps = 4;
+        let transDuration = 5;
+        let filterDuration = 5;
 
-        // If animations are globally off or none are enabled, we leave animation='none'
-        const enabledAnims = (layer.animate && Array.isArray(layer.animations))
-            ? layer.animations.filter(a => a && a.enabled)
-            : [];
+        if (layer.animate && Array.isArray(layer.animations)) {
+            layer.animations.forEach((anim, aIndex) => {
+                const animName = `${projectName}_preview_layer${i}_preview_anim${aIndex}`;
+                const duration = anim.duration || defaultDuration;
+                maxDuration = Math.max(maxDuration, duration);
+                maxdelay = Math.max(maxdelay, anim.delay ?? 0);
 
-        // If nothing enabled, just append and move on
-        if (enabledAnims.length === 0) {
-            container.appendChild(div);
-            return;
-        }
+                switch (anim.type) {
+                    case 'rotate':
+                        hasTransform = true;
+                        transformFrames['0%'].push('rotate(0deg)');
+                        transformFrames['50%'].push(`rotate(${anim.reverse ? '-180deg' : '180deg'})`);
+                        transformFrames['100%'].push(`rotate(${anim.reverse ? '-360deg' : '360deg'})`);
+                        break;
 
-        enabledAnims.forEach((anim, aIndex) => {
-            const animName = `${projectName}_preview_layer${i}_preview_anim${aIndex}`;
-            const duration = (anim.duration ?? defaultDuration);
-            const delay = (anim.delay ?? 0);
-            const easing = (anim.easing ?? 'linear'); // default smooth
-            const direction = (anim.directionCss ?? 'normal'); // if you store it; else keep 'normal'
-            const iterations = (anim.iterations ?? 'infinite');
+                    case 'step-rotate':
+                        hasTransform = true;
+                        const stepDeg = anim.step || 90;
+                        totalSteps = 360 / stepDeg;
+                        transformFrames['0%'].push('rotate(0deg)');
+                        transformFrames['100%'].push('rotate(360deg)');
+                        break;
 
-            maxDuration = Math.max(maxDuration, duration);
-            maxDelay = Math.max(maxDelay, delay);
+                    case 'scale':
+                        hasTransform = true;
 
-            switch (anim.type) {
-                case 'rotate': {
-                    hasTransform = true;
-                    transformFrames['0%'].push('rotate(0deg)');
-                    transformFrames['50%'].push(`rotate(${anim.reverse ? '-180deg' : '180deg'})`);
-                    transformFrames['100%'].push(`rotate(${anim.reverse ? '-360deg' : '360deg'})`);
-                    break;
-                }
+                        transformFrames['0%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
+                        transformFrames['50%'].push(`scale(${anim.scaletoX ?? 1}, ${anim.scaletoY ?? 1.1})`);
+                        transformFrames['100%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
+                        break;
 
-                case 'step-rotate': {
-                    hasTransform = true;
-                    const stepDeg = anim.step || 90;
-                    totalSteps = Math.max(1, Math.round(360 / stepDeg));
-                    transformFrames['0%'].push('rotate(0deg)');
-                    transformFrames['100%'].push('rotate(360deg)');
-                    // timing applied later per-animation
-                    break;
-                }
+                    case 'translate':
+                        hasTransform = true;
+                        const txFrom = anim.transXfrom ?? 0;
+                        const tyFrom = anim.transYfrom ?? 0;
+                        const txTo = anim.transXto ?? 10;
+                        const tyTo = anim.transYto ?? 10;
+                        transformFrames['0%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                        transformFrames['50%'].push(`translate(${txTo}px, ${tyTo}px)`);
+                        transformFrames['100%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
+                        break;
 
-                case 'scale': {
-                    hasTransform = true;
-                    transformFrames['0%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
-                    transformFrames['50%'].push(`scale(${anim.scaletoX ?? 1}, ${anim.scaletoY ?? 1.1})`);
-                    transformFrames['100%'].push(`scale(${anim.scalefromX ?? 1}, ${anim.scalefromY ?? 1})`);
-                    break;
-                }
+                    case 'skew':
+                        hasTransform = true;
+                        const axis = anim.direction === 'vertical' ? 'Y' : 'X';
+                        const skewVal = anim.intensity || 15;
+                        transformFrames['0%'].push(`skew${axis}(0deg)`);
+                        transformFrames['50%'].push(`skew${axis}(${skewVal}deg)`);
+                        transformFrames['100%'].push(`skew${axis}(0deg)`);
+                        break;
 
-                case 'translate': {
-                    hasTransform = true;
-                    const txFrom = anim.transXfrom ?? 0;
-                    const tyFrom = anim.transYfrom ?? 0;
-                    const txTo = anim.transXto ?? 10;
-                    const tyTo = anim.transYto ?? 10;
-                    transformFrames['0%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
-                    transformFrames['50%'].push(`translate(${txTo}px, ${tyTo}px)`);
-                    transformFrames['100%'].push(`translate(${txFrom}px, ${tyFrom}px)`);
-                    break;
-                }
+                    case 'blur':
+                        hasFilter = true;
+                        const blurFrom = anim.blurfrom ?? 0;
+                        const blurTo = anim.blurto ?? 10;
+                        filterFrames['0%'].push(`blur(${blurFrom}px)`);
+                        filterFrames['50%'].push(`blur(${(blurFrom + blurTo) / 2}px)`);
+                        filterFrames['100%'].push(`blur(${blurTo}px)`);
+                        break;
 
-                case 'skew': {
-                    hasTransform = true;
-                    const axis = anim.direction === 'vertical' ? 'Y' : 'X';
-                    const skewVal = anim.intensity || 15;
-                    transformFrames['0%'].push(`skew${axis}(0deg)`);
-                    transformFrames['50%'].push(`skew${axis}(${skewVal}deg)`);
-                    transformFrames['100%'].push(`skew${axis}(0deg)`);
-                    break;
-                }
+                    case 'hue':
+                        hasFilter = true;
+                        const fromHue = anim.fromHue ?? 0;
+                        const toHue = anim.toHue ?? 360;
+                        filterFrames['0%'].push(`hue-rotate(${fromHue}deg)`);
+                        //filterFrames['50%'].push(`hue-rotate(${(fromHue + toHue) / 2}deg)`);
+                        filterFrames['100%'].push(`hue-rotate(${toHue}deg)`);
+                        break;
 
-                case 'blur': {
-                    hasFilter = true;
-                    const blurFrom = anim.blurfrom ?? 0;
-                    const blurTo = anim.blurto ?? 10;
-                    // Replace base blur smoothly: remove base blur, add animated blur at each frame
-                    filterFrames['0%'] = filterFrames['0%'].filter(p => !p.startsWith('blur('));
-                    filterFrames['50%'] = filterFrames['50%'].filter(p => !p.startsWith('blur('));
-                    filterFrames['100%'] = filterFrames['100%'].filter(p => !p.startsWith('blur('));
-                    filterFrames['0%'].push(`blur(${blurFrom}px)`);
-                    filterFrames['50%'].push(`blur(${(blurFrom + blurTo) / 2}px)`);
-                    filterFrames['100%'].push(`blur(${blurTo}px)`);
-                    break;
-                }
+                    case 'saturation':
+                        hasFilter = true;
+                        const satFrom = anim.satfrom ?? 1;
+                        const satTo = anim.satto ?? 2;
+                        filterFrames['0%'].push(`saturate(${satFrom})`);
+                        filterFrames['50%'].push(`saturate(${(satFrom + satTo) / 2})`);
+                        filterFrames['100%'].push(`saturate(${satTo})`);
+                        break;
 
-                case 'hue': {
-                    hasFilter = true;
-                    const fromHue = (anim.fromHue ?? 0);
-                    let toHue = anim.toHue;
+                    case 'contrast':
+                        hasFilter = true;
+                        filterFrames['0%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
+                        filterFrames['50%'].push(`contrast(${anim.contrastto ?? 150}%)`);
+                        filterFrames['100%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
+                        break;
 
-                    // Make hue loop continuous: default to fromHue + 360
-                    if (toHue == null) toHue = fromHue + 360;
+                    case 'dropglow':
+                        hasFilter = true;
+                        const fromColor = anim.dropglowcolorfrom ?? '#1c80e3';
+                        const toColor = anim.dropglowcolorto ?? '#da76d2';
+                        const glowFrom = anim.dropglowFrom ?? 5;
+                        const glowTo = anim.dropglowTo ?? 10;
+                        filterFrames['0%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
+                        filterFrames['50%'].push(`drop-shadow(0 0 ${glowTo}px ${toColor})`);
+                        filterFrames['100%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
+                        break;
 
-                    // If user sets toHue equal to fromHue, bump a full turn
-                    if (Math.abs(toHue - fromHue) < 0.0001) toHue = fromHue + 360;
-
-                    // Add a midpoint to help the compositor keep things smooth
-                    const midHue = fromHue + (toHue - fromHue) * 0.5;
-
-                    filterFrames['0%'].push(`hue-rotate(${fromHue}deg)`);
-                    filterFrames['50%'].push(`hue-rotate(${midHue}deg)`);
-                    filterFrames['100%'].push(`hue-rotate(${toHue}deg)`);
-                    break;
-                }
-
-                case 'saturation': {
-                    hasFilter = true;
-                    const satFrom = anim.satfrom ?? 1;
-                    const satTo = anim.satto ?? 2;
-                    filterFrames['0%'].push(`saturate(${satFrom})`);
-                    filterFrames['50%'].push(`saturate(${(satFrom + satTo) / 2})`);
-                    filterFrames['100%'].push(`saturate(${satTo})`);
-                    break;
-                }
-
-                case 'contrast': {
-                    hasFilter = true;
-                    filterFrames['0%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
-                    filterFrames['50%'].push(`contrast(${anim.contrastto ?? 150}%)`);
-                    filterFrames['100%'].push(`contrast(${anim.contrastfrom ?? 100}%)`);
-                    break;
-                }
-
-                case 'dropglow': {
-                    hasFilter = true;
-                    const fromColor = anim.dropglowcolorfrom ?? '#1c80e3';
-                    const toColor = anim.dropglowcolorto ?? '#da76d2';
-                    const glowFrom = anim.dropglowFrom ?? 5;
-                    const glowTo = anim.dropglowTo ?? 10;
-                    filterFrames['0%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
-                    filterFrames['50%'].push(`drop-shadow(0 0 ${glowTo}px ${toColor})`);
-                    filterFrames['100%'].push(`drop-shadow(0 0 ${glowFrom}px ${fromColor})`);
-                    break;
-                }
-
-                case 'pulse': {
-                    const lowOpacity = Math.max(0, anim.pulsefrom ?? 0.3);
-                    const highOpacity = anim.pulseto ?? layer.opacity;
-                    animStyleElem.innerHTML += `@keyframes ${animName} {
+                    case 'pulse':
+                        const lowOpacity = Math.max(0, anim.pulsefrom ?? 0.3);
+                        const highOpacity = anim.pulseto ?? layer.opacity;
+                        const pulseAnimName = animName;
+                        animStyleElem.innerHTML += `@keyframes ${pulseAnimName} {
   0%, 100% { opacity: ${highOpacity}; }
   50% { opacity: ${lowOpacity}; }
 }`;
-                    div.style.animation = appendAnimation(div.style.animation, animName, duration, 'normal', delay, easing, iterations);
-                    break;
-                }
+                        div.style.animation = appendAnimation(div.style.animation, pulseAnimName, duration, 'normal', anim.delay ?? 0);
+                        break;
 
-                case 'slide': {
-                    const slideDir = anim.direction || 'horizontal';
-                    div.style.backgroundSize = '200% 200%';
-                    animStyleElem.innerHTML += `@keyframes ${animName} {
+                    case 'slide':
+                        const slideDir = anim.direction || 'horizontal';
+                        div.style.backgroundSize = '200% 200%';
+                        const slideAnimName = animName;
+                        animStyleElem.innerHTML += `@keyframes ${slideAnimName} {
   0% { background-position: ${slideDir === 'vertical' ? '50% 0%' : '0% 50%'}; }
   100% { background-position: ${slideDir === 'vertical' ? '50% 100%' : '100% 50%'}; }
 }`;
-                    div.style.animation = appendAnimation(div.style.animation, animName, duration, 'alternate', delay, easing, iterations);
-                    break;
+                        div.style.animation = appendAnimation(div.style.animation, slideAnimName, duration, 'alternate', anim.delay ?? 0);
+                        break;
                 }
-            }
+            });
 
-            // Special case: step-rotate should use steps timing *only for that animation*
-            if (anim.type === 'step-rotate') {
-                // We’ll apply steps() when we append the transform combo below via timingFn
-                // (because your current step-rotate is part of transform combo)
-            }
-        });
-
-        // Transform combo
-        if (hasTransform) {
-            const transformAnimName = `${projectName}_preview_layer${i}_preview_transformCombo`;
-            animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
-  0% { transform: ${transformFrames['0%'].join(' ') || 'none'}; }`;
-            if (transformFrames['50%'].length > 0) {
-                animStyleElem.innerHTML += `
-  50% { transform: ${transformFrames['50%'].join(' ')}; }`;
-            }
-            animStyleElem.innerHTML += `
-  100% { transform: ${transformFrames['100%'].join(' ') || 'none'}; }
+            if (hasTransform) {
+                const transformAnimName = `${projectName}_preview_layer${i}_preview_transformCombo`;
+                animStyleElem.innerHTML += `@keyframes ${transformAnimName} {
+  0% { transform: ${transformFrames['0%'].join(' ')}; }`;
+                if (transformFrames['50%'].length > 0) {
+                    animStyleElem.innerHTML += ` 
+                      50% { transform: ${transformFrames['50%'].join(' ')}; }`;
+                }            
+        animStyleElem.innerHTML += ` 
+  100% { transform: ${transformFrames['100%'].join(' ')}; }
 }`;
-            // If any enabled step-rotate exists, steps() timing for transform combo; else ease/linear
-            const hasStepRotate = enabledAnims.some(a => a.type === 'step-rotate');
-            const tf = hasStepRotate ? `steps(${totalSteps})` : 'linear';
-            div.style.animation = appendAnimation(div.style.animation, transformAnimName, maxDuration, 'normal', maxDelay, tf, 'infinite');
+                div.style.animation = appendAnimation(div.style.animation, transformAnimName, maxDuration, 'normal', maxdelay);
+            }
+
+            if (hasFilter) {
+                const filterAnimName = `${projectName}_preview_layer${i}_preview_filterCombo`;
+                animStyleElem.innerHTML += `@keyframes ${filterAnimName} {
+  0% { filter: ${filterFrames['0%'].join(' ')}; }`;
+                if (filterFrames['50%'].length > 0) {
+                    animStyleElem.innerHTML += ` 
+                    50% { filter: ${filterFrames['50%'].join(' ')}; }`;  
+  }
+                animStyleElem.innerHTML += ` 100% { filter: ${filterFrames['100%'].join(' ')}; }
+            }`;
+
+                div.style.animation = appendAnimation(div.style.animation, filterAnimName, maxDuration, 'normal', maxdelay);
+            }
         }
 
-        // Filter combo
-        if (hasFilter) {
-            const filterAnimName = `${projectName}_preview_layer${i}_preview_filterCombo`;
-            animStyleElem.innerHTML += `@keyframes ${filterAnimName} {
-  0% { filter: ${filterFrames['0%'].join(' ')}; }
-  50% { filter: ${filterFrames['50%'].join(' ')}; }
-  100% { filter: ${filterFrames['100%'].join(' ')}; }
-}`;
-            // Hue/filter generally should be linear for smoothness
-            div.style.animation = appendAnimation(div.style.animation, filterAnimName, maxDuration, 'normal', maxDelay, 'linear', 'infinite');
+        if (layer.animations.some(a => a.type === "step-rotate")) {
+            div.style.animationTimingFunction = `steps(${totalSteps})`;
+            console.log("Steppin " + div.style.animationTimingFunction);
         }
-
         container.appendChild(div);
     });
 
@@ -1999,7 +1973,7 @@ function buildGradientString(layer) {
             createLayers();
         }
 
-function addLayer() {
+        function addLayer() {
     pushHistory('addLayer');
             layers.push(defaultLayer());
             createLayers();
@@ -2046,6 +2020,9 @@ function generateCSS() {
         }
         
         layerCSS += `  opacity: ${layer.opacity};\n`;
+        if (layer.blendMode && layer.blendMode !== "normal") {
+            layerCSS += `  mix-blend-mode: ${layer.blendMode};\n`;
+        }
 
         // Shape / Clip
         if (layer.clip && layer.clip.doclip && layer.clip.shape) {
@@ -2193,7 +2170,7 @@ function generateCSS() {
   0%, 100% { opacity: ${layer.opacity}; }
   50% { opacity: ${Math.max(0.1, layer.opacity - 0.2)}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
 
                     case 'slide':
@@ -2203,7 +2180,7 @@ function generateCSS() {
   0% { background-position: ${vertical ? '50% 0%' : '0% 50%'}; }
   100% { background-position: ${vertical ? '50% 100%' : '100% 50%'}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
 
                     case 'morph':
@@ -2216,7 +2193,7 @@ function generateCSS() {
   50% { background: ${gradB}; }
   100% { background: ${gradA}; }
 }\n\n`;
-                        otherAnimations.push(`${animName} ${duration}s ${delay}s linear ${infinite}`);
+                        otherAnimations.push(`${animName} ${duration}s ${delay}s ${anim.easing || "linear"} ${anim.iterations ?? infinite} ${anim.direction || (anim.reverse ? "reverse" : "normal")}`);
                         break;
                 }
             });
@@ -2232,7 +2209,7 @@ function generateCSS() {
                 }
                     keyframes += `100% { transform: ${transformFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${tAnim} ${transDuration}s ${maxdelay}s linear infinite`);
+                otherAnimations.push(`${tAnim} ${transDuration}s ${maxdelay}s ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.easing || "linear"} ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.iterations ?? "infinite"} ${layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.direction || (layer.animations.find(a => a.type && ["rotate","step-rotate","scale","translate","skew"].includes(a.type))?.reverse ? "reverse" : "normal")}`);
             }
 
             if (hasFilter) {
@@ -2246,7 +2223,7 @@ function generateCSS() {
                 }
                 keyframes += `100% { filter: ${filterFrames['100%'].join(' ')}; }
 }\n\n`;
-                otherAnimations.push(`${fAnim} ${filterDuration}s ${maxdelay}s linear infinite`);
+                otherAnimations.push(`${fAnim} ${filterDuration}s ${maxdelay}s ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.easing || "linear"} ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.iterations ?? "infinite"} ${layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.direction || (layer.animations.find(a => a.type && ["hue","blur","saturation","contrast","dropglow"].includes(a.type))?.reverse ? "reverse" : "normal")}`);
             }
 
             layerCSS += `  animation: ${otherAnimations.join(', ')};\n`;
@@ -2821,8 +2798,8 @@ function renderAnimationControls() {
     container.appendChild(help);
 
     const easingOptions = [
-        'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
-        'cubic-bezier(0.4, 0, 0.2, 1)', 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        'linear','ease','ease-in','ease-out','ease-in-out',
+        'cubic-bezier(0.4, 0, 0.2, 1)','cubic-bezier(0.2, 0.8, 0.2, 1)',
         'steps(8, end)'
     ];
 
@@ -3083,8 +3060,8 @@ function renderAnimationControls() {
         if (type === 'dropglow') {
             body.appendChild(row('Glow from (px)', numberInput(anim.dropglowFrom ?? 5, { step: 1, onChange: (v) => { pushHistory(); updateAnimation(index, 'dropglowFrom', v); } })));
             body.appendChild(row('Glow to (px)', numberInput(anim.dropglowTo ?? 20, { step: 1, onChange: (v) => { pushHistory(); updateAnimation(index, 'dropglowTo', v); } })));
-            body.appendChild(row('Color from', textInput(anim.dropglowcolorfrom ?? '#1c80e3', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorfrom', v); })));
-            body.appendChild(row('Color to', textInput(anim.dropglowcolorto ?? '#da76d2', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorto', v); })));
+            body.appendChild(row('Color from', textInput(anim.dropglowcolorfrom ?? '#1c80e3', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorfrom', v); } )));
+            body.appendChild(row('Color to', textInput(anim.dropglowcolorto ?? '#da76d2', (v) => { pushHistory(); updateAnimation(index, 'dropglowcolorto', v); } )));
         }
 
         if (type === 'slide') {
@@ -3114,12 +3091,19 @@ function addAnimation() {
     pushHistory('add animation');
     layers[currentLayerIndex].animations.push({
         type: 'rotate',
-        duration: 10,
+        duration: defaultDuration,
+        delay: 0,
+        easing: 'linear',
+        direction: 'normal',
+        iterations: 'infinite',
+        enabled: true,
         reverse: false
     });
     renderAnimationControls();
-    document.getElementById('animationList').classList.remove('hidden');
+    const list = document.getElementById('animationList');
+    if (list) list.classList.remove('hidden');
     createLayers();
+    toast("Animation added");
 }
 
 function updateAnimation(index, key, value) {
@@ -3129,15 +3113,15 @@ function updateAnimation(index, key, value) {
 
     // Type coercion
     const numericKeys = new Set([
-        'duration', 'delay',
-        'fromHue', 'toHue',
-        'blurfrom', 'blurto',
-        'satfrom', 'satto',
-        'contrastfrom', 'contrastto',
-        'dropglowFrom', 'dropglowTo',
-        'scalefromX', 'scalefromY', 'scaletoX', 'scaletoY',
-        'transXfrom', 'transYfrom', 'transXto', 'transYto',
-        'intensity', 'step', 'angleA', 'angleB'
+      'duration','delay',
+      'fromHue','toHue',
+      'blurfrom','blurto',
+      'satfrom','satto',
+      'contrastfrom','contrastto',
+      'dropglowFrom','dropglowTo',
+      'scalefromX','scalefromY','scaletoX','scaletoY',
+      'transXfrom','transYfrom','transXto','transYto',
+      'intensity','step','angleA','angleB'
     ]);
 
     if (numericKeys.has(key)) value = parseFloat(value);
@@ -3147,13 +3131,12 @@ function updateAnimation(index, key, value) {
 
     // Keep backward-compat fields aligned
     if (key === 'direction') {
-        layer.animations[index].reverse = (value === 'reverse' || value === 'alternate-reverse');
+      layer.animations[index].reverse = (value === 'reverse' || value === 'alternate-reverse');
     }
 
     renderAnimationControls();
     createLayers();
 }
-
 function syncDuration(animIndex) {
     if (!layers || currentLayerIndex < 0) return;
     const layer = layers[currentLayerIndex];
@@ -3282,18 +3265,21 @@ function startDragStop(e, index) {
 
 
 
-// Toggle template visibility
+// Toggle right-side menus (templates / animations / details)
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('templateHeader').onclick = () => {
-        const list = document.getElementById('templateList');
-        list.classList.toggle('hidden');
-    }; document.getElementById('animationHeader').onclick = () => {
-        const list = document.getElementById('animationList');
-        list.classList.toggle('hidden');
-    }; document.getElementById('detailsHeader').onclick = () => {
-        const list = document.getElementById('layer-details-block');
-        list.classList.toggle('hidden');
+    const toggle = (headerId, listId) => {
+        const header = document.getElementById(headerId);
+        const list = document.getElementById(listId);
+        if (!header || !list) return;
+        header.onclick = () => {
+            list.classList.toggle('hidden');
+            if (!list.classList.contains('hidden')) animateIn(list, { dx: 6, ms: 160 });
+            pulse(header, 120);
+        };
     };
+    toggle('templateHeader', 'templateList');
+    toggle('animationHeader', 'animationList');
+    toggle('detailsHeader', 'layer-details-block');
 });
 
 
@@ -3574,6 +3560,9 @@ function togglePin() {
         preview.style.right = '20px';
         preview.style.left = 'auto';
         preview.style.bottom = 'auto';
+        //reset back to original size
+        preview.style.width = "500px";
+        preview.style.height = "500px";
         //localStorage.setItem('previewPinned', 'true');
     }
 }
@@ -3812,18 +3801,6 @@ function randomColor(minAlpha = 0.5, maxAlpha = 1.0) {
     return `rgba(${r},${g},${b},${a})`;
 }
 
-function initPreviewSize() {
-    let width = document.getElementById('previewwWidth');
-    let height = document.getElementById('previewwHeight');
-    if (width && height) {
-        let prev = document.getElementById('previewWindow').getBoundingClientRect();
-        if (prev) {
-            width.value = prev.width;
-            height.value = prev.height;
-        }
-    }
-}
-
 function updatePreviewSize() {
     pushHistory('updatePreviewSize');
     let width = document.getElementById('previewwWidth');
@@ -3880,7 +3857,468 @@ function clearHtmlPreview() {
 
 // Initialize with one default layer
 //addLayer();
-initPreviewSize();
 renderTemplateMenu();
 //console.log("aaa" + templates[0].config);
 loadTemplate(templates[0] ? templates[0].config : { name: "Issues", config: defaultLayer() });
+
+
+/* ============================================================
+   Custom Clip Polygon Editor Integration (Drag + Add Points)
+   Requires: clip_polygon_editor.js loaded before this script OR after, but before use.
+   Adds a "Custom (Polygon)" option workflow to existing clip controls.
+   ============================================================ */
+
+(function () {
+  // ---- Monkey-patch fullClipPathString to support custom polygons (without breaking existing) ----
+  const _origFullClipPathString = window.fullClipPathString;
+
+  function _basicFullClipPathString(clip) {
+    // Fallback only if original doesn't exist.
+    // Keep simple + standards-based; adjust to match your existing shapes if needed.
+    if (!clip || !clip.shape) return "none";
+    switch (clip.shape) {
+      case "triangle":
+        return "polygon(50% 0%, 100% 100%, 0% 100%)";
+      case "hexagon":
+        return "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
+      case "star":
+        return "polygon(50% 2%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+      case "custom":
+        return (clip.customPath && String(clip.customPath).trim()) ? String(clip.customPath).trim() : "none";
+      default:
+        return "none";
+    }
+  }
+
+  // Patch: if shape === "custom", prefer stored polygon/path, otherwise defer to original builder.
+  window.fullClipPathString = function fullClipPathStringPatched(clip) {
+    if (clip && clip.shape === "custom") {
+      const v = clip.customPath && String(clip.customPath).trim();
+      return v ? v : "none";
+    }
+    if (typeof _origFullClipPathString === "function") return _origFullClipPathString(clip);
+    return _basicFullClipPathString(clip);
+  };
+
+  // ---- Editor instance state ----
+  let activeClipEditor = null;
+  let activeClipEditorLayerIndex = null;
+
+  // Debounced export/update so dragging doesn't spam heavy operations
+  let _clipExportTimer = null;
+  function scheduleClipExportUpdate() {
+    clearTimeout(_clipExportTimer);
+    _clipExportTimer = setTimeout(() => {
+      try { generateCSS(); } catch (_) {}
+      try { exportConfig(); } catch (_) {}
+    }, 120);
+  }
+
+  function getCurrentLayer() {
+    if (typeof layers === "undefined") return null;
+    if (typeof currentLayerIndex !== "number") return null;
+    if (currentLayerIndex < 0 || currentLayerIndex >= layers.length) return null;
+    return layers[currentLayerIndex];
+  }
+
+  function getCurrentLayerPreviewEl() {
+    // createLayers uses: `spiral-layer ${projectName}-preview-layer-${i}`
+    if (typeof projectName !== "string") return null;
+    return document.querySelector(`.${projectName}-preview-layer-${currentLayerIndex}`);
+  }
+
+  function ensureCustomClipPanelExists() {
+    const clipSelect = document.getElementById("clipshape");
+    if (!clipSelect) return;
+
+    if (document.getElementById("customClipPanel")) return;
+
+    const panel = document.createElement("div");
+    panel.id = "customClipPanel";
+    panel.style.marginTop = "10px";
+    panel.style.padding = "10px";
+    panel.style.borderRadius = "12px";
+    panel.style.border = "1px solid rgba(170,140,255,.18)";
+    panel.style.background = "rgba(255,255,255,.04)";
+    panel.style.display = "none";
+
+    panel.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="font-weight:700; opacity:.95;">Custom Clip (polygon/path)</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="clipEditorToggleBtn" class="btnSmall">Edit Points</button>
+          <button type="button" id="clipEditorAddPointBtn" class="btnSmall">Add Points</button>
+        </div>
+      </div>
+
+      <textarea id="customClipPathInput" rows="4"
+        style="width:100%; resize:vertical; padding:10px; border-radius:10px; border:1px solid rgba(170,140,255,.18);
+               background: rgba(0,0,0,.18); color: rgba(238,240,255,.95); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"
+        placeholder="polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)"></textarea>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px;">
+        <div id="customClipStatus" style="font-size:12px; opacity:.9;"></div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="clipApplyCustomBtn" class="btnSmall">Apply</button>
+          <button type="button" id="clipCopyCustomBtn" class="btnSmall">Copy</button>
+        </div>
+      </div>
+
+      <div style="margin-top:8px; font-size:12px; opacity:.88; line-height:1.35;">
+        Tip: Use <code>polygon(...)</code> for point editing. Use <code>path('...')</code> for curves.
+        Percent coordinates export cleanly and stay responsive.
+      </div>
+    `;
+
+    // Insert panel right after the clipshape select (or its label container)
+    clipSelect.parentNode.insertBefore(panel, clipSelect.nextSibling);
+
+    // Small button class fallback if you don't have one
+    const styleId = "customClipPanelStyle";
+    if (!document.getElementById(styleId)) {
+      const st = document.createElement("style");
+      st.id = styleId;
+      st.textContent = `
+        .btnSmall{
+          height:30px; padding:0 10px; border-radius:10px;
+          border:1px solid rgba(170,140,255,.22);
+          background: rgba(255,255,255,.06);
+          color: rgba(238,240,255,.95);
+          cursor:pointer;
+          font-size:12px;
+        }
+        .btnSmall:hover{ background: rgba(255,255,255,.10); }
+      `;
+      document.head.appendChild(st);
+    }
+
+    // Wire buttons
+    document.getElementById("clipEditorToggleBtn").addEventListener("click", () => toggleClipPolygonEditor());
+    document.getElementById("clipEditorAddPointBtn").addEventListener("click", () => toggleAddPointMode());
+    document.getElementById("clipApplyCustomBtn").addEventListener("click", () => applyCustomClipFromTextarea());
+    document.getElementById("clipCopyCustomBtn").addEventListener("click", () => copyCustomClipTextarea());
+    document.getElementById("customClipPathInput").addEventListener("input", () => {
+      // soft-apply as user types (but don't force re-render)
+      softApplyCustomClipToPreview();
+    });
+  }
+
+  function setCustomClipPanelVisible(visible) {
+    const panel = document.getElementById("customClipPanel");
+    if (!panel) return;
+    panel.style.display = visible ? "block" : "none";
+  }
+
+  function setCustomClipStatus(msg) {
+    const el = document.getElementById("customClipStatus");
+    if (!el) return;
+    el.textContent = msg || "";
+  }
+
+  function isCustomSelected() {
+    const sel = document.getElementById("clipshape");
+    return sel && sel.value === "custom";
+  }
+
+  function getOrInitLayerClip(layer) {
+    if (!layer.clip) layer.clip = {};
+    if (typeof layer.clip.doclip !== "boolean") layer.clip.doclip = true;
+    return layer.clip;
+  }
+
+  function updateCustomClipUIFromLayer() {
+    ensureCustomClipPanelExists();
+
+    const layer = getCurrentLayer();
+    const panel = document.getElementById("customClipPanel");
+    const input = document.getElementById("customClipPathInput");
+    if (!panel || !input || !layer) return;
+
+    const isCustom = layer.clip && layer.clip.shape === "custom";
+    setCustomClipPanelVisible(isCustom);
+
+    if (isCustom) {
+      input.value = layer.clip.customPath || input.value || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+      setCustomClipStatus(activeClipEditor ? "Point editor active." : "");
+    } else {
+      setCustomClipStatus("");
+    }
+
+    // If user switched layers, ensure editor points at the current layer if still active
+    if (activeClipEditor && activeClipEditorLayerIndex !== currentLayerIndex) {
+      destroyClipPolygonEditor();
+      // auto-restart only if new layer is custom
+      if (isCustom) startClipPolygonEditor();
+    }
+  }
+
+  function applyCustomClipToLayerAndPreview(clipPath, points) {
+    const layer = getCurrentLayer();
+    const previewEl = getCurrentLayerPreviewEl();
+    if (!layer || !previewEl) return;
+
+    const clip = getOrInitLayerClip(layer);
+
+    // Ensure clipping is enabled + custom selected
+    clip.doclip = true;
+    clip.shape = "custom";
+    clip.customPath = clipPath;
+    if (Array.isArray(points)) clip.customPoints = points;
+
+    // Apply immediately to preview element without full rebuild
+    previewEl.style.clipPath = clipPath;
+
+    // Update inputs (if present)
+    const sel = document.getElementById("clipshape");
+    const doclip = document.getElementById("doclip");
+    if (sel) sel.value = "custom";
+    if (doclip) doclip.checked = true;
+
+    // trigger your normal data pipeline
+    try { generateCSS(); } catch (_) {}
+    try { exportConfig(); } catch (_) {}
+  }
+
+  function normalizeCustomClipValue(raw) {
+    if (!raw) return null;
+    let s = String(raw).trim();
+    s = s.replace(/^clip-path\s*:\s*/i, "").replace(/;$/, "").trim();
+    const ok = /^(polygon|inset|circle|ellipse|path)\(/i.test(s);
+    return ok ? s : null;
+  }
+
+  function softApplyCustomClipToPreview() {
+    const input = document.getElementById("customClipPathInput");
+    const previewEl = getCurrentLayerPreviewEl();
+    if (!input || !previewEl) return;
+
+    const val = normalizeCustomClipValue(input.value);
+    if (!val) {
+      setCustomClipStatus("Invalid syntax (use polygon/circle/ellipse/inset/path).");
+      return;
+    }
+
+    // Apply to preview only (do not commit points unless user clicks Apply)
+    previewEl.style.clipPath = val;
+    setCustomClipStatus("Preview updated.");
+  }
+
+  function applyCustomClipFromTextarea() {
+    const input = document.getElementById("customClipPathInput");
+    if (!input) return;
+
+    const val = normalizeCustomClipValue(input.value);
+    if (!val) {
+      setCustomClipStatus("Invalid syntax (use polygon/circle/ellipse/inset/path).");
+      return;
+    }
+
+    // If polygon editor exists, prefer its points so we keep editability
+    let points = null;
+    if (activeClipEditor) {
+      points = activeClipEditor.getPoints?.() || null;
+    }
+
+    applyCustomClipToLayerAndPreview(val, points);
+    setCustomClipStatus("Applied to layer.");
+    scheduleClipExportUpdate();
+  }
+
+  async function copyCustomClipTextarea() {
+    const input = document.getElementById("customClipPathInput");
+    if (!input) return;
+    const txt = input.value.trim();
+    if (!txt) return;
+
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(txt);
+      else {
+        const ta = document.createElement("textarea");
+        ta.value = txt;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCustomClipStatus("Copied.");
+    } catch {
+      setCustomClipStatus("Copy failed.");
+    }
+  }
+
+  function startClipPolygonEditor() {
+    const layer = getCurrentLayer();
+    const previewEl = getCurrentLayerPreviewEl();
+    if (!layer || !previewEl) return;
+
+    if (!window.ClipPolygonEditor) {
+      console.warn("ClipPolygonEditor not found. Ensure clip_polygon_editor.js is loaded.");
+      setCustomClipStatus("Editor not loaded (missing clip_polygon_editor.js).");
+      return;
+    }
+
+    const clip = getOrInitLayerClip(layer);
+    const initial = clip.customPath || window.getComputedStyle(previewEl).clipPath || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+
+    // Ensure layer is in custom mode
+    clip.doclip = true;
+    clip.shape = "custom";
+    clip.customPath = normalizeCustomClipValue(initial) || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+
+    activeClipEditor?.destroy?.();
+    activeClipEditor = window.ClipPolygonEditor.attach({
+      previewEl,
+      initialClipPath: clip.customPath,
+      // Snapping makes it feel more "professional" for geometry work; turn off if you prefer
+      snap: false,
+      snapToEdges: true,
+      showLabels: false,
+      onChange: ({ clipPath, points }) => {
+        // keep UI synced
+        const input = document.getElementById("customClipPathInput");
+        if (input && input.value !== clipPath) input.value = clipPath;
+
+        // Commit continuously so export and layer state are always correct
+        clip.customPath = clipPath;
+        clip.customPoints = points;
+
+        // Preview is already applied by the editor; just keep pipeline updated lightly
+        scheduleClipExportUpdate();
+      }
+    });
+
+    activeClipEditorLayerIndex = currentLayerIndex;
+    setCustomClipStatus("Point editor active.");
+  }
+
+  function destroyClipPolygonEditor() {
+    try { activeClipEditor?.destroy?.(); } catch (_) {}
+    activeClipEditor = null;
+    activeClipEditorLayerIndex = null;
+
+    const addBtn = document.getElementById("clipEditorAddPointBtn");
+    if (addBtn) addBtn.textContent = "Add Points";
+    setCustomClipStatus("");
+  }
+
+  function toggleClipPolygonEditor() {
+    if (!isCustomSelected()) {
+      // Force custom selection if user clicks "Edit Points"
+      const sel = document.getElementById("clipshape");
+      if (sel) sel.value = "custom";
+      const layer = getCurrentLayer();
+      if (layer) {
+        const clip = getOrInitLayerClip(layer);
+        clip.doclip = true;
+        clip.shape = "custom";
+      }
+      setCustomClipPanelVisible(true);
+    }
+
+    if (activeClipEditor) {
+      destroyClipPolygonEditor();
+      setCustomClipStatus("Point editor closed.");
+    } else {
+      startClipPolygonEditor();
+    }
+  }
+
+  function toggleAddPointMode() {
+    if (!activeClipEditor) {
+      // auto-start editor, then arm add mode
+      startClipPolygonEditor();
+      if (!activeClipEditor) return;
+    }
+
+    const btn = document.getElementById("clipEditorAddPointBtn");
+    const enabled = !!activeClipEditor.isAddMode?.() ? false : true;
+
+    activeClipEditor.setAddMode?.(enabled);
+
+    if (btn) btn.textContent = enabled ? "Add Points: ON" : "Add Points";
+    setCustomClipStatus(enabled ? "Click on the preview to add points." : "Add-point mode off.");
+  }
+
+  // ---- Hook custom mode into existing controls ----
+  function handleClipShapeChange() {
+    ensureCustomClipPanelExists();
+    const layer = getCurrentLayer();
+    if (!layer) return;
+
+    const clip = getOrInitLayerClip(layer);
+    const sel = document.getElementById("clipshape");
+    if (!sel) return;
+
+    clip.shape = sel.value;
+
+    if (clip.shape === "custom") {
+      // ensure panel visible + seed value if absent
+      setCustomClipPanelVisible(true);
+      const input = document.getElementById("customClipPathInput");
+      if (input && !input.value.trim()) {
+        input.value = clip.customPath || "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+      }
+      // If they switch into custom, we do NOT force-open the editor; user can click Edit Points.
+      applyCustomClipFromTextarea();
+    } else {
+      setCustomClipPanelVisible(false);
+      destroyClipPolygonEditor();
+    }
+  }
+
+  // Patch selectLayer to keep custom UI + editor aligned with layer selection
+  const _origSelectLayer = window.selectLayer;
+  if (typeof _origSelectLayer === "function") {
+    window.selectLayer = function patchedSelectLayer(index) {
+      _origSelectLayer(index);
+      updateCustomClipUIFromLayer();
+    };
+  }
+
+  // Patch updateCurrentLayer to persist custom clip textarea into the model when in custom mode
+  const _origUpdateCurrentLayer = window.updateCurrentLayer;
+  if (typeof _origUpdateCurrentLayer === "function") {
+    window.updateCurrentLayer = function patchedUpdateCurrentLayer() {
+      _origUpdateCurrentLayer();
+
+      const layer = getCurrentLayer();
+      if (!layer) return;
+
+      // If the user is in custom mode, persist the textarea value
+      const sel = document.getElementById("clipshape");
+      const input = document.getElementById("customClipPathInput");
+      if (sel && sel.value === "custom" && input) {
+        const clip = getOrInitLayerClip(layer);
+        clip.shape = "custom";
+        clip.customPath = normalizeCustomClipValue(input.value) || clip.customPath || "";
+        scheduleClipExportUpdate();
+      }
+
+      updateCustomClipUIFromLayer();
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    ensureCustomClipPanelExists();
+
+    // Add "custom" option if missing
+    const sel = document.getElementById("clipshape");
+    if (sel && !Array.from(sel.options).some(o => o.value === "custom")) {
+      const opt = document.createElement("option");
+      opt.value = "custom";
+      opt.textContent = "Custom (Polygon)";
+      sel.appendChild(opt);
+    }
+
+    // Wire shape change
+    if (sel) {
+      sel.addEventListener("change", () => handleClipShapeChange());
+    }
+
+    // Initial sync after templates load
+    setTimeout(() => updateCustomClipUIFromLayer(), 0);
+  });
+
+})();
