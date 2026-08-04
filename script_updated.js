@@ -1812,7 +1812,7 @@ function openPopup() {
 
 function addColorStop() {
     pushHistory('addColorStop');
-    openPopup();
+
     if (currentLayerIndex < 0) return;
 
     const stops = layers[currentLayerIndex].colorStops;
