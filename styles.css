@@ -1564,6 +1564,13 @@ body.tooltips-disabled .tooltip-text {
         width: 20px;
     }
 
+
+#footerPanel {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
 @keyframes animatedshadow {
     0% {
         filter: drop-shadow(0 0 4px #2e1867);
